@@ -22,6 +22,12 @@
         "phpunit/phpunit": "^9.5.0",
         "symfony/phpunit-bridge": "^5.2"
     },
+    "suggest": {
+        "doctrine/orm": "To use ORM implementation and batch utilities.",
+        "doctrine/dbal": "To use DBAL implementation.",
+        "doctrine/collections": "To use CollectionDecorator.",
+        "pagerfanta/pagerfanta": "To use CollectionAdapter."
+    },
     "config": {
         "preferred-install": "dist",
         "sort-packages": true
