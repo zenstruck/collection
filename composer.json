@@ -16,6 +16,7 @@
         "symfony/polyfill-php80": "^1.22"
     },
     "require-dev": {
+        "doctrine/collections": "^1.6",
         "doctrine/orm": "^2.8",
         "pagerfanta/pagerfanta": "^1.0|^2.0",
         "phpunit/phpunit": "^9.5.0",
