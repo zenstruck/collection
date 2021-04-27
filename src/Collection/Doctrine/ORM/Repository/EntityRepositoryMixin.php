@@ -2,14 +2,21 @@
 
 namespace Zenstruck\Collection\Doctrine\ORM\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NativeQuery;
+use Doctrine\ORM\Query;
+use Doctrine\ORM\Query\ResultSetMappingBuilder;
+use Doctrine\ORM\QueryBuilder;
 use Zenstruck\Collection\Doctrine\ORM\Repository;
 
 /**
  * Allows your repository to have access to Doctrine\ORM\EntityRepository
  * methods (except count()).
  *
- * @mixin EntityRepository
+ * @method QueryBuilder            createQueryBuilder(string $alias, ?string $indexBy = null)
+ * @method ResultSetMappingBuilder createResultSetMappingBuilder(string $alias)
+ * @method Query                   createNamedQuery(string $queryName)
+ * @method NativeQuery             createNativeNamedQuery(string $queryName)
+ * @method void                    clear()
  *
  * @author Kevin Bond <kevinbond@gmail.com>
  */
