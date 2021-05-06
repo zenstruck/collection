@@ -3,9 +3,10 @@
 $finder = PhpCsFixer\Finder::create()
     ->in([__DIR__.'/src', __DIR__.'/tests'])
 ;
+$config = new PhpCsFixer\Config();
 
-return PhpCsFixer\Config::create()
-    ->setRules(array(
+return $config
+    ->setRules([
         '@Symfony' => true,
         '@Symfony:risky' => true,
         '@DoctrineAnnotation' => true,
@@ -19,7 +20,7 @@ return PhpCsFixer\Config::create()
             'imports_order' => ['const', 'class', 'function'],
         ],
         'ordered_class_elements' => true,
-        'native_function_invocation' => true,
+        'native_function_invocation' => ['include' => ['@internal']],
         'explicit_indirect_variable' => true,
         'explicit_string_variable' => true,
         'escape_implicit_backslashes' => true,
@@ -40,7 +41,7 @@ return PhpCsFixer\Config::create()
         'phpdoc_to_comment' => false,
         'function_declaration' => ['closure_function_spacing' => 'none'],
         'nullable_type_declaration_for_default_null_value' => true,
-    ))
+    ])
     ->setRiskyAllowed(true)
     ->setFinder($finder)
 ;
