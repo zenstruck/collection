@@ -15,6 +15,8 @@ class Result implements Collection
     use Paginatable;
 
     private QueryBuilder $qb;
+
+    /** @var callable(QueryBuilder):QueryBuilder */
     private $countModifier;
     private ?int $count = null;
 
@@ -27,20 +29,20 @@ class Result implements Collection
     public function take(int $limit, int $offset = 0): Collection
     {
         return new IterableCollection(
-            fn() => (clone $this->qb)->setFirstResult($offset)->setMaxResults($limit)->execute()->fetchAll()
+            fn() => (clone $this->qb)->setFirstResult($offset)->setMaxResults($limit)->execute()->fetchAllAssociative()
         );
     }
 
     public function count(): int
     {
-        return $this->count ??= ($this->countModifier)(clone $this->qb)->execute()->fetchColumn();
+        return $this->count ??= ($this->countModifier)(clone $this->qb)->execute()->fetchOne();
     }
 
     public function getIterator(): \Traversable
     {
         $stmt = $this->qb->execute();
 
-        while ($data = $stmt->fetch()) {
+        while ($data = $stmt->fetchAssociative()) {
             yield $data;
         }
     }
