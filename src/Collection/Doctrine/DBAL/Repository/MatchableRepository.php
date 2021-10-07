@@ -35,7 +35,7 @@ trait MatchableRepository
         $result = $this->qbForSpecification($specification)
             ->setMaxResults(1)
             ->execute()
-            ->fetch()
+            ->fetchAssociative()
         ;
 
         if (!$result) {
