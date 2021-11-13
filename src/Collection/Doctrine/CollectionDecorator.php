@@ -177,6 +177,7 @@ final class CollectionDecorator implements Collection, DoctrineCollection
         return $this->inner->offsetExists($offset);
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->inner->offsetGet($offset);

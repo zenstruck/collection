@@ -15,6 +15,7 @@ final class Iterator implements \Iterator
         $this->items = $count ? \range(1, $count) : [];
     }
 
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->items[$this->position];
@@ -25,6 +26,7 @@ final class Iterator implements \Iterator
         ++$this->position;
     }
 
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->position;
