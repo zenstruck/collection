@@ -14,12 +14,14 @@ final class OrderByNormalizer extends DoctrineNormalizer
      * @param OrderBy $specification
      * @param Context $context
      */
-    public function normalize($specification, $context): void
+    public function normalize(mixed $specification, mixed $context): mixed
     {
         $context->qb()->addOrderBy($context->prefixAlias($specification->field()), $specification->direction());
+
+        return null;
     }
 
-    protected function supportsSpecification($specification): bool
+    protected function supportsSpecification(mixed $specification): bool
     {
         return $specification instanceof OrderBy;
     }

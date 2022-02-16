@@ -18,20 +18,22 @@ final class AntiJoinNormalizer implements Normalizer
      * @param AntiJoin   $specification
      * @param ORMContext $context
      */
-    public function normalize($specification, $context)
+    public function normalize(mixed $specification, mixed $context): mixed
     {
         $context->qb()
             ->leftJoin($context->prefixAlias($specification->field()), $specification->field())
             ->andWhere("{$specification->field()} IS NULL")
         ;
+
+        return null;
     }
 
-    protected function supportsSpecification($specification): bool
+    protected function supportsSpecification(mixed $specification): bool
     {
         return $specification instanceof AntiJoin;
     }
 
-    protected function supportsContext($context): bool
+    protected function supportsContext(mixed $context): bool
     {
         return $context instanceof ORMContext;
     }

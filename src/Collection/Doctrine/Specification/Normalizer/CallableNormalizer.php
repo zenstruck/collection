@@ -13,12 +13,12 @@ final class CallableNormalizer extends DoctrineNormalizer
      * @param callable $specification
      * @param Context  $context
      */
-    public function normalize($specification, $context)
+    public function normalize(mixed $specification, mixed $context): mixed
     {
         return $specification($context);
     }
 
-    protected function supportsSpecification($specification): bool
+    protected function supportsSpecification(mixed $specification): bool
     {
         return \is_callable($specification);
     }

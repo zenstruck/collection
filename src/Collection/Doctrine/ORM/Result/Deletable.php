@@ -11,6 +11,9 @@ use Zenstruck\Collection\Doctrine\ORM\Result;
  */
 trait Deletable
 {
+    /**
+     * @param callable(object):void|null $callback
+     */
     final public function delete(?callable $callback = null): int
     {
         if (!$this instanceof Result) {

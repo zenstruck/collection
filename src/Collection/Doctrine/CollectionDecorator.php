@@ -9,13 +9,23 @@ use Zenstruck\Collection\Paginatable;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
+ *
+ * @template Key of array-key
+ * @template Value
+ * @implements Collection<Key,Value>
+ * @implements DoctrineCollection<Key,Value>
  */
 final class CollectionDecorator implements Collection, DoctrineCollection
 {
+    /** @use Paginatable<Value> */
     use Paginatable;
 
+    /** @var DoctrineCollection<Key,Value> */
     private DoctrineCollection $inner;
 
+    /**
+     * @param iterable<Key,Value>|DoctrineCollection<Key,Value>|null $source
+     */
     public function __construct(iterable|DoctrineCollection|null $source = [])
     {
         $source ??= [];
@@ -27,6 +37,9 @@ final class CollectionDecorator implements Collection, DoctrineCollection
         $this->inner = $source;
     }
 
+    /**
+     * @return self<Key,Value>
+     */
     public function take(int $limit, int $offset = 0): self
     {
         return new self($this->slice($offset, $limit));
@@ -62,7 +75,7 @@ final class CollectionDecorator implements Collection, DoctrineCollection
         return $this->inner->isEmpty();
     }
 
-    public function remove($key)
+    public function remove($key): mixed
     {
         return $this->inner->remove($key);
     }
@@ -77,7 +90,7 @@ final class CollectionDecorator implements Collection, DoctrineCollection
         return $this->inner->containsKey($key);
     }
 
-    public function get($key)
+    public function get($key): mixed
     {
         return $this->inner->get($key);
     }
@@ -102,27 +115,27 @@ final class CollectionDecorator implements Collection, DoctrineCollection
         return $this->inner->toArray();
     }
 
-    public function first()
+    public function first(): mixed
     {
         return $this->inner->first();
     }
 
-    public function last()
+    public function last(): mixed
     {
         return $this->inner->last();
     }
 
-    public function key()
+    public function key(): int|string|null
     {
         return $this->inner->key();
     }
 
-    public function current()
+    public function current(): mixed
     {
         return $this->inner->current();
     }
 
-    public function next()
+    public function next(): mixed
     {
         return $this->inner->next();
     }
@@ -132,6 +145,9 @@ final class CollectionDecorator implements Collection, DoctrineCollection
         return $this->inner->exists($p);
     }
 
+    /**
+     * @return self<Key,Value>
+     */
     public function filter(\Closure $p): self
     {
         return new self($this->inner->filter($p));
@@ -142,6 +158,13 @@ final class CollectionDecorator implements Collection, DoctrineCollection
         return $this->inner->forAll($p);
     }
 
+    /**
+     * @template U
+     *
+     * @param \Closure():U $func
+     *
+     * @return self<Key,U>
+     */
     public function map(\Closure $func): self
     {
         return new self($this->inner->map($func));
@@ -152,7 +175,7 @@ final class CollectionDecorator implements Collection, DoctrineCollection
         return $this->inner->partition($p);
     }
 
-    public function indexOf($element)
+    public function indexOf($element): int|string|bool
     {
         return $this->inner->indexOf($element);
     }
@@ -167,8 +190,7 @@ final class CollectionDecorator implements Collection, DoctrineCollection
         return $this->inner->offsetExists($offset);
     }
 
-    #[\ReturnTypeWillChange]
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->inner->offsetGet($offset);
     }

@@ -22,7 +22,10 @@ use Zenstruck\Collection\Doctrine\ORM\Repository;
  */
 trait EntityRepositoryMixin
 {
-    final public function __call($name, $arguments)
+    /**
+     * @param mixed[] $arguments
+     */
+    final public function __call(string $name, array $arguments): mixed
     {
         if (!$this instanceof Repository) {
             throw new \BadMethodCallException(); // todo

@@ -9,6 +9,7 @@ use Zenstruck\Collection\Doctrine\Specification\Normalizer\ComparisonNormalizer;
 use Zenstruck\Collection\Doctrine\Specification\Normalizer\CompositeNormalizer;
 use Zenstruck\Collection\Doctrine\Specification\Normalizer\NullNormalizer;
 use Zenstruck\Collection\Doctrine\Specification\Normalizer\OrderByNormalizer;
+use Zenstruck\Collection\Specification\Normalizer;
 use Zenstruck\Collection\Specification\Normalizer\NestedNormalizer;
 use Zenstruck\Collection\Specification\SpecificationNormalizer;
 
@@ -17,6 +18,7 @@ use Zenstruck\Collection\Specification\SpecificationNormalizer;
  */
 abstract class Context
 {
+    /** @var array<class-string,SpecificationNormalizer> */
     private static array $defaultNormalizer = [];
 
     private string $alias;
@@ -45,6 +47,9 @@ abstract class Context
         return self::$defaultNormalizer[static::class] ??= new SpecificationNormalizer(static::defaultNormalizers());
     }
 
+    /**
+     * @return Normalizer[]
+     */
     protected static function defaultNormalizers(): array
     {
         return [

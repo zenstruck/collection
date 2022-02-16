@@ -6,18 +6,27 @@ use Zenstruck\Collection;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
+ *
+ * @template Key
+ * @template Value
+ * @implements Collection<Key,Value>
  */
 final class FactoryCollection implements Collection
 {
+    /** @use Paginatable<Value> */
     use Paginatable;
 
+    /** @var Collection<Key,Value> */
     private Collection $inner;
-    private $factory;
+    private \Closure $factory;
 
+    /**
+     * @param Collection<Key,Value> $collection
+     */
     public function __construct(Collection $collection, callable $factory)
     {
         $this->inner = $collection;
-        $this->factory = $factory;
+        $this->factory = \Closure::fromCallable($factory);
     }
 
     public function take(int $limit, int $offset = 0): Collection

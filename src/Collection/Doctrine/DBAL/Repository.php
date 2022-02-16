@@ -7,6 +7,9 @@ use Doctrine\DBAL\Query\QueryBuilder;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
+ *
+ * @template Value
+ * @implements \IteratorAggregate<int,Value>
  */
 abstract class Repository implements \IteratorAggregate, \Countable
 {
@@ -20,6 +23,9 @@ abstract class Repository implements \IteratorAggregate, \Countable
         return static::createResult($this->qb())->count();
     }
 
+    /**
+     * @return Result<Value>
+     */
     protected static function createResult(QueryBuilder $qb): Result
     {
         return new Result($qb, static::countModifier());

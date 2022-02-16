@@ -8,10 +8,15 @@ use Zenstruck\Collection\Doctrine\ORM\Repository;
  * Allows your repository to remove objects from the db.
  *
  * @author Kevin Bond <kevinbond@gmail.com>
+ *
+ * @template Value
  */
 trait Removable
 {
-    final public function remove(object $item, bool $flush = true): self
+    /**
+     * @param Value $item
+     */
+    final public function remove(object $item, bool $flush = true): static
     {
         if (!$this instanceof Repository) {
             throw new \BadMethodCallException(); // todo

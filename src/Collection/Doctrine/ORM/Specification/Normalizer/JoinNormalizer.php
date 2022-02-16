@@ -20,7 +20,7 @@ final class JoinNormalizer implements Normalizer, NormalizerAware
      * @param Join       $join
      * @param ORMContext $context
      */
-    public function normalize($join, $context)
+    public function normalize(mixed $join, mixed $context): mixed
     {
         $this->addJoin($context, $join);
 
@@ -35,12 +35,12 @@ final class JoinNormalizer implements Normalizer, NormalizerAware
         return $this->normalizer()->normalize($join->child(), $context->scopeTo($join->alias()));
     }
 
-    protected function supportsSpecification($specification): bool
+    protected function supportsSpecification(mixed $specification): bool
     {
         return $specification instanceof Join;
     }
 
-    protected function supportsContext($context): bool
+    protected function supportsContext(mixed $context): bool
     {
         return $context instanceof ORMContext;
     }

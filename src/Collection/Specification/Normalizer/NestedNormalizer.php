@@ -14,14 +14,13 @@ final class NestedNormalizer implements Normalizer, NormalizerAware
 
     /**
      * @param Nested $specification
-     * @param mixed  $context
      */
-    public function normalize($specification, $context)
+    public function normalize($specification, mixed $context): mixed
     {
         return $this->normalizer()->normalize($specification->child(), $context);
     }
 
-    public function supports($specification, $context): bool
+    public function supports(mixed $specification, mixed $context): bool
     {
         return $specification instanceof Nested;
     }

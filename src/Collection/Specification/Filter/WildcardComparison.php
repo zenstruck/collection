@@ -10,7 +10,12 @@ abstract class WildcardComparison extends Comparison
     private string $format = '%s';
     private ?string $wildcard = null;
 
-    final public static function contains(string $field, $value): static
+    final public function __construct(string $field, ?string $value)
+    {
+        parent::__construct($field, $value);
+    }
+
+    final public static function contains(string $field, ?string $value): static
     {
         $specification = new static($field, $value);
 
@@ -19,7 +24,7 @@ abstract class WildcardComparison extends Comparison
         return $specification;
     }
 
-    final public static function beginsWith(string $field, $value): static
+    final public static function beginsWith(string $field, ?string $value): static
     {
         $specification = new static($field, $value);
 
@@ -28,7 +33,7 @@ abstract class WildcardComparison extends Comparison
         return $specification;
     }
 
-    final public static function endsWith(string $field, $value): static
+    final public static function endsWith(string $field, ?string $value): static
     {
         $specification = new static($field, $value);
 

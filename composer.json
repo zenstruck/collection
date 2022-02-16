@@ -19,6 +19,7 @@
         "doctrine/dbal": "^2.12|^3.0",
         "doctrine/orm": "^2.11",
         "pagerfanta/pagerfanta": "^1.0|^2.0|^3.0",
+        "phpstan/phpstan": "^1.4",
         "phpunit/phpunit": "^9.5.0",
         "symfony/cache": "^4.4|^5.0",
         "symfony/phpunit-bridge": "^5.2"

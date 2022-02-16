@@ -435,7 +435,7 @@ trait MatchableRepositoryTests
     public function can_use_nested_specification(): void
     {
         $object = $this->createWithItems(3)->matchOne(new class() implements Nested {
-            public function child()
+            public function child(): mixed
             {
                 return Spec::eq('value', 'value 2');
             }

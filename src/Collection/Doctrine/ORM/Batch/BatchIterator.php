@@ -7,14 +7,21 @@ use Doctrine\ORM\Internal\Hydration\IterableResult;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
+ *
+ * @template Value
+ * @implements \IteratorAggregate<int,Value>
  */
 class BatchIterator implements \IteratorAggregate
 {
+    /** @var iterable<int,Value> */
     protected iterable $items;
     private EntityManagerInterface $em;
     private int $chunkSize;
 
-    protected function __construct(iterable $items, EntityManagerInterface $em, int $chunkSize = 100)
+    /**
+     * @param iterable<int,Value> $items
+     */
+    private function __construct(iterable $items, EntityManagerInterface $em, int $chunkSize = 100)
     {
         if ($items instanceof IterableResult) {
             $items = new IterableResultDecorator($items);
@@ -25,6 +32,11 @@ class BatchIterator implements \IteratorAggregate
         $this->chunkSize = $chunkSize;
     }
 
+    /**
+     * @param iterable<int,Value> $items
+     *
+     * @return self<Value>|CountableBatchIterator<Value>
+     */
     final public static function for(iterable $items, EntityManagerInterface $em, int $chunkSize = 100): self|CountableBatchIterator
     {
         if (\is_countable($items)) {

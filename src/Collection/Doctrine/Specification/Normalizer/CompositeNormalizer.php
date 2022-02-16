@@ -21,7 +21,7 @@ final class CompositeNormalizer extends DoctrineNormalizer implements Normalizer
      * @param Composite $specification
      * @param Context   $context
      */
-    public function normalize($specification, $context)
+    public function normalize(mixed $specification, mixed $context): mixed
     {
         $children = \array_filter(\array_map(
             fn($child) => $this->normalizer()->normalize($child, $context),
@@ -35,6 +35,9 @@ final class CompositeNormalizer extends DoctrineNormalizer implements Normalizer
         return $context->qb()->expr()->{self::methodFor($specification)}(...$children);
     }
 
+    /**
+     * @return array<class-string, string>
+     */
     protected static function classMethodMap(): array
     {
         return [

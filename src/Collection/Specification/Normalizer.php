@@ -7,17 +7,7 @@ namespace Zenstruck\Collection\Specification;
  */
 interface Normalizer
 {
-    /**
-     * @param mixed $specification
-     * @param mixed $context
-     *
-     * @return mixed
-     */
-    public function normalize($specification, $context);
+    public function normalize(mixed $specification, mixed $context): mixed;
 
-    /**
-     * @param mixed $specification
-     * @param mixed $context
-     */
-    public function supports($specification, $context): bool;
+    public function supports(mixed $specification, mixed $context): bool;
 }

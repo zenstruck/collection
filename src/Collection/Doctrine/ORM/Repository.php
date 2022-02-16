@@ -8,9 +8,13 @@ use Doctrine\ORM\QueryBuilder;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
+ *
+ * @template Value
+ * @implements \IteratorAggregate<int,Value>
  */
 abstract class Repository implements \IteratorAggregate, \Countable
 {
+    /** @var EntityRepository<Value>|null */
     private ?EntityRepository $repo = null;
 
     final public function getIterator(): \Traversable
@@ -18,11 +22,17 @@ abstract class Repository implements \IteratorAggregate, \Countable
         return static::createResult($this->qb());
     }
 
+    /**
+     * @return \Traversable<int,Value>
+     */
     final public function batch(int $chunkSize = 100): \Traversable
     {
         return static::createResult($this->qb())->batch($chunkSize);
     }
 
+    /**
+     * @return \Traversable<int,Value>
+     */
     final public function batchProcess(int $chunkSize = 100): \Traversable
     {
         return static::createResult($this->qb())->batchProcess($chunkSize);
@@ -35,11 +45,17 @@ abstract class Repository implements \IteratorAggregate, \Countable
 
     abstract public function getClassName(): string;
 
+    /**
+     * @return Result<Value>
+     */
     protected static function createResult(QueryBuilder $qb, bool $fetchCollection = true, ?bool $useOutputWalkers = null): Result
     {
         return new Result($qb, $fetchCollection, $useOutputWalkers);
     }
 
+    /**
+     * @return EntityRepository<Value>
+     */
     protected function repo(): EntityRepository
     {
         return $this->repo ??= new EntityRepository($this->em(), $this->em()->getClassMetadata($this->getClassName()));

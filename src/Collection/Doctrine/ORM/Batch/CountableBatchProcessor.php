@@ -3,14 +3,15 @@
 namespace Zenstruck\Collection\Doctrine\ORM\Batch;
 
 /**
- * @property \Countable $items
- *
  * @author Kevin Bond <kevinbond@gmail.com>
+ *
+ * @template Value
+ * @extends BatchProcessor<Value>
  */
 final class CountableBatchProcessor extends BatchProcessor implements \Countable
 {
     public function count(): int
     {
-        return \count($this->items);
+        return \is_countable($this->items) ? \count($this->items) : throw new \LogicException('Not countable.');
     }
 }

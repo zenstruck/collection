@@ -9,14 +9,17 @@ use Zenstruck\Collection\IterableCollection;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
+ *
+ * @template Value
+ * @extends Result<Value>
  */
 class ObjectResult extends Result
 {
-    private $factory;
+    private \Closure $factory;
 
     public function __construct(callable $factory, QueryBuilder $qb, ?callable $countModifier = null)
     {
-        $this->factory = $factory;
+        $this->factory = \Closure::fromCallable($factory);
 
         parent::__construct($qb, $countModifier);
     }

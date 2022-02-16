@@ -8,10 +8,10 @@ use Zenstruck\Collection\Tests\IterableCollectionTest;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class CallableCountableIteratorTest extends IterableCollectionTest
+final class ClosureArrayTest extends IterableCollectionTest
 {
     protected function createWithItems(int $count): IterableCollection
     {
-        return new IterableCollection(fn() => new \ArrayIterator($count ? \range(1, $count) : []));
+        return new IterableCollection(fn() => $count ? \range(1, $count) : []);
     }
 }

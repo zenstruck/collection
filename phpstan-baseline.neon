@@ -1,0 +1,7 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Property Zenstruck\\\\Collection\\\\IterableCollection\\<Key,Value\\>\\:\\:\\$source \\(\\(Closure\\(\\)\\: iterable\\<Key, Value\\>\\)\\|iterable\\<Key, Value\\>\\) does not accept array\\{\\}\\|\\(callable\\(\\)\\: iterable\\<Key, Value\\>\\)\\|\\(callable\\(\\)\\: iterable\\<Key, Value\\>&iterable\\)\\|iterable\\<Key, Value\\>\\.$#"
+			count: 1
+			path: src/Collection/IterableCollection.php
+
