@@ -25,10 +25,7 @@ class BatchIterator implements \IteratorAggregate
         $this->chunkSize = $chunkSize;
     }
 
-    /**
-     * @return BatchIterator|CountableBatchIterator
-     */
-    final public static function for(iterable $items, EntityManagerInterface $em, int $chunkSize = 100)
+    final public static function for(iterable $items, EntityManagerInterface $em, int $chunkSize = 100): self|CountableBatchIterator
     {
         if (\is_countable($items)) {
             return new CountableBatchIterator($items, $em, $chunkSize);

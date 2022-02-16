@@ -26,10 +26,7 @@ class BatchProcessor implements \IteratorAggregate
         $this->chunkSize = $chunkSize;
     }
 
-    /**
-     * @return BatchProcessor|CountableBatchProcessor
-     */
-    final public static function for(iterable $items, EntityManagerInterface $em, int $chunkSize = 100)
+    final public static function for(iterable $items, EntityManagerInterface $em, int $chunkSize = 100): self|CountableBatchProcessor
     {
         if (\is_countable($items)) {
             return new CountableBatchProcessor($items, $em, $chunkSize);

@@ -14,16 +14,9 @@ final class IterableCollection implements Collection
     /** @var callable|iterable */
     private $source;
 
-    /**
-     * @param iterable|callable|null $source
-     */
-    public function __construct($source = null)
+    public function __construct(iterable|callable|null $source = null)
     {
-        $source = $source ?? [];
-
-        if (!\is_callable($source) && !\is_iterable($source)) {
-            throw new \InvalidArgumentException('$source must be callable, iterable or null.');
-        }
+        $source ??= [];
 
         if ($source instanceof \Generator) {
             throw new \InvalidArgumentException('$source must not be a generator directly as generators cannot be rewound. Try wrapping in a closure.');

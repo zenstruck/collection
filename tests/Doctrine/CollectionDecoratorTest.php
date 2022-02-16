@@ -33,16 +33,6 @@ abstract class CollectionDecoratorTest extends TestCase
     /**
      * @test
      */
-    public function must_be_constructed_with_iterator(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-
-        new CollectionDecorator('not iterable');
-    }
-
-    /**
-     * @test
-     */
     public function key_current_next(): void
     {
         $collection = new CollectionDecorator(['a', 'b']);

@@ -24,9 +24,7 @@ final class CompositeNormalizer extends DoctrineNormalizer implements Normalizer
     public function normalize($specification, $context)
     {
         $children = \array_filter(\array_map(
-            function($child) use ($context) {
-                return $this->normalizer()->normalize($child, $context);
-            },
+            fn($child) => $this->normalizer()->normalize($child, $context),
             $specification->children()
         ));
 

@@ -13,12 +13,12 @@ trait ClassMethodMap
             return false;
         }
 
-        return \array_key_exists(\get_class($specification), static::classMethodMap());
+        return \array_key_exists($specification::class, static::classMethodMap());
     }
 
     protected static function methodFor(object $specification): string
     {
-        return static::classMethodMap()[\get_class($specification)];
+        return static::classMethodMap()[$specification::class];
     }
 
     /**

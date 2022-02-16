@@ -11,7 +11,7 @@ final class PageCollection implements \IteratorAggregate, \Countable
 {
     private Collection $collection;
     private int $limit;
-    private ?Page $page1;
+    private Page $page1;
 
     public function __construct(Collection $collection, int $limit = Page::DEFAULT_LIMIT)
     {

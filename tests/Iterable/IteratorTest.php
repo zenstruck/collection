@@ -31,17 +31,6 @@ final class IteratorTest extends IterableCollectionTest
         $this->createWithItems(1)->take(5, -1);
     }
 
-    /**
-     * @test
-     */
-    public function non_callable_source_must_be_iterable(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('$source must be callable, iterable or null.');
-
-        new IterableCollection('not iterable');
-    }
-
     protected function createWithItems(int $count): IterableCollection
     {
         return new IterableCollection(new Iterator($count));

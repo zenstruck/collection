@@ -16,16 +16,9 @@ final class CollectionDecorator implements Collection, DoctrineCollection
 
     private DoctrineCollection $inner;
 
-    /**
-     * @param iterable|DoctrineCollection|null $source
-     */
-    public function __construct($source = [])
+    public function __construct(iterable|DoctrineCollection|null $source = [])
     {
-        $source = $source ?? [];
-
-        if (!\is_iterable($source)) {
-            throw new \InvalidArgumentException(); // todo
-        }
+        $source ??= [];
 
         if (!$source instanceof DoctrineCollection) {
             $source = new ArrayCollection(\is_array($source) ? $source : \iterator_to_array($source));
@@ -49,9 +42,6 @@ final class CollectionDecorator implements Collection, DoctrineCollection
         return $this->inner->getIterator();
     }
 
-    /**
-     * @return true
-     */
     public function add($element): bool
     {
         return $this->inner->add($element);

@@ -23,7 +23,7 @@ final class SpecificationNormalizer implements Normalizer
     public function normalize($specification, $context)
     {
         if (!$normalizer = $this->getNormalizer($specification, $context)) {
-            throw new \RuntimeException(\sprintf('Specification "%s" with context "%s" does not have a supported normalizer registered.', get_debug_type($specification), get_debug_type($context)));
+            throw new \RuntimeException(\sprintf('Specification "%s" with context "%s" does not have a supported normalizer registered.', \get_debug_type($specification), \get_debug_type($context)));
         }
 
         return $normalizer->normalize($specification, $context);
@@ -36,8 +36,8 @@ final class SpecificationNormalizer implements Normalizer
 
     private function getNormalizer($specification, $context): ?Normalizer
     {
-        $specificationCacheKey = \is_object($specification) ? \get_class($specification) : 'native-'.\gettype($specification);
-        $contextCacheKey = \is_object($context) ? \get_class($context) : 'native-'.\gettype($context);
+        $specificationCacheKey = \is_object($specification) ? $specification::class : 'native-'.\gettype($specification);
+        $contextCacheKey = \is_object($context) ? $context::class : 'native-'.\gettype($context);
 
         if (isset($this->normalizerCache[$specificationCacheKey][$contextCacheKey])) {
             return $this->normalizerCache[$specificationCacheKey][$contextCacheKey];

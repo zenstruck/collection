@@ -17,7 +17,7 @@ trait Deletable
             throw new \BadMethodCallException(); // todo
         }
 
-        $callback = $callback ?? static function() {};
+        $callback ??= static function() {};
         $count = 0;
 
         foreach ($this->batchProcess() as $entity) {

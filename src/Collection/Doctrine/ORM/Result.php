@@ -26,10 +26,7 @@ class Result implements Collection
     private ?bool $useOutputWalkers;
     private ?int $count = null;
 
-    /**
-     * @param Query|QueryBuilder $query
-     */
-    final public function __construct($query, bool $fetchCollection = true, ?bool $useOutputWalkers = null)
+    final public function __construct(Query|QueryBuilder $query, bool $fetchCollection = true, ?bool $useOutputWalkers = null)
     {
         if ($query instanceof QueryBuilder) {
             $query = $query->getQuery();

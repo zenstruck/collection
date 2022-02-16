@@ -36,15 +36,9 @@ abstract class Context
         return "{$this->alias}.{$value}";
     }
 
-    /**
-     * @return ORMQueryBuilder|DBALQueryBuilder
-     */
-    abstract public function qb(): object;
+    abstract public function qb(): ORMQueryBuilder|DBALQueryBuilder;
 
-    /**
-     * @return static
-     */
-    abstract public function scopeTo(string $alias): self;
+    abstract public function scopeTo(string $alias): static;
 
     final public static function defaultNormalizer(): SpecificationNormalizer
     {
