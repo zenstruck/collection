@@ -1,18 +1,18 @@
 <?php
 
 use Zenstruck\Collection\IterableCollection;
-use Zenstruck\Collection\Doctrine\CollectionDecorator;
+use Zenstruck\Collection\DoctrineCollection;
 use function PHPStan\Testing\assertType;
 
 assertType('Zenstruck\Collection\IterableCollection<int, User>', new IterableCollection([new User]));
 
-/** @var CollectionDecorator<int,User> $doctrineCollection */
+/** @var DoctrineCollection<int,User> $doctrineCollection */
 
 assertType('Traversable<int, User>', $doctrineCollection->getIterator());
 assertType('Zenstruck\Collection\Page<User>', $doctrineCollection->paginate());
 assertType('User|null', $doctrineCollection->get(1));
-assertType('Zenstruck\Collection\Doctrine\CollectionDecorator<int, User>', $doctrineCollection->take(1));
-assertType('Zenstruck\Collection\Doctrine\CollectionDecorator<int, User>', $doctrineCollection->filter(fn(User $user) => true));
+assertType('Zenstruck\Collection\DoctrineCollection<int, User>', $doctrineCollection->take(1));
+assertType('Zenstruck\Collection\DoctrineCollection<int, User>', $doctrineCollection->filter(fn(User $user) => true));
 
 /** @var ORMRepository<User> $ormRepository */
 

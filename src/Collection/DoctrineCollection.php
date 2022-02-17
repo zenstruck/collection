@@ -1,11 +1,10 @@
 <?php
 
-namespace Zenstruck\Collection\Doctrine;
+namespace Zenstruck\Collection;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection as DoctrineCollection;
+use Doctrine\Common\Collections\Collection as Inner;
 use Zenstruck\Collection;
-use Zenstruck\Collection\Paginatable;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -13,24 +12,24 @@ use Zenstruck\Collection\Paginatable;
  * @template K of array-key
  * @template V
  * @implements Collection<K,V>
- * @implements DoctrineCollection<K,V>
+ * @implements Inner<K,V>
  */
-final class CollectionDecorator implements Collection, DoctrineCollection
+final class DoctrineCollection implements Collection, Inner
 {
     /** @use Paginatable<V> */
     use Paginatable;
 
-    /** @var DoctrineCollection<K,V> */
-    private DoctrineCollection $inner;
+    /** @var Inner<K,V> */
+    private Inner $inner;
 
     /**
-     * @param iterable<K,V>|DoctrineCollection<K,V>|null $source
+     * @param iterable<K,V>|Inner<K,V>|null $source
      */
-    public function __construct(iterable|DoctrineCollection|null $source = [])
+    public function __construct(iterable|Inner|null $source = [])
     {
         $source ??= [];
 
-        if (!$source instanceof DoctrineCollection) {
+        if (!$source instanceof Inner) {
             $source = new ArrayCollection(\is_array($source) ? $source : \iterator_to_array($source));
         }
 
