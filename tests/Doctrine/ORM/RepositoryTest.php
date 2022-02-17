@@ -84,6 +84,7 @@ final class RepositoryTest extends TestCase
     public function can_call_method_on_inner_entity_repository(): void
     {
         $this->assertInstanceOf(QueryBuilder::class, $this->createWithItems(0)->createQueryBuilder('e'));
+        $this->assertInstanceOf(Entity::class, $this->createWithItems(1)->findOneByValue('value 1'));
     }
 
     /**

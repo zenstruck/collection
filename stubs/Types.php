@@ -2,6 +2,7 @@
 
 use Zenstruck\Collection\IterableCollection;
 use Zenstruck\Collection\DoctrineCollection;
+use Zenstruck\Collection\Doctrine\ORMRepository;
 use function PHPStan\Testing\assertType;
 
 assertType('Zenstruck\Collection\IterableCollection<int, User>', new IterableCollection([new User]));
@@ -32,14 +33,14 @@ assertType('Zenstruck\Collection\PageCollection<User>', $ormRepository->pages())
 assertType('Zenstruck\Collection\Page<User>', $ormRepository->pages()->get(1));
 assertType('Traversable<int, Zenstruck\Collection\Page<User>>', $ormRepository->pages()->getIterator());
 
-assertType('ORMResult<User>', $ormRepository->match('spec'));
+assertType('Zenstruck\Collection\Doctrine\ORMResult<User>', $ormRepository->match('spec'));
 assertType('Traversable<int, User>', $ormRepository->match('spec')->getIterator());
 assertType('Zenstruck\Collection\Page<User>', $ormRepository->match('spec')->paginate());
 assertType('User', $ormRepository->matchOne('spec'));
 
-assertType('ORMRepository<User>', $ormRepository->flush());
-assertType('ORMRepository<User>', $ormRepository->remove(new User));
-assertType('ORMRepository<User>', $ormRepository->add(new User));
+assertType('Zenstruck\Collection\Doctrine\ORMRepository<User>', $ormRepository->flush());
+assertType('Zenstruck\Collection\Doctrine\ORMRepository<User>', $ormRepository->remove(new User));
+assertType('Zenstruck\Collection\Doctrine\ORMRepository<User>', $ormRepository->add(new User));
 
 /** @var DBALRepository<User> $dbalRepository */
 

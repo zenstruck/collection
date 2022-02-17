@@ -5,9 +5,9 @@ namespace Zenstruck\Collection\Tests\Doctrine\ORM\Result;
 use PHPUnit\Framework\TestCase;
 use Zenstruck\Collection\Doctrine\ORM\Batch\CountableBatchIterator;
 use Zenstruck\Collection\Doctrine\ORM\Batch\CountableBatchProcessor;
+use Zenstruck\Collection\Doctrine\ORMResult;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
 use Zenstruck\Collection\Tests\Doctrine\HasDatabase;
-use Zenstruck\Collection\Tests\Doctrine\ORM\Fixture\KitchenSinkResult;
 use Zenstruck\Collection\Tests\PagintableCollectionTests;
 
 /**
@@ -142,5 +142,5 @@ abstract class ObjectResultTest extends TestCase
         return new Entity("value {$position}", $position);
     }
 
-    abstract protected function createWithItems(int $count): KitchenSinkResult;
+    abstract protected function createWithItems(int $count): ORMResult;
 }

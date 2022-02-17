@@ -4,9 +4,9 @@ namespace Zenstruck\Collection\Tests\Doctrine\ORM\Result;
 
 use Composer\InstalledVersions;
 use PHPUnit\Framework\TestCase;
+use Zenstruck\Collection\Doctrine\ORMResult;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
 use Zenstruck\Collection\Tests\Doctrine\HasDatabase;
-use Zenstruck\Collection\Tests\Doctrine\ORM\Fixture\KitchenSinkResult;
 use Zenstruck\Collection\Tests\PagintableCollectionTests;
 
 /**
@@ -82,13 +82,13 @@ final class QueryExtraFieldsResultTest extends TestCase
         $this->assertCount(0, $this->em->getRepository(Entity::class)->findAll());
     }
 
-    protected function createWithItems(int $count): KitchenSinkResult
+    protected function createWithItems(int $count): ORMResult
     {
         $this->persistEntities($count);
 
         $query = $this->em->createQuery(\sprintf('SELECT e, UPPER(e.value) AS extra FROM %s e', Entity::class));
 
-        return new KitchenSinkResult($query, true, false);
+        return new ORMResult($query, true, false);
     }
 
     protected function expectedValueAt(int $position): array
