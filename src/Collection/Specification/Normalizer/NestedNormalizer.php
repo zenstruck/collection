@@ -20,6 +20,14 @@ final class NestedNormalizer implements Normalizer, NormalizerAware
         return $this->normalizer()->normalize($specification->child(), $context);
     }
 
+    /**
+     * @param Nested $specification
+     */
+    public function stringify(mixed $specification, mixed $context): string
+    {
+        return \sprintf('%s(%s)', $specification::class, $this->normalizer()->stringify($specification->child(), $context));
+    }
+
     public function supports(mixed $specification, mixed $context): bool
     {
         return $specification instanceof Nested;

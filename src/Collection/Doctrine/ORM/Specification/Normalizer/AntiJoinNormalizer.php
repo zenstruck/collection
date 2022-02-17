@@ -28,6 +28,14 @@ final class AntiJoinNormalizer implements Normalizer
         return null;
     }
 
+    /**
+     * @param AntiJoin $specification
+     */
+    public function stringify(mixed $specification, mixed $context): string
+    {
+        return \sprintf('AntiJoin(%s)', $specification->field());
+    }
+
     protected function supportsSpecification(mixed $specification): bool
     {
         return $specification instanceof AntiJoin;

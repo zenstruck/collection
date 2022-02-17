@@ -36,6 +36,19 @@ final class CompositeNormalizer extends DoctrineNormalizer implements Normalizer
     }
 
     /**
+     * @param Composite $specification
+     */
+    public function stringify(mixed $specification, mixed $context): string
+    {
+        $children = \array_filter(\array_map(
+            fn($child) => $this->normalizer()->stringify($child, $context),
+            $specification->children()
+        ));
+
+        return \sprintf('%s(%s)', self::methodFor($specification), \implode(', ', $children));
+    }
+
+    /**
      * @return array<class-string, string>
      */
     protected static function classMethodMap(): array

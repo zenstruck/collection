@@ -18,6 +18,14 @@ final class CallableNormalizer extends DoctrineNormalizer
         return $specification($context);
     }
 
+    /**
+     * @param callable $specification
+     */
+    public function stringify(mixed $specification, mixed $context): string
+    {
+        return '(callable)';
+    }
+
     protected function supportsSpecification(mixed $specification): bool
     {
         return \is_callable($specification);

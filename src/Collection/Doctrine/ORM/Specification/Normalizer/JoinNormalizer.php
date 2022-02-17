@@ -35,6 +35,14 @@ final class JoinNormalizer implements Normalizer, NormalizerAware
         return $this->normalizer()->normalize($join->child(), $context->scopeTo($join->alias()));
     }
 
+    /**
+     * @param Join $specification
+     */
+    public function stringify(mixed $specification, mixed $context): string
+    {
+        return \sprintf('%sJoin(%s)', \ucfirst($specification->type()), $specification->field());
+    }
+
     protected function supportsSpecification(mixed $specification): bool
     {
         return $specification instanceof Join;

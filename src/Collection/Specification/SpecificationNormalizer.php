@@ -25,19 +25,26 @@ final class SpecificationNormalizer implements Normalizer
 
     public function normalize(mixed $specification, mixed $context): mixed
     {
-        if (!$normalizer = $this->getNormalizer($specification, $context)) {
-            throw new \RuntimeException(\sprintf('Specification "%s" with context "%s" does not have a supported normalizer registered.', \get_debug_type($specification), \get_debug_type($context)));
-        }
+        return $this->getNormalizer($specification, $context)->normalize($specification, $context);
+    }
 
-        return $normalizer->normalize($specification, $context);
+    public function stringify(mixed $specification, mixed $context): string
+    {
+        return $this->getNormalizer($specification, $context)->stringify($specification, $context);
     }
 
     public function supports(mixed $specification, mixed $context): bool
     {
-        return null !== $this->getNormalizer($specification, $context);
+        try {
+            $this->getNormalizer($specification, $context);
+
+            return true;
+        } catch (\RuntimeException) {
+            return false;
+        }
     }
 
-    private function getNormalizer(mixed $specification, mixed $context): ?Normalizer
+    private function getNormalizer(mixed $specification, mixed $context): Normalizer
     {
         $specificationCacheKey = \is_object($specification) ? $specification::class : 'native-'.\gettype($specification);
         $contextCacheKey = \is_object($context) ? $context::class : 'native-'.\gettype($context);
@@ -58,6 +65,6 @@ final class SpecificationNormalizer implements Normalizer
             return $this->normalizerCache[$specificationCacheKey][$contextCacheKey] = $normalizer;
         }
 
-        return null;
+        throw new \RuntimeException(\sprintf('Specification "%s" with context "%s" does not have a supported normalizer registered.', \get_debug_type($specification), \get_debug_type($context)));
     }
 }

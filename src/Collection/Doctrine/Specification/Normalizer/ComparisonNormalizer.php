@@ -45,6 +45,18 @@ final class ComparisonNormalizer extends DoctrineNormalizer
     }
 
     /**
+     * @param Comparison $specification
+     */
+    public function stringify(mixed $specification, mixed $context): string
+    {
+        return \sprintf('Compare(%s %s %s)',
+            $specification->field(),
+            self::methodFor($specification),
+            \is_scalar($value = $specification->value()) ? $value : \get_debug_type($value)
+        );
+    }
+
+    /**
      * @return array<class-string, string>
      */
     protected static function classMethodMap(): array

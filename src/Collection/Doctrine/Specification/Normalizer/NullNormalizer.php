@@ -25,6 +25,14 @@ final class NullNormalizer extends DoctrineNormalizer
     }
 
     /**
+     * @param Field $specification
+     */
+    public function stringify(mixed $specification, mixed $context): string
+    {
+        return \sprintf('%s(%s)', self::methodFor($specification), $specification->field());
+    }
+
+    /**
      * @return array<class-string, string>
      */
     protected static function classMethodMap(): array

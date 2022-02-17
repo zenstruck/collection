@@ -21,6 +21,14 @@ final class OrderByNormalizer extends DoctrineNormalizer
         return null;
     }
 
+    /**
+     * @param OrderBy $specification
+     */
+    public function stringify(mixed $specification, mixed $context): string
+    {
+        return \sprintf('OrderBy%s(%s)', $specification->direction(), $specification->field());
+    }
+
     protected function supportsSpecification(mixed $specification): bool
     {
         return $specification instanceof OrderBy;
