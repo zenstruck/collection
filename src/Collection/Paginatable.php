@@ -25,7 +25,7 @@ trait Paginatable
     public function pages(int $limit = Page::DEFAULT_LIMIT): PageCollection
     {
         if (!$this instanceof Collection) {
-            throw new \BadMethodCallException(); // todo
+            throw new \BadMethodCallException(\sprintf('"%s" can only be used on instances of "%s".', __TRAIT__, Collection::class));
         }
 
         return new PageCollection($this, $limit);

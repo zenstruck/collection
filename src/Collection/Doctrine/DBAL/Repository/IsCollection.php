@@ -21,7 +21,7 @@ trait IsCollection
     final public function take(int $limit, int $offset = 0): Collection
     {
         if (!$this instanceof Repository) {
-            throw new \BadMethodCallException(); // todo
+            throw new \BadMethodCallException(\sprintf('"%s" can only be used on instances of "%s".', __TRAIT__, Repository::class));
         }
 
         return static::createResult($this->qb())->take($limit, $offset);

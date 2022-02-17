@@ -14,7 +14,7 @@ trait Flushable
     final public function flush(): static
     {
         if (!$this instanceof Repository) {
-            throw new \BadMethodCallException(); // todo
+            throw new \BadMethodCallException(\sprintf('"%s" can only be used on instances of "%s".', __TRAIT__, Repository::class));
         }
 
         $this->em()->flush();

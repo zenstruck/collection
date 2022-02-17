@@ -25,7 +25,7 @@ trait IsMatchable
     final public function match(mixed $specification): Result
     {
         if (!$this instanceof Repository) {
-            throw new \BadMethodCallException(); // todo
+            throw new \BadMethodCallException(\sprintf('"%s" can only be used on instances of "%s".', __TRAIT__, Repository::class));
         }
 
         return static::createResult($this->qbForSpecification($specification));
@@ -37,7 +37,7 @@ trait IsMatchable
     final public function matchOne(mixed $specification): object
     {
         if (!$this instanceof Repository) {
-            throw new \BadMethodCallException(); // todo
+            throw new \BadMethodCallException(\sprintf('"%s" can only be used on instances of "%s".', __TRAIT__, Repository::class));
         }
 
         if (!\is_object($result = $this->qbForSpecification($specification)->getQuery()->getOneOrNullResult())) {

@@ -17,7 +17,7 @@ trait Deletable
     final public function delete(?callable $callback = null): int
     {
         if (!$this instanceof Result) {
-            throw new \BadMethodCallException(); // todo
+            throw new \BadMethodCallException(\sprintf('"%s" can only be used on instances of "%s".', __TRAIT__, Result::class));
         }
 
         $callback ??= static function() {};
