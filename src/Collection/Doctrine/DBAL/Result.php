@@ -10,12 +10,12 @@ use Zenstruck\Collection\Paginatable;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template Value
- * @implements Collection<int,Value>
+ * @template V
+ * @implements Collection<int,V>
  */
 class Result implements Collection
 {
-    /** @use Paginatable<Value> */
+    /** @use Paginatable<V> */
     use Paginatable;
 
     private QueryBuilder $qb;

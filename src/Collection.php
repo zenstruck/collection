@@ -5,14 +5,14 @@ namespace Zenstruck;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template Key
- * @template Value
- * @extends \IteratorAggregate<Key,Value>
+ * @template K
+ * @template V
+ * @extends \IteratorAggregate<K,V>
  */
 interface Collection extends \IteratorAggregate, \Countable
 {
     /**
-     * @return self<Key,Value>
+     * @return self<K,V>
      */
     public function take(int $limit, int $offset = 0): self;
 }

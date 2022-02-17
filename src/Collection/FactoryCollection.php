@@ -7,21 +7,21 @@ use Zenstruck\Collection;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template Key
- * @template Value
- * @implements Collection<Key,Value>
+ * @template K
+ * @template V
+ * @implements Collection<K,V>
  */
 final class FactoryCollection implements Collection
 {
-    /** @use Paginatable<Value> */
+    /** @use Paginatable<V> */
     use Paginatable;
 
-    /** @var Collection<Key,Value> */
+    /** @var Collection<K,V> */
     private Collection $inner;
     private \Closure $factory;
 
     /**
-     * @param Collection<Key,Value> $collection
+     * @param Collection<K,V> $collection
      */
     public function __construct(Collection $collection, callable $factory)
     {

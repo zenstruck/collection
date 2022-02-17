@@ -10,21 +10,21 @@ use Zenstruck\Collection\Paginatable;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template Key of array-key
- * @template Value
- * @implements Collection<Key,Value>
- * @implements DoctrineCollection<Key,Value>
+ * @template K of array-key
+ * @template V
+ * @implements Collection<K,V>
+ * @implements DoctrineCollection<K,V>
  */
 final class CollectionDecorator implements Collection, DoctrineCollection
 {
-    /** @use Paginatable<Value> */
+    /** @use Paginatable<V> */
     use Paginatable;
 
-    /** @var DoctrineCollection<Key,Value> */
+    /** @var DoctrineCollection<K,V> */
     private DoctrineCollection $inner;
 
     /**
-     * @param iterable<Key,Value>|DoctrineCollection<Key,Value>|null $source
+     * @param iterable<K,V>|DoctrineCollection<K,V>|null $source
      */
     public function __construct(iterable|DoctrineCollection|null $source = [])
     {
@@ -38,7 +38,7 @@ final class CollectionDecorator implements Collection, DoctrineCollection
     }
 
     /**
-     * @return self<Key,Value>
+     * @return self<K,V>
      */
     public function take(int $limit, int $offset = 0): self
     {
@@ -50,6 +50,9 @@ final class CollectionDecorator implements Collection, DoctrineCollection
         return $this->inner->count();
     }
 
+    /**
+     * @return \Traversable<K,V>
+     */
     public function getIterator(): \Traversable
     {
         return $this->inner->getIterator();
@@ -146,7 +149,7 @@ final class CollectionDecorator implements Collection, DoctrineCollection
     }
 
     /**
-     * @return self<Key,Value>
+     * @return self<K,V>
      */
     public function filter(\Closure $p): self
     {
@@ -163,7 +166,7 @@ final class CollectionDecorator implements Collection, DoctrineCollection
      *
      * @param \Closure():U $func
      *
-     * @return self<Key,U>
+     * @return self<K,U>
      */
     public function map(\Closure $func): self
     {

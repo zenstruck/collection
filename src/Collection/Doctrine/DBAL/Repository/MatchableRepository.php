@@ -15,12 +15,12 @@ use Zenstruck\Collection\Specification\Normalizer;
  *
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template Value
+ * @template V
  */
 trait MatchableRepository
 {
     /**
-     * @return Result<Value>
+     * @return Result<V>
      */
     final public function match(mixed $specification): Result
     {
@@ -31,6 +31,9 @@ trait MatchableRepository
         return static::createResult($this->qbForSpecification($specification));
     }
 
+    /**
+     * @return V
+     */
     final public function matchOne(mixed $specification): mixed
     {
         if (!$this instanceof Repository) {

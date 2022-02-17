@@ -6,8 +6,8 @@ use Zenstruck\Collection\Doctrine\ORM\Result\Deletable;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template Value
- * @extends Result<Value>
+ * @template V
+ * @extends Result<V>
  */
 final class ORMResult extends Result
 {

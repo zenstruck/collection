@@ -5,8 +5,8 @@ namespace Zenstruck\Collection\Doctrine\ORM\Batch;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template Value
- * @extends BatchIterator<Value>
+ * @template V
+ * @extends BatchIterator<V>
  */
 final class CountableBatchIterator extends BatchIterator implements \Countable
 {

@@ -9,12 +9,12 @@ use Zenstruck\Collection\Doctrine\ORM\Repository;
  *
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template Value
+ * @template V
  */
 trait Writable
 {
     /**
-     * @param Value $item
+     * @param V $item
      */
     final public function add(object $item, bool $flush = true): static
     {

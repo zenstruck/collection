@@ -1,6 +1,5 @@
 <?php
 
-use Doctrine\DBAL\Connection;
 use Zenstruck\Collection;
 use Zenstruck\Collection\Doctrine\DBAL\ObjectRepository;
 use Zenstruck\Collection\Doctrine\DBAL\Repository\CollectionRepository;
@@ -11,34 +10,19 @@ use Zenstruck\Collection\Paginatable;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template Value
- * @extends ObjectRepository<Value>
- * @implements Collection<int,Value>
- * @implements Matchable<int,Value>
+ * @template V
+ * @extends ObjectRepository<V>
+ * @implements Collection<int,V>
+ * @implements Matchable<int,V>
  */
-final class DBALRepository extends ObjectRepository implements Collection, Matchable
+abstract class DBALRepository extends ObjectRepository implements Collection, Matchable
 {
-    /** @use CollectionRepository<Value> */
+    /** @use CollectionRepository<V> */
     use CollectionRepository;
 
-    /** @use MatchableRepository<Value> */
+    /** @use MatchableRepository<V> */
     use MatchableRepository;
 
-    /** @use Paginatable<Value> */
+    /** @use Paginatable<V> */
     use Paginatable;
-
-    protected static function createObject(array $data): object
-    {
-        return new \stdClass();
-    }
-
-    protected static function tableName(): string
-    {
-        return 'table';
-    }
-
-    protected function connection(): Connection
-    {
-        return 'connection'; // @phpstan-ignore-line
-    }
 }

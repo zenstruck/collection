@@ -14,12 +14,13 @@ use Zenstruck\Collection\Specification\Normalizer;
  *
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template Value
+ * @template V of object
+ * @template R of Result
  */
 trait MatchableRepository
 {
     /**
-     * @return Result<Value>
+     * @return R<V>
      */
     final public function match(mixed $specification): Result
     {
@@ -31,18 +32,19 @@ trait MatchableRepository
     }
 
     /**
-     * @return Value|mixed
+     * @return V
      */
-    final public function matchOne(mixed $specification): mixed
+    final public function matchOne(mixed $specification): object
     {
         if (!$this instanceof Repository) {
             throw new \BadMethodCallException(); // todo
         }
 
-        if (!$result = $this->qbForSpecification($specification)->getQuery()->getOneOrNullResult()) {
+        if (!\is_object($result = $this->qbForSpecification($specification)->getQuery()->getOneOrNullResult())) {
             throw new NotFound("{$this->getClassName()} not found for given specification.");
         }
 
+        /** @var V $result */
         return $result;
     }
 

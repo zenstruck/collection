@@ -9,12 +9,12 @@ use Doctrine\ORM\QueryBuilder;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template Value
- * @implements \IteratorAggregate<int,Value>
+ * @template V
+ * @implements \IteratorAggregate<int,V>
  */
 abstract class Repository implements \IteratorAggregate, \Countable
 {
-    /** @var EntityRepository<Value>|null */
+    /** @var EntityRepository<V>|null */
     private ?EntityRepository $repo = null;
 
     final public function getIterator(): \Traversable
@@ -23,7 +23,7 @@ abstract class Repository implements \IteratorAggregate, \Countable
     }
 
     /**
-     * @return \Traversable<int,Value>
+     * @return \Traversable<int,V>
      */
     final public function batch(int $chunkSize = 100): \Traversable
     {
@@ -31,7 +31,7 @@ abstract class Repository implements \IteratorAggregate, \Countable
     }
 
     /**
-     * @return \Traversable<int,Value>
+     * @return \Traversable<int,V>
      */
     final public function batchProcess(int $chunkSize = 100): \Traversable
     {
@@ -46,7 +46,7 @@ abstract class Repository implements \IteratorAggregate, \Countable
     abstract public function getClassName(): string;
 
     /**
-     * @return Result<Value>
+     * @return Result<V>
      */
     protected static function createResult(QueryBuilder $qb, bool $fetchCollection = true, ?bool $useOutputWalkers = null): Result
     {
@@ -54,7 +54,7 @@ abstract class Repository implements \IteratorAggregate, \Countable
     }
 
     /**
-     * @return EntityRepository<Value>
+     * @return EntityRepository<V>
      */
     protected function repo(): EntityRepository
     {

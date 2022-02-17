@@ -11,12 +11,12 @@ use Zenstruck\Collection\Doctrine\ORM\Repository;
  *
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template Value
+ * @template V
  */
 trait CollectionRepository
 {
     /**
-     * @return Collection<int,Value>
+     * @return Collection<int,V>
      */
     final public function take(int $limit, int $offset = 0): Collection
     {

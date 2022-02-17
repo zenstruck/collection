@@ -7,12 +7,12 @@ use Zenstruck\Collection;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template Value
+ * @template V
  */
 trait Paginatable
 {
     /**
-     * @return Page<Value>
+     * @return Page<V>
      */
     public function paginate(int $page = 1, int $limit = Page::DEFAULT_LIMIT): Page
     {
@@ -20,7 +20,7 @@ trait Paginatable
     }
 
     /**
-     * @return PageCollection<Value>
+     * @return PageCollection<V>
      */
     public function pages(int $limit = Page::DEFAULT_LIMIT): PageCollection
     {

@@ -5,8 +5,8 @@ namespace Zenstruck\Collection\Doctrine\ORM\Batch;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template Value
- * @extends BatchProcessor<Value>
+ * @template V
+ * @extends BatchProcessor<V>
  */
 final class CountableBatchProcessor extends BatchProcessor implements \Countable
 {
