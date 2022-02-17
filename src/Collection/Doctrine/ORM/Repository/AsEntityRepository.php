@@ -20,7 +20,7 @@ use Zenstruck\Collection\Doctrine\ORM\Repository;
  *
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-trait EntityRepositoryMixin
+trait AsEntityRepository
 {
     /**
      * @param mixed[] $arguments

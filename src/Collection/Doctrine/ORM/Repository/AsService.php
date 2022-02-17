@@ -12,7 +12,7 @@ use Doctrine\Persistence\ObjectRepository;
  *
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-trait ServiceRepository
+trait AsService
 {
     private ?ManagerRegistry $managerRegistry = null;
     private ?EntityManagerInterface $em = null;

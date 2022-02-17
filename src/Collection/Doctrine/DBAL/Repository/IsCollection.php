@@ -1,9 +1,9 @@
 <?php
 
-namespace Zenstruck\Collection\Doctrine\ORM\Repository;
+namespace Zenstruck\Collection\Doctrine\DBAL\Repository;
 
 use Zenstruck\Collection;
-use Zenstruck\Collection\Doctrine\ORM\Repository;
+use Zenstruck\Collection\Doctrine\DBAL\Repository;
 
 /**
  * Enables your repository to implement Zenstruck\Collection (and use
@@ -13,7 +13,7 @@ use Zenstruck\Collection\Doctrine\ORM\Repository;
  *
  * @template V
  */
-trait CollectionRepository
+trait IsCollection
 {
     /**
      * @return Collection<int,V>

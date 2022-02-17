@@ -17,7 +17,7 @@ use Zenstruck\Collection\Specification\Normalizer;
  *
  * @template V
  */
-trait MatchableRepository
+trait IsMatchable
 {
     /**
      * @return Result<V>

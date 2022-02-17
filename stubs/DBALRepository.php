@@ -2,8 +2,8 @@
 
 use Zenstruck\Collection;
 use Zenstruck\Collection\Doctrine\DBAL\ObjectRepository;
-use Zenstruck\Collection\Doctrine\DBAL\Repository\CollectionRepository;
-use Zenstruck\Collection\Doctrine\DBAL\Repository\MatchableRepository;
+use Zenstruck\Collection\Doctrine\DBAL\Repository\IsCollection;
+use Zenstruck\Collection\Doctrine\DBAL\Repository\IsMatchable;
 use Zenstruck\Collection\Matchable;
 use Zenstruck\Collection\Paginatable;
 
@@ -17,11 +17,11 @@ use Zenstruck\Collection\Paginatable;
  */
 abstract class DBALRepository extends ObjectRepository implements Collection, Matchable
 {
-    /** @use CollectionRepository<V> */
-    use CollectionRepository;
+    /** @use IsCollection<V> */
+    use IsCollection;
 
-    /** @use MatchableRepository<V> */
-    use MatchableRepository;
+    /** @use IsMatchable<V> */
+    use IsMatchable;
 
     /** @use Paginatable<V> */
     use Paginatable;
