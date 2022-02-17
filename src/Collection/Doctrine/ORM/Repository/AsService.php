@@ -32,13 +32,13 @@ trait AsService
         }
 
         if (!$this instanceof ObjectRepository) {
-            throw new \BadMethodCallException(); // todo
+            throw new \BadMethodCallException(\sprintf('"%s" can only be used on instances of "%s".', __TRAIT__, ObjectRepository::class));
         }
 
         $em = $this->managerRegistry()->getManagerForClass($this->getClassName());
 
         if (!$em instanceof EntityManagerInterface) {
-            throw new \RuntimeException(); // todo
+            throw new \RuntimeException(\sprintf('EntityManager for "%s" not found. Is this entity configured?', $this->getClassName()));
         }
 
         return $this->em = $em;
@@ -47,7 +47,7 @@ trait AsService
     private function managerRegistry(): ManagerRegistry
     {
         if (!$this->managerRegistry) {
-            throw new \RuntimeException(); // todo
+            throw new \RuntimeException(\sprintf('Doctrine was not set - is doctrine installed and is "%s" autowired?', static::class));
         }
 
         return $this->managerRegistry;

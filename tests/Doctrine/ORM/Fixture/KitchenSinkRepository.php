@@ -2,10 +2,10 @@
 
 namespace Zenstruck\Collection\Tests\Doctrine\ORM\Fixture;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Zenstruck\Collection;
 use Zenstruck\Collection\Doctrine\ORM\ObjectRepository;
 use Zenstruck\Collection\Doctrine\ORM\Repository\AsEntityRepository;
+use Zenstruck\Collection\Doctrine\ORM\Repository\AsService;
 use Zenstruck\Collection\Doctrine\ORM\Repository\Flushable;
 use Zenstruck\Collection\Doctrine\ORM\Repository\IsCollection;
 use Zenstruck\Collection\Doctrine\ORM\Repository\IsMatchable;
@@ -20,22 +20,10 @@ use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
  */
 final class KitchenSinkRepository extends ObjectRepository implements Collection, Matchable
 {
-    use AsEntityRepository, Flushable, IsCollection, IsMatchable, Paginatable, Removable, Writable;
-
-    private EntityManagerInterface $em;
-
-    public function __construct(EntityManagerInterface $em)
-    {
-        $this->em = $em;
-    }
+    use AsEntityRepository, AsService, Flushable, IsCollection, IsMatchable, Paginatable, Removable, Writable;
 
     public function getClassName(): string
     {
         return Entity::class;
-    }
-
-    protected function em(): EntityManagerInterface
-    {
-        return $this->em;
     }
 }
