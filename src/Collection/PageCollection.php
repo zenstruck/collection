@@ -7,20 +7,20 @@ use Zenstruck\Collection;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template Value
- * @implements \IteratorAggregate<int,Page<Value>>
+ * @template V
+ * @implements \IteratorAggregate<int,Page<V>>
  */
 final class PageCollection implements \IteratorAggregate, \Countable
 {
-    /** @var Collection<int,Value> */
+    /** @var Collection<int,V> */
     private Collection $collection;
     private int $limit;
 
-    /** @var Page<Value> */
+    /** @var Page<V> */
     private Page $page1;
 
     /**
-     * @param Collection<int,Value> $collection
+     * @param Collection<int,V> $collection
      */
     public function __construct(Collection $collection, int $limit = Page::DEFAULT_LIMIT)
     {
@@ -29,7 +29,7 @@ final class PageCollection implements \IteratorAggregate, \Countable
     }
 
     /**
-     * @return Page<Value>
+     * @return Page<V>
      */
     public function get(int $page): Page
     {
@@ -59,7 +59,7 @@ final class PageCollection implements \IteratorAggregate, \Countable
     }
 
     /**
-     * @return Page<Value>
+     * @return Page<V>
      */
     private function page1(): Page
     {

@@ -8,8 +8,8 @@ use Doctrine\DBAL\Query\QueryBuilder;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template Value
- * @implements \IteratorAggregate<int,Value>
+ * @template V
+ * @implements \IteratorAggregate<int,V>
  */
 abstract class Repository implements \IteratorAggregate, \Countable
 {
@@ -24,7 +24,7 @@ abstract class Repository implements \IteratorAggregate, \Countable
     }
 
     /**
-     * @return Result<Value>
+     * @return Result<V>
      */
     protected static function createResult(QueryBuilder $qb): Result
     {

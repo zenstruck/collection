@@ -20,7 +20,7 @@ use Zenstruck\Collection\Doctrine\ORM\Repository;
  *
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-trait EntityRepositoryMixin
+trait AsEntityRepository
 {
     /**
      * @param mixed[] $arguments
@@ -28,7 +28,7 @@ trait EntityRepositoryMixin
     final public function __call(string $name, array $arguments): mixed
     {
         if (!$this instanceof Repository) {
-            throw new \BadMethodCallException(); // todo
+            throw new \BadMethodCallException(\sprintf('"%s" can only be used on instances of "%s".', __TRAIT__, Repository::class));
         }
 
         return $this->repo()->{$name}(...$arguments);

@@ -9,18 +9,18 @@ use Doctrine\ORM\Internal\Hydration\IterableResult;
  * @author Marco Pivetta <ocramius@gmail.com>
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template Value
- * @implements \IteratorAggregate<int,Value>
+ * @template V
+ * @implements \IteratorAggregate<int,V>
  */
 class BatchProcessor implements \IteratorAggregate
 {
-    /** @var iterable<int,Value> */
+    /** @var iterable<int,V> */
     protected iterable $items;
     private EntityManagerInterface $em;
     private int $chunkSize;
 
     /**
-     * @param iterable<int,Value> $items
+     * @param iterable<int,V> $items
      */
     private function __construct(iterable $items, EntityManagerInterface $em, int $chunkSize = 100)
     {
@@ -34,9 +34,9 @@ class BatchProcessor implements \IteratorAggregate
     }
 
     /**
-     * @param iterable<int,Value> $items
+     * @param iterable<int,V> $items
      *
-     * @return self<Value>|CountableBatchProcessor<Value>
+     * @return self<V>|CountableBatchProcessor<V>
      */
     final public static function for(iterable $items, EntityManagerInterface $em, int $chunkSize = 100): self|CountableBatchProcessor
     {

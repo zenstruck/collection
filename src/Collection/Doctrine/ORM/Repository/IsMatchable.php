@@ -6,7 +6,6 @@ use Doctrine\ORM\QueryBuilder;
 use Zenstruck\Collection\Doctrine\ORM\Repository;
 use Zenstruck\Collection\Doctrine\ORM\Result;
 use Zenstruck\Collection\Doctrine\ORM\Specification\ORMContext;
-use Zenstruck\Collection\Exception\NotFound;
 use Zenstruck\Collection\Specification\Normalizer;
 
 /**
@@ -14,35 +13,37 @@ use Zenstruck\Collection\Specification\Normalizer;
  *
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template Value
+ * @template V of object
+ * @template R of Result
  */
-trait MatchableRepository
+trait IsMatchable
 {
     /**
-     * @return Result<Value>
+     * @return R<V>
      */
     final public function match(mixed $specification): Result
     {
         if (!$this instanceof Repository) {
-            throw new \BadMethodCallException(); // todo
+            throw new \BadMethodCallException(\sprintf('"%s" can only be used on instances of "%s".', __TRAIT__, Repository::class));
         }
 
         return static::createResult($this->qbForSpecification($specification));
     }
 
     /**
-     * @return Value|mixed
+     * @return V
      */
-    final public function matchOne(mixed $specification): mixed
+    final public function matchOne(mixed $specification): object
     {
         if (!$this instanceof Repository) {
-            throw new \BadMethodCallException(); // todo
+            throw new \BadMethodCallException(\sprintf('"%s" can only be used on instances of "%s".', __TRAIT__, Repository::class));
         }
 
-        if (!$result = $this->qbForSpecification($specification)->getQuery()->getOneOrNullResult()) {
-            throw new NotFound("{$this->getClassName()} not found for given specification.");
+        if (!\is_object($result = $this->qbForSpecification($specification)->getQuery()->getOneOrNullResult())) {
+            throw new \RuntimeException("{$this->getClassName()} not found for given specification.");
         }
 
+        /** @var V $result */
         return $result;
     }
 

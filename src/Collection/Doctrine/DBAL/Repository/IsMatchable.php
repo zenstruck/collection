@@ -7,7 +7,6 @@ use Zenstruck\Collection\Doctrine\DBAL\ObjectRepository;
 use Zenstruck\Collection\Doctrine\DBAL\Repository;
 use Zenstruck\Collection\Doctrine\DBAL\Result;
 use Zenstruck\Collection\Doctrine\DBAL\Specification\DBALContext;
-use Zenstruck\Collection\Exception\NotFound;
 use Zenstruck\Collection\Specification\Normalizer;
 
 /**
@@ -15,26 +14,29 @@ use Zenstruck\Collection\Specification\Normalizer;
  *
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template Value
+ * @template V
  */
-trait MatchableRepository
+trait IsMatchable
 {
     /**
-     * @return Result<Value>
+     * @return Result<V>
      */
     final public function match(mixed $specification): Result
     {
         if (!$this instanceof Repository) {
-            throw new \BadMethodCallException(); // todo
+            throw new \BadMethodCallException(\sprintf('"%s" can only be used on instances of "%s".', __TRAIT__, Repository::class));
         }
 
         return static::createResult($this->qbForSpecification($specification));
     }
 
+    /**
+     * @return V
+     */
     final public function matchOne(mixed $specification): mixed
     {
         if (!$this instanceof Repository) {
-            throw new \BadMethodCallException(); // todo
+            throw new \BadMethodCallException(\sprintf('"%s" can only be used on instances of "%s".', __TRAIT__, Repository::class));
         }
 
         $result = $this->qbForSpecification($specification)
@@ -44,7 +46,7 @@ trait MatchableRepository
         ;
 
         if (!$result) {
-            throw new NotFound(\sprintf('Data from "%s" table not found for given specification.', static::tableName()));
+            throw new \RuntimeException(\sprintf('Data from "%s" table not found for given specification.', static::tableName()));
         }
 
         return $this instanceof ObjectRepository ? static::createObject($result) : $result;

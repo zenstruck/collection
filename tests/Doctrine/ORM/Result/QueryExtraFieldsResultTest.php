@@ -2,10 +2,11 @@
 
 namespace Zenstruck\Collection\Tests\Doctrine\ORM\Result;
 
+use Composer\InstalledVersions;
 use PHPUnit\Framework\TestCase;
+use Zenstruck\Collection\Doctrine\ORMResult;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
 use Zenstruck\Collection\Tests\Doctrine\HasDatabase;
-use Zenstruck\Collection\Tests\Doctrine\ORM\Fixture\KitchenSinkResult;
 use Zenstruck\Collection\Tests\PagintableCollectionTests;
 
 /**
@@ -19,7 +20,10 @@ final class QueryExtraFieldsResultTest extends TestCase
     {
         // see https://github.com/doctrine/orm/pull/8467 & https://github.com/doctrine/orm/issues/8520 for more details
         // leaving the code here in case there is a future fix
-        $this->markTestSkipped('Iterating "mixed" results (results with entity and scalar) is no longer supported as of doctrine/orm 2.8.2.');
+
+        if (\version_compare(InstalledVersions::getVersion('doctrine/orm'), '2.8.2', '>=')) {
+            $this->markTestSkipped('Iterating "mixed" results (results with entity and scalar) is no longer supported as of doctrine/orm 2.8.2.');
+        }
     }
 
     /**
@@ -78,13 +82,13 @@ final class QueryExtraFieldsResultTest extends TestCase
         $this->assertCount(0, $this->em->getRepository(Entity::class)->findAll());
     }
 
-    protected function createWithItems(int $count): KitchenSinkResult
+    protected function createWithItems(int $count): ORMResult
     {
         $this->persistEntities($count);
 
         $query = $this->em->createQuery(\sprintf('SELECT e, UPPER(e.value) AS extra FROM %s e', Entity::class));
 
-        return new KitchenSinkResult($query, true, false);
+        return new ORMResult($query, true, false);
     }
 
     protected function expectedValueAt(int $position): array

@@ -7,20 +7,20 @@ use Zenstruck\Collection;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template Key
- * @template Value
- * @implements Collection<Key,Value>
+ * @template K
+ * @template V
+ * @implements Collection<K,V>
  */
 final class IterableCollection implements Collection
 {
-    /** @use Paginatable<Value> */
+    /** @use Paginatable<V> */
     use Paginatable;
 
-    /** @var \Closure():iterable<Key,Value>|iterable<Key,Value> */
+    /** @var \Closure():iterable<K,V>|iterable<K,V> */
     private \Closure|iterable $source;
 
     /**
-     * @param iterable<Key,Value>|callable():iterable<Key,Value>|null $source
+     * @param iterable<K,V>|callable():iterable<K,V>|null $source
      */
     public function __construct(iterable|callable|null $source = null)
     {
@@ -89,7 +89,7 @@ final class IterableCollection implements Collection
     }
 
     /**
-     * @return iterable<Key,Value>
+     * @return iterable<K,V>
      */
     private function normalizeSource(): iterable
     {

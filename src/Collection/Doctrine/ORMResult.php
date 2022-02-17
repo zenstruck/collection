@@ -1,14 +1,21 @@
 <?php
 
-namespace Zenstruck\Collection\Tests\Doctrine\ORM\Fixture;
+namespace Zenstruck\Collection\Doctrine;
 
 use Zenstruck\Collection\Doctrine\ORM\Result;
 use Zenstruck\Collection\Doctrine\ORM\Result\Deletable;
 
 /**
+ * General purpose {@see Result}.
+ *
+ * - Deletable
+ *
  * @author Kevin Bond <kevinbond@gmail.com>
+ *
+ * @template V
+ * @extends Result<V>
  */
-final class KitchenSinkResult extends Result
+class ORMResult extends Result
 {
     use Deletable;
 }

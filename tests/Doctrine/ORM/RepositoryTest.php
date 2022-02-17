@@ -9,6 +9,7 @@ use Zenstruck\Collection\Doctrine\ORM\Batch\CountableBatchProcessor;
 use Zenstruck\Collection\Doctrine\ORM\Specification\Join;
 use Zenstruck\Collection\Spec;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
+use Zenstruck\Collection\Tests\Doctrine\Fixture\ManagerRegistryStub;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Relation;
 use Zenstruck\Collection\Tests\Doctrine\HasDatabase;
 use Zenstruck\Collection\Tests\Doctrine\MatchableRepositoryTests;
@@ -83,6 +84,7 @@ final class RepositoryTest extends TestCase
     public function can_call_method_on_inner_entity_repository(): void
     {
         $this->assertInstanceOf(QueryBuilder::class, $this->createWithItems(0)->createQueryBuilder('e'));
+        $this->assertInstanceOf(Entity::class, $this->createWithItems(1)->findOneByValue('value 1'));
     }
 
     /**
@@ -320,7 +322,10 @@ final class RepositoryTest extends TestCase
 
     protected function repo(): KitchenSinkRepository
     {
-        return new KitchenSinkRepository($this->em);
+        $repo = new KitchenSinkRepository();
+        $repo->setManagerRegistry(new ManagerRegistryStub($this->em));
+
+        return $repo;
     }
 
     private function persistEntitiesForJoinTest(): void

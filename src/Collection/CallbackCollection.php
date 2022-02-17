@@ -7,16 +7,16 @@ use Zenstruck\Collection;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template Key
- * @template Value
- * @implements Collection<Key,Value>
+ * @template K
+ * @template V
+ * @implements Collection<K,V>
  */
 final class CallbackCollection implements Collection
 {
-    /** @use Paginatable<Value> */
+    /** @use Paginatable<V> */
     use Paginatable;
 
-    /** @var IterableCollection<Key,Value> */
+    /** @var IterableCollection<K,V> */
     private IterableCollection $iterator;
     private \Closure $count;
 

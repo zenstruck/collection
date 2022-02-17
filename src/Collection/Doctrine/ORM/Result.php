@@ -17,12 +17,12 @@ use Zenstruck\Collection\Paginatable;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template Value
- * @implements Collection<int,Value>
+ * @template V
+ * @implements Collection<int,V>
  */
 class Result implements Collection
 {
-    /** @use Paginatable<Value> */
+    /** @use Paginatable<V> */
     use Paginatable;
 
     private Query $query;
@@ -59,7 +59,7 @@ class Result implements Collection
     }
 
     /**
-     * @return \Traversable<int,Value>
+     * @return \Traversable<int,V>
      */
     final public function batch(int $chunkSize = 100): \Traversable
     {
@@ -67,7 +67,7 @@ class Result implements Collection
     }
 
     /**
-     * @return \Traversable<int,Value>
+     * @return \Traversable<int,V>
      */
     final public function batchProcess(int $chunkSize = 100): \Traversable
     {
@@ -114,7 +114,7 @@ class Result implements Collection
     }
 
     /**
-     * @return Paginator<Value>
+     * @return Paginator<V>
      */
     private function paginatorFor(Query $query): Paginator
     {

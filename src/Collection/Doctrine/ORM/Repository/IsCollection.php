@@ -1,9 +1,9 @@
 <?php
 
-namespace Zenstruck\Collection\Doctrine\DBAL\Repository;
+namespace Zenstruck\Collection\Doctrine\ORM\Repository;
 
 use Zenstruck\Collection;
-use Zenstruck\Collection\Doctrine\DBAL\Repository;
+use Zenstruck\Collection\Doctrine\ORM\Repository;
 
 /**
  * Enables your repository to implement Zenstruck\Collection (and use
@@ -11,17 +11,17 @@ use Zenstruck\Collection\Doctrine\DBAL\Repository;
  *
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template Value
+ * @template V
  */
-trait CollectionRepository
+trait IsCollection
 {
     /**
-     * @return Collection<int,Value>
+     * @return Collection<int,V>
      */
     final public function take(int $limit, int $offset = 0): Collection
     {
         if (!$this instanceof Repository) {
-            throw new \BadMethodCallException(); // todo
+            throw new \BadMethodCallException(\sprintf('"%s" can only be used on instances of "%s".', __TRAIT__, Repository::class));
         }
 
         return static::createResult($this->qb())->take($limit, $offset);

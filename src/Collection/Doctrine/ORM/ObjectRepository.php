@@ -9,9 +9,9 @@ use Doctrine\Persistence\ObjectRepository as DoctrineObjectRepository;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template Value
- * @extends Repository<Value>
- * @implements DoctrineObjectRepository<Value>
+ * @template V of object
+ * @extends Repository<V>
+ * @implements DoctrineObjectRepository<V>
  */
 abstract class ObjectRepository extends Repository implements DoctrineObjectRepository
 {
@@ -19,6 +19,8 @@ abstract class ObjectRepository extends Repository implements DoctrineObjectRepo
      * @see EntityRepository::find()
      *
      * @param LockMode::*|null $lockMode
+     *
+     * @return ?V
      */
     final public function find($id, ?int $lockMode = null, ?int $lockVersion = null): ?object
     {
@@ -45,6 +47,8 @@ abstract class ObjectRepository extends Repository implements DoctrineObjectRepo
      * @see EntityRepository::findOneBy()
      *
      * @param array<string,string>|null $orderBy
+     *
+     * @return ?V
      */
     final public function findOneBy(array $criteria, ?array $orderBy = null): ?object
     {

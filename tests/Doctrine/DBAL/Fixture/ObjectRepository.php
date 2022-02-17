@@ -5,8 +5,8 @@ namespace Zenstruck\Collection\Tests\Doctrine\DBAL\Fixture;
 use Doctrine\DBAL\Connection;
 use Zenstruck\Collection;
 use Zenstruck\Collection\Doctrine\DBAL\ObjectRepository as BaseObjectRepository;
-use Zenstruck\Collection\Doctrine\DBAL\Repository\CollectionRepository;
-use Zenstruck\Collection\Doctrine\DBAL\Repository\MatchableRepository;
+use Zenstruck\Collection\Doctrine\DBAL\Repository\IsCollection;
+use Zenstruck\Collection\Doctrine\DBAL\Repository\IsMatchable;
 use Zenstruck\Collection\Matchable;
 use Zenstruck\Collection\Paginatable;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
@@ -16,7 +16,7 @@ use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
  */
 final class ObjectRepository extends BaseObjectRepository implements Collection, Matchable
 {
-    use CollectionRepository, MatchableRepository, Paginatable;
+    use IsCollection, IsMatchable, Paginatable;
 
     private Connection $connection;
 

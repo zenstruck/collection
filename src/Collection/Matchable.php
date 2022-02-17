@@ -3,25 +3,24 @@
 namespace Zenstruck\Collection;
 
 use Zenstruck\Collection;
-use Zenstruck\Collection\Exception\NotFound;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template Key
- * @template Value
+ * @template K
+ * @template V
  */
 interface Matchable
 {
     /**
-     * @return Collection<Key,Value>
+     * @return Collection<K,V>
      */
     public function match(mixed $specification): Collection;
 
     /**
-     * @return Value
+     * @return V
      *
-     * @throws NotFound If no match found
+     * @throws \RuntimeException If no match found
      */
     public function matchOne(mixed $specification): mixed;
 }

@@ -7,13 +7,13 @@ use Doctrine\DBAL\Query\QueryBuilder;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template Value
- * @extends Repository<Value>
+ * @template V
+ * @extends Repository<V>
  */
 abstract class ObjectRepository extends Repository
 {
     /**
-     * @return ObjectResult<Value>
+     * @return ObjectResult<V>
      */
     protected static function createResult(QueryBuilder $qb): ObjectResult
     {

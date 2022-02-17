@@ -1,6 +1,6 @@
 <?php
 
-namespace Zenstruck\Collection\Bridge\Pagerfanta;
+namespace Zenstruck\Collection\Bridge;
 
 use Pagerfanta\Adapter\AdapterInterface;
 use Zenstruck\Collection;
@@ -8,17 +8,17 @@ use Zenstruck\Collection;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template Key
- * @template Value
- * @implements AdapterInterface<Value>
+ * @template K
+ * @template V
+ * @implements AdapterInterface<V>
  */
-final class CollectionAdapter implements AdapterInterface
+final class PagerfantaAdapter implements AdapterInterface
 {
-    /** @var Collection<Key,Value> */
+    /** @var Collection<K,V> */
     private Collection $collection;
 
     /**
-     * @param Collection<Key,Value> $collection
+     * @param Collection<K,V> $collection
      */
     public function __construct(Collection $collection)
     {

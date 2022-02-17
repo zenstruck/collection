@@ -10,8 +10,8 @@ use Zenstruck\Collection\IterableCollection;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template Value
- * @extends Result<Value>
+ * @template V
+ * @extends Result<V>
  */
 class ObjectResult extends Result
 {
