@@ -25,62 +25,62 @@ use Zenstruck\Collection\Specification\OrderBy;
  */
 final class Spec
 {
-    public static function andX(...$children): AndX
+    public static function andX(mixed ...$children): AndX
     {
         return new AndX(...$children);
     }
 
-    public static function orX(...$children): OrX
+    public static function orX(mixed ...$children): OrX
     {
         return new OrX(...$children);
     }
 
-    public static function like(string $field, $value): Like
+    public static function like(string $field, ?string $value): Like
     {
         return new Like($field, $value);
     }
 
-    public static function notLike(string $field, $value): NotLike
+    public static function notLike(string $field, ?string $value): NotLike
     {
         return new NotLike($field, $value);
     }
 
-    public static function contains(string $field, $value): Like
+    public static function contains(string $field, ?string $value): Like
     {
         return Like::contains($field, $value);
     }
 
-    public static function notContains(string $field, $value): NotLike
+    public static function notContains(string $field, ?string $value): NotLike
     {
         return NotLike::contains($field, $value);
     }
 
-    public static function beginsWith(string $field, $value): Like
+    public static function beginsWith(string $field, ?string $value): Like
     {
         return Like::beginsWith($field, $value);
     }
 
-    public static function notBeginningWith(string $field, $value): NotLike
+    public static function notBeginningWith(string $field, ?string $value): NotLike
     {
         return NotLike::beginsWith($field, $value);
     }
 
-    public static function endsWith(string $field, $value): Like
+    public static function endsWith(string $field, ?string $value): Like
     {
         return Like::endsWith($field, $value);
     }
 
-    public static function notEndingWith(string $field, $value): NotLike
+    public static function notEndingWith(string $field, ?string $value): NotLike
     {
         return NotLike::endsWith($field, $value);
     }
 
-    public static function eq(string $field, $value): Equal
+    public static function eq(string $field, mixed $value): Equal
     {
         return new Equal($field, $value);
     }
 
-    public static function neq(string $field, $value): NotEqual
+    public static function neq(string $field, mixed $value): NotEqual
     {
         return new NotEqual($field, $value);
     }
@@ -95,32 +95,38 @@ final class Spec
         return new IsNotNull($field);
     }
 
+    /**
+     * @param mixed[] $value
+     */
     public static function in(string $field, array $value): In
     {
         return new In($field, $value);
     }
 
+    /**
+     * @param mixed[] $value
+     */
     public static function notIn(string $field, array $value): NotIn
     {
         return new NotIn($field, $value);
     }
 
-    public static function lt(string $field, $value): LessThan
+    public static function lt(string $field, mixed $value): LessThan
     {
         return new LessThan($field, $value);
     }
 
-    public static function lte(string $field, $value): LessThanOrEqual
+    public static function lte(string $field, mixed $value): LessThanOrEqual
     {
         return new LessThanOrEqual($field, $value);
     }
 
-    public static function gt(string $field, $value): GreaterThan
+    public static function gt(string $field, mixed $value): GreaterThan
     {
         return new GreaterThan($field, $value);
     }
 
-    public static function gte(string $field, $value): GreaterThanOrEqual
+    public static function gte(string $field, mixed $value): GreaterThanOrEqual
     {
         return new GreaterThanOrEqual($field, $value);
     }

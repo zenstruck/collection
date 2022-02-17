@@ -13,7 +13,7 @@ abstract class DoctrineNormalizer implements Normalizer
 {
     use SplitSupports;
 
-    protected function supportsContext($context): bool
+    protected function supportsContext(mixed $context): bool
     {
         return $context instanceof Context;
     }

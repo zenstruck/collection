@@ -9,35 +9,38 @@ use Zenstruck\Collection\Specification\Normalizer\NormalizerAware;
  */
 final class SpecificationNormalizer implements Normalizer
 {
+    /** @var iterable<Normalizer> */
     private iterable $normalizers;
+
+    /** @var array<string,array<string,Normalizer>> */
     private array $normalizerCache = [];
 
     /**
-     * @param Normalizer[] $normalizers
+     * @param iterable<Normalizer> $normalizers
      */
     public function __construct(iterable $normalizers)
     {
         $this->normalizers = $normalizers;
     }
 
-    public function normalize($specification, $context)
+    public function normalize(mixed $specification, mixed $context): mixed
     {
         if (!$normalizer = $this->getNormalizer($specification, $context)) {
-            throw new \RuntimeException(\sprintf('Specification "%s" with context "%s" does not have a supported normalizer registered.', get_debug_type($specification), get_debug_type($context)));
+            throw new \RuntimeException(\sprintf('Specification "%s" with context "%s" does not have a supported normalizer registered.', \get_debug_type($specification), \get_debug_type($context)));
         }
 
         return $normalizer->normalize($specification, $context);
     }
 
-    public function supports($specification, $context): bool
+    public function supports(mixed $specification, mixed $context): bool
     {
         return null !== $this->getNormalizer($specification, $context);
     }
 
-    private function getNormalizer($specification, $context): ?Normalizer
+    private function getNormalizer(mixed $specification, mixed $context): ?Normalizer
     {
-        $specificationCacheKey = \is_object($specification) ? \get_class($specification) : 'native-'.\gettype($specification);
-        $contextCacheKey = \is_object($context) ? \get_class($context) : 'native-'.\gettype($context);
+        $specificationCacheKey = \is_object($specification) ? $specification::class : 'native-'.\gettype($specification);
+        $contextCacheKey = \is_object($context) ? $context::class : 'native-'.\gettype($context);
 
         if (isset($this->normalizerCache[$specificationCacheKey][$contextCacheKey])) {
             return $this->normalizerCache[$specificationCacheKey][$contextCacheKey];

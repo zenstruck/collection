@@ -8,7 +8,7 @@ use Zenstruck\Collection\Tests\IterableCollectionTest;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class CallableGeneratorTest extends IterableCollectionTest
+final class ClosureGeneratorTest extends IterableCollectionTest
 {
     /**
      * @test

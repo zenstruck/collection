@@ -9,6 +9,7 @@ use Zenstruck\Collection\Doctrine\Specification\Normalizer\ComparisonNormalizer;
 use Zenstruck\Collection\Doctrine\Specification\Normalizer\CompositeNormalizer;
 use Zenstruck\Collection\Doctrine\Specification\Normalizer\NullNormalizer;
 use Zenstruck\Collection\Doctrine\Specification\Normalizer\OrderByNormalizer;
+use Zenstruck\Collection\Specification\Normalizer;
 use Zenstruck\Collection\Specification\Normalizer\NestedNormalizer;
 use Zenstruck\Collection\Specification\SpecificationNormalizer;
 
@@ -17,6 +18,7 @@ use Zenstruck\Collection\Specification\SpecificationNormalizer;
  */
 abstract class Context
 {
+    /** @var array<class-string,SpecificationNormalizer> */
     private static array $defaultNormalizer = [];
 
     private string $alias;
@@ -36,21 +38,18 @@ abstract class Context
         return "{$this->alias}.{$value}";
     }
 
-    /**
-     * @return ORMQueryBuilder|DBALQueryBuilder
-     */
-    abstract public function qb(): object;
+    abstract public function qb(): ORMQueryBuilder|DBALQueryBuilder;
 
-    /**
-     * @return static
-     */
-    abstract public function scopeTo(string $alias): self;
+    abstract public function scopeTo(string $alias): static;
 
     final public static function defaultNormalizer(): SpecificationNormalizer
     {
         return self::$defaultNormalizer[static::class] ??= new SpecificationNormalizer(static::defaultNormalizers());
     }
 
+    /**
+     * @return Normalizer[]
+     */
     protected static function defaultNormalizers(): array
     {
         return [

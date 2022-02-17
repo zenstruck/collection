@@ -9,22 +9,16 @@ use Zenstruck\Collection\Specification\Field;
  */
 abstract class Comparison extends Field
 {
-    private $value;
+    private mixed $value;
 
-    /**
-     * @param mixed $value
-     */
-    public function __construct(string $field, $value)
+    public function __construct(string $field, mixed $value)
     {
         parent::__construct($field);
 
         $this->value = $value;
     }
 
-    /**
-     * @return mixed
-     */
-    public function value()
+    public function value(): mixed
     {
         return $this->value;
     }

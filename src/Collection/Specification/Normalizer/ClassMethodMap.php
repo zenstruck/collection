@@ -7,26 +7,26 @@ namespace Zenstruck\Collection\Specification\Normalizer;
  */
 trait ClassMethodMap
 {
-    protected static function classInMap($specification): bool
+    protected static function classInMap(mixed $specification): bool
     {
         if (!\is_object($specification)) {
             return false;
         }
 
-        return \array_key_exists(\get_class($specification), static::classMethodMap());
+        return \array_key_exists($specification::class, static::classMethodMap());
     }
 
     protected static function methodFor(object $specification): string
     {
-        return static::classMethodMap()[\get_class($specification)];
+        return static::classMethodMap()[$specification::class];
     }
 
     /**
-     * @return array<string, string>
+     * @return array<class-string, string>
      */
     abstract protected static function classMethodMap(): array;
 
-    protected function supportsSpecification($specification): bool
+    protected function supportsSpecification(mixed $specification): bool
     {
         return self::classInMap($specification);
     }

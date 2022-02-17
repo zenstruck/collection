@@ -11,7 +11,7 @@ use Zenstruck\Collection\Doctrine\ORM\Repository;
  */
 trait Flushable
 {
-    final public function flush(): self
+    final public function flush(): static
     {
         if (!$this instanceof Repository) {
             throw new \BadMethodCallException(); // todo

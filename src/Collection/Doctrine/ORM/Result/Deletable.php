@@ -11,13 +11,16 @@ use Zenstruck\Collection\Doctrine\ORM\Result;
  */
 trait Deletable
 {
+    /**
+     * @param callable(object):void|null $callback
+     */
     final public function delete(?callable $callback = null): int
     {
         if (!$this instanceof Result) {
             throw new \BadMethodCallException(); // todo
         }
 
-        $callback = $callback ?? static function() {};
+        $callback ??= static function() {};
         $count = 0;
 
         foreach ($this->batchProcess() as $entity) {

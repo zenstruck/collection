@@ -15,7 +15,7 @@ final class Join extends Field
     private string $alias;
     private string $type;
     private bool $eager = false;
-    private $child;
+    private mixed $child = null;
 
     private function __construct(string $type, string $field, ?string $alias = null)
     {
@@ -47,7 +47,7 @@ final class Join extends Field
         return $this;
     }
 
-    public function scope($specification): self
+    public function scope(mixed $specification): self
     {
         $this->child = $specification;
 
@@ -69,10 +69,7 @@ final class Join extends Field
         return $this->eager;
     }
 
-    /**
-     * @return mixed
-     */
-    public function child()
+    public function child(): mixed
     {
         return $this->child;
     }

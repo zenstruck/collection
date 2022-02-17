@@ -21,17 +21,10 @@ trait HasDatabase
      */
     protected function setupEntityManager(): void
     {
-        $paths = [];
-        $isDevMode = true;
-
-        // the connection configuration
-        $dbParams = [
-            'driver' => 'pdo_sqlite',
-            'memory' => true,
-        ];
-
-        $config = Setup::createAnnotationMetadataConfiguration($paths, $isDevMode);
-        $this->em = EntityManager::create($dbParams, $config);
+        $this->em = EntityManager::create(
+            ['driver' => 'pdo_sqlite', 'memory' => true],
+            Setup::createAttributeMetadataConfiguration([], true)
+        );
 
         $schemaTool = new SchemaTool($this->em);
         $schemaTool->createSchema([

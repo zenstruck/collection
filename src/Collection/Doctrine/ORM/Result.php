@@ -16,9 +16,13 @@ use Zenstruck\Collection\Paginatable;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
+ *
+ * @template Value
+ * @implements Collection<int,Value>
  */
 class Result implements Collection
 {
+    /** @use Paginatable<Value> */
     use Paginatable;
 
     private Query $query;
@@ -26,10 +30,7 @@ class Result implements Collection
     private ?bool $useOutputWalkers;
     private ?int $count = null;
 
-    /**
-     * @param Query|QueryBuilder $query
-     */
-    final public function __construct($query, bool $fetchCollection = true, ?bool $useOutputWalkers = null)
+    final public function __construct(Query|QueryBuilder $query, bool $fetchCollection = true, ?bool $useOutputWalkers = null)
     {
         if ($query instanceof QueryBuilder) {
             $query = $query->getQuery();
@@ -57,11 +58,17 @@ class Result implements Collection
         return $this->batch();
     }
 
+    /**
+     * @return \Traversable<int,Value>
+     */
     final public function batch(int $chunkSize = 100): \Traversable
     {
         return BatchIterator::for($this->callbackCollection(), $this->em(), $chunkSize);
     }
 
+    /**
+     * @return \Traversable<int,Value>
+     */
     final public function batchProcess(int $chunkSize = 100): \Traversable
     {
         return BatchProcessor::for($this->callbackCollection(), $this->em(), $chunkSize);
@@ -82,7 +89,10 @@ class Result implements Collection
         $this->count = null;
     }
 
-    final protected function rawIterator(): iterable
+    /**
+     * @return iterable<mixed>
+     */
+    private function rawIterator(): iterable
     {
         $query = $this->cloneQuery();
 
@@ -95,11 +105,17 @@ class Result implements Collection
         return $query->toIterable();
     }
 
+    /**
+     * @return CallbackCollection<int,mixed>
+     */
     private function callbackCollection(): CallbackCollection
     {
         return new CallbackCollection(fn() => $this->rawIterator(), [$this, 'count']);
     }
 
+    /**
+     * @return Paginator<Value>
+     */
     private function paginatorFor(Query $query): Paginator
     {
         return (new Paginator($query, $this->fetchCollection))->setUseOutputWalkers($this->useOutputWalkers);

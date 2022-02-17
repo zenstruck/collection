@@ -7,13 +7,17 @@ namespace Zenstruck\Collection\Specification\Logic;
  */
 abstract class Composite
 {
+    /** @var mixed[] */
     private array $children;
 
-    public function __construct(...$children)
+    public function __construct(mixed ...$children)
     {
         $this->children = $children;
     }
 
+    /**
+     * @return mixed[]
+     */
     public function children(): array
     {
         return $this->children;

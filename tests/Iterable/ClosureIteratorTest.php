@@ -9,7 +9,7 @@ use Zenstruck\Collection\Tests\IterableCollectionTest;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class CallableIteratorTest extends IterableCollectionTest
+final class ClosureIteratorTest extends IterableCollectionTest
 {
     /**
      * @test

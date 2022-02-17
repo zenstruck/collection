@@ -7,20 +7,21 @@ use Zenstruck\Collection\Exception\NotFound;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
+ *
+ * @template Key
+ * @template Value
  */
 interface Matchable
 {
     /**
-     * @param mixed $specification
+     * @return Collection<Key,Value>
      */
-    public function match($specification): Collection;
+    public function match(mixed $specification): Collection;
 
     /**
-     * @param mixed $specification
-     *
-     * @return mixed
+     * @return Value
      *
      * @throws NotFound If no match found
      */
-    public function matchOne($specification);
+    public function matchOne(mixed $specification): mixed;
 }

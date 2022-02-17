@@ -7,12 +7,12 @@ namespace Zenstruck\Collection\Specification\Normalizer;
  */
 trait SplitSupports
 {
-    public function supports($specification, $context): bool
+    public function supports(mixed $specification, mixed $context): bool
     {
         return $this->supportsSpecification($specification) && $this->supportsContext($context);
     }
 
-    abstract protected function supportsSpecification($specification): bool;
+    abstract protected function supportsSpecification(mixed $specification): bool;
 
-    abstract protected function supportsContext($context): bool;
+    abstract protected function supportsContext(mixed $context): bool;
 }

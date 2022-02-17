@@ -15,6 +15,10 @@ final class Iterator implements \Iterator
         $this->items = $count ? \range(1, $count) : [];
     }
 
+    public function __invoke()
+    {
+    }
+
     #[\ReturnTypeWillChange]
     public function current()
     {

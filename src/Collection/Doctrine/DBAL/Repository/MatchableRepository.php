@@ -14,10 +14,15 @@ use Zenstruck\Collection\Specification\Normalizer;
  * Enables your repository to implement Zenstruck\Collection\Matchable.
  *
  * @author Kevin Bond <kevinbond@gmail.com>
+ *
+ * @template Value
  */
 trait MatchableRepository
 {
-    final public function match($specification): Result
+    /**
+     * @return Result<Value>
+     */
+    final public function match(mixed $specification): Result
     {
         if (!$this instanceof Repository) {
             throw new \BadMethodCallException(); // todo
@@ -26,7 +31,7 @@ trait MatchableRepository
         return static::createResult($this->qbForSpecification($specification));
     }
 
-    final public function matchOne($specification)
+    final public function matchOne(mixed $specification): mixed
     {
         if (!$this instanceof Repository) {
             throw new \BadMethodCallException(); // todo
@@ -34,7 +39,7 @@ trait MatchableRepository
 
         $result = $this->qbForSpecification($specification)
             ->setMaxResults(1)
-            ->execute()
+            ->{\method_exists(QueryBuilder::class, 'executeQuery') ? 'executeQuery' : 'execute'}()
             ->fetchAssociative()
         ;
 
@@ -45,7 +50,7 @@ trait MatchableRepository
         return $this instanceof ObjectRepository ? static::createObject($result) : $result;
     }
 
-    final protected function qbForSpecification($specification): QueryBuilder
+    final protected function qbForSpecification(mixed $specification): QueryBuilder
     {
         $qb = $this->qb('entity');
         $result = $this->specificationNormalizer()->normalize($specification, new DBALContext($qb, 'entity'));

@@ -6,33 +6,38 @@ use Zenstruck\Collection;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
+ *
+ * @template Key
+ * @template Value
+ * @implements Collection<Key,Value>
  */
 final class IterableCollection implements Collection
 {
+    /** @use Paginatable<Value> */
     use Paginatable;
 
-    /** @var callable|iterable */
-    private $source;
+    /** @var \Closure():iterable<Key,Value>|iterable<Key,Value> */
+    private \Closure|iterable $source;
 
     /**
-     * @param iterable|callable|null $source
+     * @param iterable<Key,Value>|callable():iterable<Key,Value>|null $source
      */
-    public function __construct($source = null)
+    public function __construct(iterable|callable|null $source = null)
     {
-        $source = $source ?? [];
-
-        if (!\is_callable($source) && !\is_iterable($source)) {
-            throw new \InvalidArgumentException('$source must be callable, iterable or null.');
-        }
+        $source ??= [];
 
         if ($source instanceof \Generator) {
             throw new \InvalidArgumentException('$source must not be a generator directly as generators cannot be rewound. Try wrapping in a closure.');
         }
 
+        if (\is_callable($source) && (!\is_iterable($source) || \is_array($source))) {
+            $source = \Closure::fromCallable($source);
+        }
+
         $this->source = $source;
     }
 
-    public function take(int $limit, int $offset = 0): self
+    public function take(int $limit, int $offset = 0): Collection
     {
         if (\is_array($source = $this->normalizeSource())) {
             return new self(\array_slice($source, $offset, $limit, true));
@@ -83,6 +88,9 @@ final class IterableCollection implements Collection
         return \iterator_count($source);
     }
 
+    /**
+     * @return iterable<Key,Value>
+     */
     private function normalizeSource(): iterable
     {
         if (\is_iterable($this->source)) {

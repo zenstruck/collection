@@ -44,6 +44,9 @@ final class ComparisonNormalizer extends DoctrineNormalizer
         );
     }
 
+    /**
+     * @return array<class-string, string>
+     */
     protected static function classMethodMap(): array
     {
         return [

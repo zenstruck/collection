@@ -10,9 +10,14 @@ use Zenstruck\Collection\Doctrine\ORM\Repository;
  * the Zenstruck\Collection\Paginatable trait).
  *
  * @author Kevin Bond <kevinbond@gmail.com>
+ *
+ * @template Value
  */
 trait CollectionRepository
 {
+    /**
+     * @return Collection<int,Value>
+     */
     final public function take(int $limit, int $offset = 0): Collection
     {
         if (!$this instanceof Repository) {

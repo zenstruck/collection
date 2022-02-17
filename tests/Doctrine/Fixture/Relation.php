@@ -2,26 +2,20 @@
 
 namespace Zenstruck\Collection\Tests\Doctrine\Fixture;
 
+use Doctrine\ORM\Mapping as ORM;
+
 /**
- * @Entity
- * @Table(name="relations")
- *
  * @author Kevin Bond <kevinbond@gmail.com>
  */
+#[ORM\Entity, ORM\Table(name: 'relations')]
 class Relation
 {
     public const TABLE = 'relations';
 
-    /**
-     * @Id
-     * @Column(type="integer")
-     * @GeneratedValue
-     */
+    #[ORM\Id, ORM\Column(type: 'integer'), ORM\GeneratedValue]
     public ?int $id;
 
-    /**
-     * @Column(type="string")
-     */
+    #[ORM\Column(type: 'string')]
     public int $value;
 
     public function __construct(int $value, ?int $id = null)

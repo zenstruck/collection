@@ -8,21 +8,19 @@ use Zenstruck\Collection\Tests\IterableCollectionTest;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class CallableArrayTest extends IterableCollectionTest
+final class InvokableObjectTest extends IterableCollectionTest
 {
     protected function createWithItems(int $count): IterableCollection
     {
-        $object = new class($count) {
+        return new IterableCollection(new class($count) {
             public function __construct(private $count)
             {
             }
 
-            public function values()
+            public function __invoke()
             {
                 return $this->count ? \range(1, $this->count) : [];
             }
-        };
-
-        return new IterableCollection([$object, 'values']);
+        });
     }
 }

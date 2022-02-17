@@ -7,8 +7,5 @@ namespace Zenstruck\Collection\Specification;
  */
 interface Nested
 {
-    /**
-     * @return mixed
-     */
-    public function child();
+    public function child(): mixed;
 }

@@ -11,6 +11,8 @@ use Doctrine\ORM\Internal\Hydration\IterableResult;
  * @internal
  *
  * @author Kevin Bond <kevinbond@gmail.com>
+ *
+ * @implements \IteratorAggregate<mixed>
  */
 final class IterableResultDecorator implements \IteratorAggregate
 {
@@ -28,12 +30,7 @@ final class IterableResultDecorator implements \IteratorAggregate
         }
     }
 
-    /**
-     * @param mixed $result
-     *
-     * @return mixed
-     */
-    private static function normalizeResult($result)
+    private static function normalizeResult(mixed $result): mixed
     {
         if (!\is_array($result)) {
             return $result;
