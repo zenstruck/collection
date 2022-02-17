@@ -3,7 +3,6 @@
 namespace Zenstruck\Collection;
 
 use Zenstruck\Collection;
-use Zenstruck\Collection\Exception\NotFound;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -21,7 +20,7 @@ interface Matchable
     /**
      * @return V
      *
-     * @throws NotFound If no match found
+     * @throws \RuntimeException If no match found
      */
     public function matchOne(mixed $specification): mixed;
 }

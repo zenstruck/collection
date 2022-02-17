@@ -6,7 +6,6 @@ use Doctrine\ORM\QueryBuilder;
 use Zenstruck\Collection\Doctrine\ORM\Repository;
 use Zenstruck\Collection\Doctrine\ORM\Result;
 use Zenstruck\Collection\Doctrine\ORM\Specification\ORMContext;
-use Zenstruck\Collection\Exception\NotFound;
 use Zenstruck\Collection\Specification\Normalizer;
 
 /**
@@ -41,7 +40,7 @@ trait IsMatchable
         }
 
         if (!\is_object($result = $this->qbForSpecification($specification)->getQuery()->getOneOrNullResult())) {
-            throw new NotFound("{$this->getClassName()} not found for given specification.");
+            throw new \RuntimeException("{$this->getClassName()} not found for given specification.");
         }
 
         /** @var V $result */

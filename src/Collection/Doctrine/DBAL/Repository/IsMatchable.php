@@ -7,7 +7,6 @@ use Zenstruck\Collection\Doctrine\DBAL\ObjectRepository;
 use Zenstruck\Collection\Doctrine\DBAL\Repository;
 use Zenstruck\Collection\Doctrine\DBAL\Result;
 use Zenstruck\Collection\Doctrine\DBAL\Specification\DBALContext;
-use Zenstruck\Collection\Exception\NotFound;
 use Zenstruck\Collection\Specification\Normalizer;
 
 /**
@@ -47,7 +46,7 @@ trait IsMatchable
         ;
 
         if (!$result) {
-            throw new NotFound(\sprintf('Data from "%s" table not found for given specification.', static::tableName()));
+            throw new \RuntimeException(\sprintf('Data from "%s" table not found for given specification.', static::tableName()));
         }
 
         return $this instanceof ObjectRepository ? static::createObject($result) : $result;

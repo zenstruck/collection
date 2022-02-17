@@ -3,7 +3,6 @@
 namespace Zenstruck\Collection\Tests\Doctrine;
 
 use Zenstruck\Collection\Doctrine\Specification\Context;
-use Zenstruck\Collection\Exception\NotFound;
 use Zenstruck\Collection\Spec;
 use Zenstruck\Collection\Specification\Nested;
 
@@ -424,7 +423,7 @@ trait MatchableRepositoryTests
      */
     public function not_found_exception_found_for_match_one_if_no_result(): void
     {
-        $this->expectException(NotFound::class);
+        $this->expectException(\RuntimeException::class);
 
         $this->createWithItems(3)->matchOne(Spec::eq('value', 'value 6'));
     }
