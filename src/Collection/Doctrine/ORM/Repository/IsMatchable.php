@@ -41,7 +41,7 @@ trait IsMatchable
         }
 
         if (!\is_object($result = $this->qbForSpecification($specification)->getQuery()->getOneOrNullResult())) {
-            throw new \RuntimeException(\sprintf('Object "%s" not found for specification "%s".', $this->getClassName(), SpecificationNormalizer::stringify($specification)));
+            throw $this->matchNotFoundException($specification);
         }
 
         /** @var V $result */
@@ -60,6 +60,14 @@ trait IsMatchable
         }
 
         return $qb;
+    }
+
+    /**
+     * Override to provide your own implementation.
+     */
+    protected function matchNotFoundException(mixed $specification): \RuntimeException
+    {
+        return new \RuntimeException(\sprintf('Object "%s" not found for specification "%s".', $this->getClassName(), SpecificationNormalizer::stringify($specification)));
     }
 
     /**

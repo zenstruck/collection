@@ -47,7 +47,7 @@ trait IsMatchable
         ;
 
         if (!$result) {
-            throw new \RuntimeException(\sprintf('Data from "%s" table not found for specification "%s".', static::tableName(), SpecificationNormalizer::stringify($specification)));
+            throw $this->matchNotFoundException($specification);
         }
 
         return $this instanceof ObjectRepository ? static::createObject($result) : $result;
@@ -63,6 +63,14 @@ trait IsMatchable
         }
 
         return $qb;
+    }
+
+    /**
+     * Override to provide your own implementation.
+     */
+    protected function matchNotFoundException(mixed $specification): \RuntimeException
+    {
+        throw new \RuntimeException(\sprintf('Data from "%s" table not found for specification "%s".', static::tableName(), SpecificationNormalizer::stringify($specification)));
     }
 
     /**
