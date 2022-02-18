@@ -26,7 +26,7 @@ final class SpecificationNormalizer implements Normalizer
     public function normalize(mixed $specification, mixed $context): mixed
     {
         if (!$normalizer = $this->getNormalizer($specification, $context)) {
-            throw new \RuntimeException(\sprintf('Specification "%s" with context "%s" does not have a supported normalizer registered.', \get_debug_type($specification), \get_debug_type($context)));
+            throw new \RuntimeException(\sprintf('Specification "%s" with context "%s" does not have a supported normalizer registered.', self::stringify($specification), \get_debug_type($context)));
         }
 
         return $normalizer->normalize($specification, $context);
@@ -35,6 +35,22 @@ final class SpecificationNormalizer implements Normalizer
     public function supports(mixed $specification, mixed $context): bool
     {
         return null !== $this->getNormalizer($specification, $context);
+    }
+
+    /**
+     * Utility method to aid in debugging.
+     */
+    public static function stringify(mixed $specification): string
+    {
+        if ($specification instanceof \Stringable) {
+            return $specification;
+        }
+
+        if ($specification instanceof Nested) {
+            return \sprintf('%s(%s)', $specification::class, self::stringify($specification->child()));
+        }
+
+        return \get_debug_type($specification);
     }
 
     private function getNormalizer(mixed $specification, mixed $context): ?Normalizer

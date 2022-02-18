@@ -7,6 +7,7 @@ use Zenstruck\Collection\Doctrine\ORM\Repository;
 use Zenstruck\Collection\Doctrine\ORM\Result;
 use Zenstruck\Collection\Doctrine\ORM\Specification\ORMContext;
 use Zenstruck\Collection\Specification\Normalizer;
+use Zenstruck\Collection\Specification\SpecificationNormalizer;
 
 /**
  * Enables your repository to implement Zenstruck\Collection\Matchable.
@@ -40,7 +41,7 @@ trait IsMatchable
         }
 
         if (!\is_object($result = $this->qbForSpecification($specification)->getQuery()->getOneOrNullResult())) {
-            throw new \RuntimeException("{$this->getClassName()} not found for given specification.");
+            throw new \RuntimeException(\sprintf('Object "%s" not found for specification "%s".', $this->getClassName(), SpecificationNormalizer::stringify($specification)));
         }
 
         /** @var V $result */

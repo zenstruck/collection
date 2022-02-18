@@ -9,4 +9,8 @@ use Zenstruck\Collection\Specification\Field;
  */
 final class AntiJoin extends Field
 {
+    public function __toString(): string
+    {
+        return \sprintf('AntiJoin(%s)', $this->field());
+    }
 }

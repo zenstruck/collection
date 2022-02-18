@@ -19,6 +19,11 @@ final class OrderBy extends Field
         $this->direction = $direction;
     }
 
+    public function __toString(): string
+    {
+        return \sprintf('OrderBy%s(%s)', $this->direction(), $this->field());
+    }
+
     public static function asc(string $field): self
     {
         return new self($field, self::ASC);
