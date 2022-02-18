@@ -40,7 +40,7 @@ abstract class Context
 
     abstract public function qb(): ORMQueryBuilder|DBALQueryBuilder;
 
-    abstract public function scopeTo(string $alias): static;
+    abstract public function scopeTo(string $alias): self;
 
     final public static function defaultNormalizer(): SpecificationNormalizer
     {

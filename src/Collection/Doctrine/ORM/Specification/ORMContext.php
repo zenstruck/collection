@@ -26,7 +26,7 @@ final class ORMContext extends Context
         return $this->qb;
     }
 
-    public function scopeTo(string $alias): static
+    public function scopeTo(string $alias): self
     {
         return new self($this->qb, $alias);
     }
