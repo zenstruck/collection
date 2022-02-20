@@ -6,8 +6,8 @@ use Doctrine\ORM\QueryBuilder;
 use Zenstruck\Collection\Doctrine\ORM\Repository;
 use Zenstruck\Collection\Doctrine\ORM\Result;
 use Zenstruck\Collection\Doctrine\ORM\Specification\ORMContext;
-use Zenstruck\Collection\Specification\Normalizer;
-use Zenstruck\Collection\Specification\SpecificationNormalizer;
+use Zenstruck\Collection\Specification\Interpreter;
+use Zenstruck\Collection\Specification\SpecificationInterpreter;
 
 /**
  * Enables your repository to implement Zenstruck\Collection\Matchable.
@@ -50,7 +50,7 @@ trait IsMatchable
 
     protected function qbForSpecification(mixed $specification): QueryBuilder
     {
-        $result = $this->specificationNormalizer()->normalize(
+        $result = $this->specificationInterpreter()->interpret(
             $specification,
             new ORMContext($qb = $this->qb('entity'), 'entity')
         );
@@ -67,14 +67,14 @@ trait IsMatchable
      */
     protected function matchNotFoundException(mixed $specification): \RuntimeException
     {
-        return new \RuntimeException(\sprintf('Object "%s" not found for specification "%s".', $this->getClassName(), SpecificationNormalizer::stringify($specification)));
+        return new \RuntimeException(\sprintf('Object "%s" not found for specification "%s".', $this->getClassName(), SpecificationInterpreter::stringify($specification)));
     }
 
     /**
-     * Override to provide your own SpecificationNormalizer implementation.
+     * Override to provide your own Specification Interpreter implementation.
      */
-    protected function specificationNormalizer(): Normalizer
+    protected function specificationInterpreter(): Interpreter
     {
-        return ORMContext::defaultNormalizer();
+        return ORMContext::defaultInterpreter();
     }
 }

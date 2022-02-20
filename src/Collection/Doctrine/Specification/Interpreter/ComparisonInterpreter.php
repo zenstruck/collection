@@ -1,6 +1,6 @@
 <?php
 
-namespace Zenstruck\Collection\Doctrine\Specification\Normalizer;
+namespace Zenstruck\Collection\Doctrine\Specification\Interpreter;
 
 use Doctrine\DBAL\Connection;
 use Zenstruck\Collection\Doctrine\Specification\Context;
@@ -15,12 +15,12 @@ use Zenstruck\Collection\Specification\Filter\Like;
 use Zenstruck\Collection\Specification\Filter\NotEqual;
 use Zenstruck\Collection\Specification\Filter\NotIn;
 use Zenstruck\Collection\Specification\Filter\NotLike;
-use Zenstruck\Collection\Specification\Normalizer\ClassMethodMap;
+use Zenstruck\Collection\Specification\Interpreter\ClassMethodMap;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class ComparisonNormalizer extends DoctrineNormalizer
+final class ComparisonInterpreter extends DoctrineInterpreter
 {
     use ClassMethodMap;
 
@@ -28,7 +28,7 @@ final class ComparisonNormalizer extends DoctrineNormalizer
      * @param Comparison $specification
      * @param Context    $context
      */
-    public function normalize($specification, $context): string
+    public function interpret($specification, $context): string
     {
         $parameter = \sprintf('comparison_%d', \count($context->qb()->getParameters()));
 

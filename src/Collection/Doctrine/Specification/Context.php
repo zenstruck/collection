@@ -4,22 +4,22 @@ namespace Zenstruck\Collection\Doctrine\Specification;
 
 use Doctrine\DBAL\Query\QueryBuilder as DBALQueryBuilder;
 use Doctrine\ORM\QueryBuilder as ORMQueryBuilder;
-use Zenstruck\Collection\Doctrine\Specification\Normalizer\CallableNormalizer;
-use Zenstruck\Collection\Doctrine\Specification\Normalizer\ComparisonNormalizer;
-use Zenstruck\Collection\Doctrine\Specification\Normalizer\CompositeNormalizer;
-use Zenstruck\Collection\Doctrine\Specification\Normalizer\NullNormalizer;
-use Zenstruck\Collection\Doctrine\Specification\Normalizer\OrderByNormalizer;
-use Zenstruck\Collection\Specification\Normalizer;
-use Zenstruck\Collection\Specification\Normalizer\NestedNormalizer;
-use Zenstruck\Collection\Specification\SpecificationNormalizer;
+use Zenstruck\Collection\Doctrine\Specification\Interpreter\CallableInterpreter;
+use Zenstruck\Collection\Doctrine\Specification\Interpreter\ComparisonInterpreter;
+use Zenstruck\Collection\Doctrine\Specification\Interpreter\CompositeInterpreter;
+use Zenstruck\Collection\Doctrine\Specification\Interpreter\NullInterpreter;
+use Zenstruck\Collection\Doctrine\Specification\Interpreter\OrderByInterpreter;
+use Zenstruck\Collection\Specification\Interpreter;
+use Zenstruck\Collection\Specification\Interpreter\NestedInterpreter;
+use Zenstruck\Collection\Specification\SpecificationInterpreter;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
 abstract class Context
 {
-    /** @var array<class-string,SpecificationNormalizer> */
-    private static array $defaultNormalizer = [];
+    /** @var array<class-string,SpecificationInterpreter> */
+    private static array $defaultInterpreter = [];
 
     private string $alias;
 
@@ -42,23 +42,23 @@ abstract class Context
 
     abstract public function scopeTo(string $alias): self;
 
-    final public static function defaultNormalizer(): SpecificationNormalizer
+    final public static function defaultInterpreter(): SpecificationInterpreter
     {
-        return self::$defaultNormalizer[static::class] ??= new SpecificationNormalizer(static::defaultNormalizers());
+        return self::$defaultInterpreter[static::class] ??= new SpecificationInterpreter(static::defaultInterpreters());
     }
 
     /**
-     * @return Normalizer[]
+     * @return Interpreter[]
      */
-    protected static function defaultNormalizers(): array
+    protected static function defaultInterpreters(): array
     {
         return [
-            new NestedNormalizer(),
-            new CallableNormalizer(),
-            new ComparisonNormalizer(),
-            new CompositeNormalizer(),
-            new NullNormalizer(),
-            new OrderByNormalizer(),
+            new NestedInterpreter(),
+            new CallableInterpreter(),
+            new ComparisonInterpreter(),
+            new CompositeInterpreter(),
+            new NullInterpreter(),
+            new OrderByInterpreter(),
         ];
     }
 }

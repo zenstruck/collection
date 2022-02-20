@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Zenstruck\Collection\Doctrine\ORM\Specification\Join;
 use Zenstruck\Collection\Spec;
 use Zenstruck\Collection\Specification\Nested;
-use Zenstruck\Collection\Specification\SpecificationNormalizer;
+use Zenstruck\Collection\Specification\SpecificationInterpreter;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -18,13 +18,13 @@ final class SpecificationNormalizerTest extends TestCase
      */
     public function throws_exception_if_normalizer_not_found(): void
     {
-        $normalizer = new SpecificationNormalizer([]);
+        $normalizer = new SpecificationInterpreter([]);
 
         $this->assertFalse($normalizer->supports(null, null));
 
         $this->expectException(\RuntimeException::class);
 
-        $normalizer->normalize(null, null);
+        $normalizer->interpret(null, null);
     }
 
     /**
@@ -32,7 +32,7 @@ final class SpecificationNormalizerTest extends TestCase
      */
     public function can_stringify_spec(): void
     {
-        $str = SpecificationNormalizer::stringify(Spec::andX(
+        $str = SpecificationInterpreter::stringify(Spec::andX(
             Spec::orX(Spec::eq('foo', 'bar'), Spec::in('foo', ['bar'])),
             Spec::sortAsc('foo'),
             Join::anti('foo'),

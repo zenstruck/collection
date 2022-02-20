@@ -1,16 +1,16 @@
 <?php
 
-namespace Zenstruck\Collection\Doctrine\ORM\Specification\Normalizer;
+namespace Zenstruck\Collection\Doctrine\ORM\Specification\Interpreter;
 
 use Zenstruck\Collection\Doctrine\ORM\Specification\AntiJoin;
 use Zenstruck\Collection\Doctrine\ORM\Specification\ORMContext;
-use Zenstruck\Collection\Specification\Normalizer;
-use Zenstruck\Collection\Specification\Normalizer\SplitSupports;
+use Zenstruck\Collection\Specification\Interpreter;
+use Zenstruck\Collection\Specification\Interpreter\SplitSupports;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class AntiJoinNormalizer implements Normalizer
+final class AntiJoinInterpreter implements Interpreter
 {
     use SplitSupports;
 
@@ -18,7 +18,7 @@ final class AntiJoinNormalizer implements Normalizer
      * @param AntiJoin   $specification
      * @param ORMContext $context
      */
-    public function normalize(mixed $specification, mixed $context): mixed
+    public function interpret(mixed $specification, mixed $context): mixed
     {
         $context->qb()
             ->leftJoin($context->prefixAlias($specification->field()), $specification->field())

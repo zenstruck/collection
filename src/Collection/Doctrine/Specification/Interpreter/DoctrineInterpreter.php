@@ -1,15 +1,15 @@
 <?php
 
-namespace Zenstruck\Collection\Doctrine\Specification\Normalizer;
+namespace Zenstruck\Collection\Doctrine\Specification\Interpreter;
 
 use Zenstruck\Collection\Doctrine\Specification\Context;
-use Zenstruck\Collection\Specification\Normalizer;
-use Zenstruck\Collection\Specification\Normalizer\SplitSupports;
+use Zenstruck\Collection\Specification\Interpreter;
+use Zenstruck\Collection\Specification\Interpreter\SplitSupports;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-abstract class DoctrineNormalizer implements Normalizer
+abstract class DoctrineInterpreter implements Interpreter
 {
     use SplitSupports;
 

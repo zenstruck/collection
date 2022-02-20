@@ -1,26 +1,26 @@
 <?php
 
-namespace Zenstruck\Collection\Doctrine\ORM\Specification\Normalizer;
+namespace Zenstruck\Collection\Doctrine\ORM\Specification\Interpreter;
 
 use Zenstruck\Collection\Doctrine\ORM\Specification\Join;
 use Zenstruck\Collection\Doctrine\ORM\Specification\ORMContext;
-use Zenstruck\Collection\Specification\Normalizer;
-use Zenstruck\Collection\Specification\Normalizer\HasNormalizer;
-use Zenstruck\Collection\Specification\Normalizer\NormalizerAware;
-use Zenstruck\Collection\Specification\Normalizer\SplitSupports;
+use Zenstruck\Collection\Specification\Interpreter;
+use Zenstruck\Collection\Specification\Interpreter\HasInterpreter;
+use Zenstruck\Collection\Specification\Interpreter\InterpreterAware;
+use Zenstruck\Collection\Specification\Interpreter\SplitSupports;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class JoinNormalizer implements Normalizer, NormalizerAware
+final class JoinInterpreter implements Interpreter, InterpreterAware
 {
-    use HasNormalizer, SplitSupports;
+    use HasInterpreter, SplitSupports;
 
     /**
      * @param Join       $join
      * @param ORMContext $context
      */
-    public function normalize(mixed $join, mixed $context): mixed
+    public function interpret(mixed $join, mixed $context): mixed
     {
         $this->addJoin($context, $join);
 
@@ -32,7 +32,7 @@ final class JoinNormalizer implements Normalizer, NormalizerAware
             return null;
         }
 
-        return $this->normalizer()->normalize($join->child(), $context->scopeTo($join->alias()));
+        return $this->interpreter()->interpret($join->child(), $context->scopeTo($join->alias()));
     }
 
     protected function supportsSpecification(mixed $specification): bool

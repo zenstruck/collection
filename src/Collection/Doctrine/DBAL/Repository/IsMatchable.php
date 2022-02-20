@@ -7,8 +7,8 @@ use Zenstruck\Collection\Doctrine\DBAL\ObjectRepository;
 use Zenstruck\Collection\Doctrine\DBAL\Repository;
 use Zenstruck\Collection\Doctrine\DBAL\Result;
 use Zenstruck\Collection\Doctrine\DBAL\Specification\DBALContext;
-use Zenstruck\Collection\Specification\Normalizer;
-use Zenstruck\Collection\Specification\SpecificationNormalizer;
+use Zenstruck\Collection\Specification\Interpreter;
+use Zenstruck\Collection\Specification\SpecificationInterpreter;
 
 /**
  * Enables your repository to implement Zenstruck\Collection\Matchable.
@@ -56,7 +56,7 @@ trait IsMatchable
     final protected function qbForSpecification(mixed $specification): QueryBuilder
     {
         $qb = $this->qb('entity');
-        $result = $this->specificationNormalizer()->normalize($specification, new DBALContext($qb, 'entity'));
+        $result = $this->specificationInterpreter()->interpret($specification, new DBALContext($qb, 'entity'));
 
         if ($result) {
             $qb->where($result);
@@ -70,14 +70,14 @@ trait IsMatchable
      */
     protected function matchNotFoundException(mixed $specification): \RuntimeException
     {
-        throw new \RuntimeException(\sprintf('Data from "%s" table not found for specification "%s".', static::tableName(), SpecificationNormalizer::stringify($specification)));
+        throw new \RuntimeException(\sprintf('Data from "%s" table not found for specification "%s".', static::tableName(), SpecificationInterpreter::stringify($specification)));
     }
 
     /**
-     * Override to provide your own SpecificationNormalizer implementation.
+     * Override to provide your own Specification Interpreter implementation.
      */
-    protected function specificationNormalizer(): Normalizer
+    protected function specificationInterpreter(): Interpreter
     {
-        return DBALContext::defaultNormalizer();
+        return DBALContext::defaultInterpreter();
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Zenstruck\Collection\Doctrine\Specification\Normalizer;
+namespace Zenstruck\Collection\Doctrine\Specification\Interpreter;
 
 use Zenstruck\Collection\Doctrine\Specification\Context;
 use Zenstruck\Collection\Specification\OrderBy;
@@ -8,13 +8,13 @@ use Zenstruck\Collection\Specification\OrderBy;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class OrderByNormalizer extends DoctrineNormalizer
+final class OrderByInterpreter extends DoctrineInterpreter
 {
     /**
      * @param OrderBy $specification
      * @param Context $context
      */
-    public function normalize(mixed $specification, mixed $context): mixed
+    public function interpret(mixed $specification, mixed $context): mixed
     {
         $context->qb()->addOrderBy($context->prefixAlias($specification->field()), $specification->direction());
 

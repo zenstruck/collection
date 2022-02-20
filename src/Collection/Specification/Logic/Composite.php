@@ -2,7 +2,7 @@
 
 namespace Zenstruck\Collection\Specification\Logic;
 
-use Zenstruck\Collection\Specification\SpecificationNormalizer;
+use Zenstruck\Collection\Specification\SpecificationInterpreter;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -19,7 +19,7 @@ abstract class Composite
 
     public function __toString(): string
     {
-        $children = \array_filter(\array_map([SpecificationNormalizer::class, 'stringify'], $this->children()));
+        $children = \array_filter(\array_map([SpecificationInterpreter::class, 'stringify'], $this->children()));
 
         return \sprintf('%s(%s)', (new \ReflectionClass($this))->getShortName(), \implode(', ', $children));
     }

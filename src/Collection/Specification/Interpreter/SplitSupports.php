@@ -1,6 +1,6 @@
 <?php
 
-namespace Zenstruck\Collection\Specification\Normalizer;
+namespace Zenstruck\Collection\Specification\Interpreter;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>

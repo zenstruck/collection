@@ -1,30 +1,30 @@
 <?php
 
-namespace Zenstruck\Collection\Doctrine\Specification\Normalizer;
+namespace Zenstruck\Collection\Doctrine\Specification\Interpreter;
 
 use Zenstruck\Collection\Doctrine\Specification\Context;
+use Zenstruck\Collection\Specification\Interpreter\ClassMethodMap;
+use Zenstruck\Collection\Specification\Interpreter\HasInterpreter;
+use Zenstruck\Collection\Specification\Interpreter\InterpreterAware;
 use Zenstruck\Collection\Specification\Logic\AndX;
 use Zenstruck\Collection\Specification\Logic\Composite;
 use Zenstruck\Collection\Specification\Logic\OrX;
-use Zenstruck\Collection\Specification\Normalizer\ClassMethodMap;
-use Zenstruck\Collection\Specification\Normalizer\HasNormalizer;
-use Zenstruck\Collection\Specification\Normalizer\NormalizerAware;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class CompositeNormalizer extends DoctrineNormalizer implements NormalizerAware
+final class CompositeInterpreter extends DoctrineInterpreter implements InterpreterAware
 {
-    use ClassMethodMap, HasNormalizer;
+    use ClassMethodMap, HasInterpreter;
 
     /**
      * @param Composite $specification
      * @param Context   $context
      */
-    public function normalize(mixed $specification, mixed $context): mixed
+    public function interpret(mixed $specification, mixed $context): mixed
     {
         $children = \array_filter(\array_map(
-            fn($child) => $this->normalizer()->normalize($child, $context),
+            fn($child) => $this->interpreter()->interpret($child, $context),
             $specification->children()
         ));
 
