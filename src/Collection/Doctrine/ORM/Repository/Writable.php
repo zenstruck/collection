@@ -16,7 +16,7 @@ trait Writable
     /**
      * @param V $item
      */
-    final public function add(object $item, bool $flush = true): static
+    final public function add(mixed $item, bool $flush = true): static
     {
         if (!$this instanceof Repository) {
             throw new \BadMethodCallException(\sprintf('"%s" can only be used on instances of "%s".', __TRAIT__, Repository::class));

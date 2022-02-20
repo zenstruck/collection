@@ -308,6 +308,38 @@ final class RepositoryTest extends TestCase
         });
     }
 
+    /**
+     * @test
+     */
+    public function can_get(): void
+    {
+        $object = $this->createWithItems(3)->get(2);
+
+        $this->assertSame('value 2', $object->value);
+    }
+
+    /**
+     * @test
+     */
+    public function get_fails_if_not_found(): void
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage(\sprintf('"%s" with id "invalid" not found.', Entity::class));
+
+        $this->repo()->get('invalid');
+    }
+
+    /**
+     * @test
+     */
+    public function can_filter(): void
+    {
+        $objects = $this->createWithItems(3)->filter(['id' => 2]);
+
+        $this->assertCount(1, $objects);
+        $this->assertSame('value 2', \iterator_to_array($objects)[0]->value);
+    }
+
     protected function createWithItems(int $count): KitchenSinkRepository
     {
         $this->persistEntities($count);

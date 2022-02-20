@@ -5,17 +5,44 @@ namespace Zenstruck\Collection\Doctrine\ORM;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
+use Zenstruck\Collection;
+use Zenstruck\Collection\IterableCollection;
+use Zenstruck\Collection\Repository as RepositoryContract;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template V
- * @implements \IteratorAggregate<int,V>
+ * @template V of object
+ * @implements RepositoryContract<int,V>
  */
-abstract class Repository implements \IteratorAggregate, \Countable
+abstract class Repository implements RepositoryContract
 {
     /** @var EntityRepository<V>|null */
     private ?EntityRepository $repo = null;
+
+    public function get(mixed $id): object
+    {
+        if (!$object = $this->em()->find($this->getClassName(), $id)) {
+            throw $this->createNotFoundException($id);
+        }
+
+        /** @var V $object */
+        return $object;
+    }
+
+    /**
+     * @param array<string,mixed> $criteria
+     *
+     * @return Collection<int,V>
+     */
+    public function filter(mixed $criteria): Collection
+    {
+        if (!\is_array($criteria) || array_is_list($criteria)) {
+            throw new \InvalidArgumentException('$context must be non-list array.');
+        }
+
+        return new IterableCollection($this->repo()->findBy($criteria));
+    }
 
     final public function getIterator(): \Traversable
     {
@@ -43,6 +70,9 @@ abstract class Repository implements \IteratorAggregate, \Countable
         return $this->repo()->count([]);
     }
 
+    /**
+     * @return class-string
+     */
     abstract public function getClassName(): string;
 
     /**
@@ -64,6 +94,17 @@ abstract class Repository implements \IteratorAggregate, \Countable
     final protected function qb(string $alias = 'entity', ?string $indexBy = null): QueryBuilder
     {
         return $this->repo()->createQueryBuilder($alias, $indexBy);
+    }
+
+    /**
+     * Override to customize the not found exception.
+     */
+    protected function createNotFoundException(mixed $id): \RuntimeException
+    {
+        return new \RuntimeException(\sprintf('"%s" with id "%s" not found.',
+            $this->getClassName(),
+            \is_scalar($id) ? $id : \sprintf('(%s)', \get_debug_type($id))
+        ));
     }
 
     abstract protected function em(): EntityManagerInterface;

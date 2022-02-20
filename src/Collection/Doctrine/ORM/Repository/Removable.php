@@ -16,7 +16,7 @@ trait Removable
     /**
      * @param V $item
      */
-    final public function remove(object $item, bool $flush = true): static
+    final public function remove(mixed $item, bool $flush = true): static
     {
         if (!$this instanceof Repository) {
             throw new \BadMethodCallException(\sprintf('"%s" can only be used on instances of "%s".', __TRAIT__, Repository::class));
