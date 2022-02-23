@@ -6,11 +6,11 @@ use Doctrine\ORM\NativeQuery;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Doctrine\ORM\QueryBuilder;
-use Zenstruck\Collection\Doctrine\ORM\Repository;
+use Zenstruck\Collection\Doctrine\ORM\ObjectRepository;
 
 /**
- * Allows your repository to have access to Doctrine\ORM\EntityRepository
- * methods (except count()).
+ * Allows your repository to have access to {@see \Doctrine\ORM\EntityRepository}
+ * methods (except "count()").
  *
  * @method QueryBuilder            createQueryBuilder(string $alias, ?string $indexBy = null)
  * @method ResultSetMappingBuilder createResultSetMappingBuilder(string $alias)
@@ -27,8 +27,8 @@ trait AsEntityRepository
      */
     final public function __call(string $name, array $arguments): mixed
     {
-        if (!$this instanceof Repository) {
-            throw new \BadMethodCallException(\sprintf('"%s" can only be used on instances of "%s".', __TRAIT__, Repository::class));
+        if (!$this instanceof ObjectRepository) {
+            throw new \BadMethodCallException(\sprintf('"%s" can only be used on instances of "%s".', __TRAIT__, ObjectRepository::class));
         }
 
         return $this->repo()->{$name}(...$arguments);

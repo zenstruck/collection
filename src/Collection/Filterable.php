@@ -10,17 +10,21 @@ use Zenstruck\Collection;
  * @template K
  * @template V
  */
-interface Matchable
+interface Filterable
 {
     /**
+     * Filter results that match the "specification".
+     *
      * @return Collection<K,V>
      */
-    public function match(mixed $specification): Collection;
+    public function filter(mixed $specification): Collection;
 
     /**
+     * Return the first result that matches the "specification".
+     *
      * @return V
      *
      * @throws \RuntimeException If no match found
      */
-    public function matchOne(mixed $specification): mixed;
+    public function get(mixed $specification): mixed;
 }

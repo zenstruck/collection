@@ -7,8 +7,8 @@ use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectRepository;
 
 /**
- * For use with Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface.
- * Will make your repositories "auto-wireable".
+ * For use with {@see \Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface}
+ * to make your repositories "auto-wireable".
  *
  * @author Kevin Bond <kevinbond@gmail.com>
  */

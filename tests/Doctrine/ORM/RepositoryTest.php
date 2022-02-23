@@ -8,11 +8,11 @@ use Zenstruck\Collection\Doctrine\ORM\Batch\CountableBatchIterator;
 use Zenstruck\Collection\Doctrine\ORM\Batch\CountableBatchProcessor;
 use Zenstruck\Collection\Doctrine\ORM\Specification\Join;
 use Zenstruck\Collection\Spec;
+use Zenstruck\Collection\Tests\Doctrine\FilterableRepositoryTests;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\ManagerRegistryStub;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Relation;
 use Zenstruck\Collection\Tests\Doctrine\HasDatabase;
-use Zenstruck\Collection\Tests\Doctrine\MatchableRepositoryTests;
 use Zenstruck\Collection\Tests\Doctrine\ORM\Fixture\KitchenSinkRepository;
 use Zenstruck\Collection\Tests\PagintableCollectionTests;
 
@@ -21,7 +21,7 @@ use Zenstruck\Collection\Tests\PagintableCollectionTests;
  */
 final class RepositoryTest extends TestCase
 {
-    use HasDatabase, MatchableRepositoryTests, PagintableCollectionTests;
+    use FilterableRepositoryTests, HasDatabase, PagintableCollectionTests;
 
     /**
      * @test
@@ -160,13 +160,13 @@ final class RepositoryTest extends TestCase
     /**
      * @test
      */
-    public function match_with_inner_join(): void
+    public function filter_with_inner_join(): void
     {
         $this->persistEntitiesForJoinTest();
 
         $this->assertCount(5, $this->repo());
 
-        $results = \iterator_to_array($this->repo()->match(Join::inner('relation')));
+        $results = \iterator_to_array($this->repo()->filter(Join::inner('relation')));
 
         $this->assertCount(3, $results);
         $this->assertQueryCount(2, function() use ($results) {
@@ -178,13 +178,13 @@ final class RepositoryTest extends TestCase
     /**
      * @test
      */
-    public function match_with_eager_inner_join(): void
+    public function filter_with_eager_inner_join(): void
     {
         $this->persistEntitiesForJoinTest();
 
         $this->assertCount(5, $this->repo());
 
-        $results = \iterator_to_array($this->repo()->match(Join::inner('relation')->eager()));
+        $results = \iterator_to_array($this->repo()->filter(Join::inner('relation')->eager()));
 
         $this->assertCount(3, $results);
         $this->assertQueryCount(0, function() use ($results) {
@@ -196,13 +196,13 @@ final class RepositoryTest extends TestCase
     /**
      * @test
      */
-    public function match_with_left_join(): void
+    public function filter_with_left_join(): void
     {
         $this->persistEntitiesForJoinTest();
 
         $this->assertCount(5, $this->repo());
 
-        $results = \iterator_to_array($this->repo()->match(Join::left('relation')));
+        $results = \iterator_to_array($this->repo()->filter(Join::left('relation')));
 
         $this->assertCount(5, $results);
         $this->assertQueryCount(2, function() use ($results) {
@@ -215,13 +215,13 @@ final class RepositoryTest extends TestCase
     /**
      * @test
      */
-    public function match_with_eager_left_join(): void
+    public function filter_with_eager_left_join(): void
     {
         $this->persistEntitiesForJoinTest();
 
         $this->assertCount(5, $this->repo());
 
-        $results = \iterator_to_array($this->repo()->match(Join::left('relation')->eager()));
+        $results = \iterator_to_array($this->repo()->filter(Join::left('relation')->eager()));
 
         $this->assertCount(5, $results);
         $this->assertQueryCount(0, function() use ($results) {
@@ -234,13 +234,13 @@ final class RepositoryTest extends TestCase
     /**
      * @test
      */
-    public function match_with_join_and_scoped_select(): void
+    public function filter_with_join_and_scoped_select(): void
     {
         $this->persistEntitiesForJoinTest();
 
         $this->assertCount(5, $this->repo());
 
-        $results = \iterator_to_array($this->repo()->match(Join::inner('relation')->scope(
+        $results = \iterator_to_array($this->repo()->filter(Join::inner('relation')->scope(
             Spec::andX(Spec::gt('value', 1), Spec::lt('value', 3))
         )));
 
@@ -253,13 +253,13 @@ final class RepositoryTest extends TestCase
     /**
      * @test
      */
-    public function match_with_join_and_eager_scoped_select(): void
+    public function filter_with_join_and_eager_scoped_select(): void
     {
         $this->persistEntitiesForJoinTest();
 
         $this->assertCount(5, $this->repo());
 
-        $results = \iterator_to_array($this->repo()->match(Join::inner('relation')->eager()->scope(
+        $results = \iterator_to_array($this->repo()->filter(Join::inner('relation')->eager()->scope(
             Spec::andX(Spec::gt('value', 1), Spec::lt('value', 3))
         )));
 
@@ -272,13 +272,13 @@ final class RepositoryTest extends TestCase
     /**
      * @test
      */
-    public function match_with_left_anti_join(): void
+    public function filter_with_left_anti_join(): void
     {
         $this->persistEntitiesForJoinTest();
 
         $this->assertCount(5, $this->repo());
 
-        $results = \iterator_to_array($this->repo()->match(Join::anti('relation')));
+        $results = \iterator_to_array($this->repo()->filter(Join::anti('relation')));
 
         $this->assertCount(2, $results);
     }
@@ -286,13 +286,13 @@ final class RepositoryTest extends TestCase
     /**
      * @test
      */
-    public function match_with_join_and_multiple_scope(): void
+    public function filter_with_join_and_multiple_scope(): void
     {
         $this->persistEntitiesForJoinTest();
 
         $this->assertCount(5, $this->repo());
 
-        $results = $this->repo()->match(
+        $results = $this->repo()->filter(
             Spec::andX(
                 Join::inner('relation')->eager()->scope(Spec::gt('value', 1)),
                 Join::inner('relation')->eager()->scope(Spec::lt('value', 3))
@@ -306,6 +306,38 @@ final class RepositoryTest extends TestCase
         $this->assertQueryCount(0, function() use ($results) {
             $this->assertSame(2, $results[0]->relation->value);
         });
+    }
+
+    /**
+     * @test
+     */
+    public function can_get(): void
+    {
+        $object = $this->createWithItems(3)->get(2);
+
+        $this->assertSame('value 2', $object->value);
+    }
+
+    /**
+     * @test
+     */
+    public function get_fails_if_not_found(): void
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage(\sprintf('"%s" with id "invalid" not found.', Entity::class));
+
+        $this->repo()->get('invalid');
+    }
+
+    /**
+     * @test
+     */
+    public function can_filter(): void
+    {
+        $objects = $this->createWithItems(3)->filter(['id' => 2]);
+
+        $this->assertCount(1, $objects);
+        $this->assertSame('value 2', \iterator_to_array($objects)[0]->value);
     }
 
     protected function createWithItems(int $count): KitchenSinkRepository

@@ -2,7 +2,7 @@
 
 namespace Zenstruck\Collection\Doctrine\ORM\Repository;
 
-use Zenstruck\Collection\Doctrine\ORM\Repository;
+use Zenstruck\Collection\Doctrine\ORM\ObjectRepository;
 
 /**
  * Allows your repository to flush pending changes to the db.
@@ -13,8 +13,8 @@ trait Flushable
 {
     final public function flush(): static
     {
-        if (!$this instanceof Repository) {
-            throw new \BadMethodCallException(\sprintf('"%s" can only be used on instances of "%s".', __TRAIT__, Repository::class));
+        if (!$this instanceof ObjectRepository) {
+            throw new \BadMethodCallException(\sprintf('"%s" can only be used on instances of "%s".', __TRAIT__, ObjectRepository::class));
         }
 
         $this->em()->flush();

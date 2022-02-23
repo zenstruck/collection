@@ -321,16 +321,5 @@ abstract class DoctrineCollectionTest extends TestCase
         $this->assertTrue($this->collection->containsKey('key'));
     }
 
-    protected function fillMatchingFixture(): void
-    {
-        $std1 = new \stdClass();
-        $std1->foo = 'bar';
-        $this->collection[] = $std1;
-
-        $std2 = new \stdClass();
-        $std2->foo = 'baz';
-        $this->collection[] = $std2;
-    }
-
     abstract protected function createWithItems(int $count): DoctrineCollection;
 }
