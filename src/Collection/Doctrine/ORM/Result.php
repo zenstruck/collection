@@ -51,7 +51,7 @@ class Result implements Collection
     /**
      * By default, iterating detaches objects from the entity manager as they are iterated
      * to conserve memory. To change this behaviour, override this method and return
-     * "$this->rawIterator()".
+     * {@see rawIterator()}.
      */
     public function getIterator(): \Traversable
     {
@@ -92,7 +92,7 @@ class Result implements Collection
     /**
      * @return iterable<mixed>
      */
-    private function rawIterator(): iterable
+    final protected function rawIterator(): iterable
     {
         $query = $this->cloneQuery();
 
