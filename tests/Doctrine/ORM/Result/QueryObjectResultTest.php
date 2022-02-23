@@ -10,6 +10,19 @@ use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
  */
 final class QueryObjectResultTest extends ObjectResultTest
 {
+    /**
+     * @test
+     */
+    public function cannot_delete_non_managed_object_results(): void
+    {
+        $this->persistEntities(3);
+
+        $result = new ORMResult($this->em->createQuery(\sprintf('SELECT e.id FROM %s e', Entity::class)));
+
+        $this->expectException(\LogicException::class);
+        $result->delete();
+    }
+
     protected function createWithItems(int $count): ORMResult
     {
         $this->persistEntities($count);

@@ -2,6 +2,8 @@
 
 namespace Zenstruck\Collection\Doctrine\ORM\Result;
 
+use Doctrine\ORM\Mapping\MappingException;
+use Doctrine\ORM\ORMInvalidArgumentException;
 use Zenstruck\Collection\Doctrine\ORM\Result;
 
 /**
@@ -24,7 +26,12 @@ trait Deletable
         $count = 0;
 
         foreach ($this->batchProcess() as $entity) {
-            $this->em()->remove($entity);
+            try {
+                $this->em()->remove($entity);
+            } catch (ORMInvalidArgumentException|MappingException $e) {
+                throw new \LogicException('Can only delete results of the managed object.', 0, $e);
+            }
+
             $callback($entity);
             ++$count;
         }
