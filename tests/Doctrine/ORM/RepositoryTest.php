@@ -166,7 +166,7 @@ final class RepositoryTest extends TestCase
 
         $this->assertCount(5, $this->repo());
 
-        $results = \iterator_to_array($this->repo()->match(Join::inner('relation')));
+        $results = \iterator_to_array($this->repo()->filter(Join::inner('relation')));
 
         $this->assertCount(3, $results);
         $this->assertQueryCount(2, function() use ($results) {
@@ -184,7 +184,7 @@ final class RepositoryTest extends TestCase
 
         $this->assertCount(5, $this->repo());
 
-        $results = \iterator_to_array($this->repo()->match(Join::inner('relation')->eager()));
+        $results = \iterator_to_array($this->repo()->filter(Join::inner('relation')->eager()));
 
         $this->assertCount(3, $results);
         $this->assertQueryCount(0, function() use ($results) {
@@ -202,7 +202,7 @@ final class RepositoryTest extends TestCase
 
         $this->assertCount(5, $this->repo());
 
-        $results = \iterator_to_array($this->repo()->match(Join::left('relation')));
+        $results = \iterator_to_array($this->repo()->filter(Join::left('relation')));
 
         $this->assertCount(5, $results);
         $this->assertQueryCount(2, function() use ($results) {
@@ -221,7 +221,7 @@ final class RepositoryTest extends TestCase
 
         $this->assertCount(5, $this->repo());
 
-        $results = \iterator_to_array($this->repo()->match(Join::left('relation')->eager()));
+        $results = \iterator_to_array($this->repo()->filter(Join::left('relation')->eager()));
 
         $this->assertCount(5, $results);
         $this->assertQueryCount(0, function() use ($results) {
@@ -240,7 +240,7 @@ final class RepositoryTest extends TestCase
 
         $this->assertCount(5, $this->repo());
 
-        $results = \iterator_to_array($this->repo()->match(Join::inner('relation')->scope(
+        $results = \iterator_to_array($this->repo()->filter(Join::inner('relation')->scope(
             Spec::andX(Spec::gt('value', 1), Spec::lt('value', 3))
         )));
 
@@ -259,7 +259,7 @@ final class RepositoryTest extends TestCase
 
         $this->assertCount(5, $this->repo());
 
-        $results = \iterator_to_array($this->repo()->match(Join::inner('relation')->eager()->scope(
+        $results = \iterator_to_array($this->repo()->filter(Join::inner('relation')->eager()->scope(
             Spec::andX(Spec::gt('value', 1), Spec::lt('value', 3))
         )));
 
@@ -278,7 +278,7 @@ final class RepositoryTest extends TestCase
 
         $this->assertCount(5, $this->repo());
 
-        $results = \iterator_to_array($this->repo()->match(Join::anti('relation')));
+        $results = \iterator_to_array($this->repo()->filter(Join::anti('relation')));
 
         $this->assertCount(2, $results);
     }
@@ -292,7 +292,7 @@ final class RepositoryTest extends TestCase
 
         $this->assertCount(5, $this->repo());
 
-        $results = $this->repo()->match(
+        $results = $this->repo()->filter(
             Spec::andX(
                 Join::inner('relation')->eager()->scope(Spec::gt('value', 1)),
                 Join::inner('relation')->eager()->scope(Spec::lt('value', 3))

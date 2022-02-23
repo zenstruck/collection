@@ -32,9 +32,9 @@ assertType('Zenstruck\Collection\PageCollection<User>', $ormRepository->pages())
 assertType('Zenstruck\Collection\Page<User>', $ormRepository->pages()->get(1));
 assertType('Traversable<int, Zenstruck\Collection\Page<User>>', $ormRepository->pages()->getIterator());
 
-assertType('Zenstruck\Collection\Doctrine\ORMResult<User>', $ormRepository->match('spec'));
-assertType('Traversable<int, User>', $ormRepository->match('spec')->getIterator());
-assertType('Zenstruck\Collection\Page<User>', $ormRepository->match('spec')->paginate());
+assertType('Zenstruck\Collection\Doctrine\ORMResult<User>', $ormRepository->filter('spec'));
+assertType('Traversable<int, User>', $ormRepository->filter('spec')->getIterator());
+assertType('Zenstruck\Collection\Page<User>', $ormRepository->filter('spec')->paginate());
 assertType('User', $ormRepository->get('spec'));
 
 assertType('ORMRepository<User>', $ormRepository->flush());
@@ -46,10 +46,10 @@ assertType('ORMRepository<User>', $ormRepository->add(new User));
 assertType('Traversable<int, User>', $dbalRepository->getIterator());
 assertType('Zenstruck\Collection<int, User>', $dbalRepository->take(1, 2));
 
-assertType('Zenstruck\Collection\Doctrine\DBAL\Result<User>', $dbalRepository->match('spec'));
-assertType('Traversable<int, User>', $dbalRepository->match('spec')->getIterator());
-assertType('Zenstruck\Collection\Page<User>', $dbalRepository->match('spec')->paginate());
-assertType('User', $dbalRepository->matchOne('spec'));
+assertType('Zenstruck\Collection\Doctrine\DBAL\Result<User>', $dbalRepository->filter('spec'));
+assertType('Traversable<int, User>', $dbalRepository->filter('spec')->getIterator());
+assertType('Zenstruck\Collection\Page<User>', $dbalRepository->filter('spec')->paginate());
+assertType('User', $dbalRepository->get('spec'));
 
 assertType('Zenstruck\Collection\Page<User>', $dbalRepository->paginate());
 assertType('Traversable<int, User>', $dbalRepository->paginate()->getIterator());

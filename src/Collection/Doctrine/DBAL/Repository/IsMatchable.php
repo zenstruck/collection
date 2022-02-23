@@ -22,7 +22,7 @@ trait IsMatchable
     /**
      * @return Result<V>
      */
-    final public function match(mixed $specification): Result
+    final public function filter(mixed $specification): Result
     {
         if (!$this instanceof Repository) {
             throw new \BadMethodCallException(\sprintf('"%s" can only be used on instances of "%s".', __TRAIT__, Repository::class));
@@ -34,7 +34,7 @@ trait IsMatchable
     /**
      * @return V
      */
-    final public function matchOne(mixed $specification): mixed
+    final public function get(mixed $specification): mixed
     {
         if (!$this instanceof Repository) {
             throw new \BadMethodCallException(\sprintf('"%s" can only be used on instances of "%s".', __TRAIT__, Repository::class));
@@ -47,7 +47,7 @@ trait IsMatchable
         ;
 
         if (!$result) {
-            throw $this->matchNotFoundException($specification);
+            throw $this->createNotFoundException($specification);
         }
 
         return $this instanceof ObjectRepository ? static::createObject($result) : $result;
@@ -68,7 +68,7 @@ trait IsMatchable
     /**
      * Override to provide your own implementation.
      */
-    protected function matchNotFoundException(mixed $specification): \RuntimeException
+    protected function createNotFoundException(mixed $specification): \RuntimeException
     {
         throw new \RuntimeException(\sprintf('Data from "%s" table not found for specification "%s".', static::tableName(), SpecificationInterpreter::stringify($specification)));
     }

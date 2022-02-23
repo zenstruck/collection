@@ -14,16 +14,8 @@ use Zenstruck\Collection\Paginatable;
 abstract class ORMRepository extends BaseORMRepository implements Collection
 {
     /** @use IsMatchable<V,ORMResult> */
-    use IsMatchable { matchOne as private; }
+    use IsMatchable;
 
     /** @use Paginatable<V> */
     use Paginatable;
-
-    /**
-     * @return V
-     */
-    public function get(mixed $specification): object
-    {
-        return $this->matchOne($specification);
-    }
 }
