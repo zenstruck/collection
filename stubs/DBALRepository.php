@@ -3,8 +3,8 @@
 use Zenstruck\Collection;
 use Zenstruck\Collection\Doctrine\DBAL\ObjectRepository;
 use Zenstruck\Collection\Doctrine\DBAL\Repository\IsCollection;
-use Zenstruck\Collection\Doctrine\DBAL\Repository\IsMatchable;
-use Zenstruck\Collection\Matchable;
+use Zenstruck\Collection\Doctrine\DBAL\Repository\IsFilterable;
+use Zenstruck\Collection\Filterable;
 use Zenstruck\Collection\Paginatable;
 
 /**
@@ -13,15 +13,15 @@ use Zenstruck\Collection\Paginatable;
  * @template V
  * @extends ObjectRepository<V>
  * @implements Collection<int,V>
- * @implements Matchable<int,V>
+ * @implements Filterable<int,V>
  */
-abstract class DBALRepository extends ObjectRepository implements Collection, Matchable
+abstract class DBALRepository extends ObjectRepository implements Collection, Filterable
 {
     /** @use IsCollection<V> */
     use IsCollection;
 
-    /** @use IsMatchable<V> */
-    use IsMatchable;
+    /** @use IsFilterable<V> */
+    use IsFilterable;
 
     /** @use Paginatable<V> */
     use Paginatable;

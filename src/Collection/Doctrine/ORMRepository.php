@@ -9,7 +9,7 @@ use Zenstruck\Collection\Doctrine\ORM\Repository\AsEntityRepository;
 use Zenstruck\Collection\Doctrine\ORM\Repository\AsService;
 use Zenstruck\Collection\Doctrine\ORM\Repository\Flushable;
 use Zenstruck\Collection\Doctrine\ORM\Repository\IsCollection;
-use Zenstruck\Collection\Doctrine\ORM\Repository\IsMatchable;
+use Zenstruck\Collection\Doctrine\ORM\Repository\IsFilterable;
 use Zenstruck\Collection\Doctrine\ORM\Repository\Removable;
 use Zenstruck\Collection\Doctrine\ORM\Repository\Writable;
 use Zenstruck\Collection\Paginatable;
@@ -30,7 +30,7 @@ use Zenstruck\Collection\Store;
  *
  * @see AsEntityRepository to add traditional `EntityManager` methods (ie `$repo->findOneBy*()/$repo->findBy*()/$repo->createQueryBuilder()`)
  * @see AsService and implement {@see \Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface} to autowire with Symfony (removes need to implement {@see ObjectRepository::em()})
- * @see IsMatchable to use the specification system
+ * @see IsFilterable to use the specification system
  * @see IsCollection to implement {@see Collection}
  * @see Paginatable to make paginatable (requires {@see IsCollection}/{@see Collection})
  *

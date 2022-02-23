@@ -8,11 +8,11 @@ use Zenstruck\Collection\Doctrine\ORM\Batch\CountableBatchIterator;
 use Zenstruck\Collection\Doctrine\ORM\Batch\CountableBatchProcessor;
 use Zenstruck\Collection\Doctrine\ORM\Specification\Join;
 use Zenstruck\Collection\Spec;
+use Zenstruck\Collection\Tests\Doctrine\FilterableRepositoryTests;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\ManagerRegistryStub;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Relation;
 use Zenstruck\Collection\Tests\Doctrine\HasDatabase;
-use Zenstruck\Collection\Tests\Doctrine\MatchableRepositoryTests;
 use Zenstruck\Collection\Tests\Doctrine\ORM\Fixture\KitchenSinkRepository;
 use Zenstruck\Collection\Tests\PagintableCollectionTests;
 
@@ -21,7 +21,7 @@ use Zenstruck\Collection\Tests\PagintableCollectionTests;
  */
 final class RepositoryTest extends TestCase
 {
-    use HasDatabase, MatchableRepositoryTests, PagintableCollectionTests;
+    use FilterableRepositoryTests, HasDatabase, PagintableCollectionTests;
 
     /**
      * @test
@@ -160,7 +160,7 @@ final class RepositoryTest extends TestCase
     /**
      * @test
      */
-    public function match_with_inner_join(): void
+    public function filter_with_inner_join(): void
     {
         $this->persistEntitiesForJoinTest();
 
@@ -178,7 +178,7 @@ final class RepositoryTest extends TestCase
     /**
      * @test
      */
-    public function match_with_eager_inner_join(): void
+    public function filter_with_eager_inner_join(): void
     {
         $this->persistEntitiesForJoinTest();
 
@@ -196,7 +196,7 @@ final class RepositoryTest extends TestCase
     /**
      * @test
      */
-    public function match_with_left_join(): void
+    public function filter_with_left_join(): void
     {
         $this->persistEntitiesForJoinTest();
 
@@ -215,7 +215,7 @@ final class RepositoryTest extends TestCase
     /**
      * @test
      */
-    public function match_with_eager_left_join(): void
+    public function filter_with_eager_left_join(): void
     {
         $this->persistEntitiesForJoinTest();
 
@@ -234,7 +234,7 @@ final class RepositoryTest extends TestCase
     /**
      * @test
      */
-    public function match_with_join_and_scoped_select(): void
+    public function filter_with_join_and_scoped_select(): void
     {
         $this->persistEntitiesForJoinTest();
 
@@ -253,7 +253,7 @@ final class RepositoryTest extends TestCase
     /**
      * @test
      */
-    public function match_with_join_and_eager_scoped_select(): void
+    public function filter_with_join_and_eager_scoped_select(): void
     {
         $this->persistEntitiesForJoinTest();
 
@@ -272,7 +272,7 @@ final class RepositoryTest extends TestCase
     /**
      * @test
      */
-    public function match_with_left_anti_join(): void
+    public function filter_with_left_anti_join(): void
     {
         $this->persistEntitiesForJoinTest();
 
@@ -286,7 +286,7 @@ final class RepositoryTest extends TestCase
     /**
      * @test
      */
-    public function match_with_join_and_multiple_scope(): void
+    public function filter_with_join_and_multiple_scope(): void
     {
         $this->persistEntitiesForJoinTest();
 

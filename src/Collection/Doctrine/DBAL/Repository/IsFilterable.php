@@ -7,17 +7,18 @@ use Zenstruck\Collection\Doctrine\DBAL\ObjectRepository;
 use Zenstruck\Collection\Doctrine\DBAL\Repository;
 use Zenstruck\Collection\Doctrine\DBAL\Result;
 use Zenstruck\Collection\Doctrine\DBAL\Specification\DBALContext;
+use Zenstruck\Collection\Filterable;
 use Zenstruck\Collection\Specification\Interpreter;
 use Zenstruck\Collection\Specification\SpecificationInterpreter;
 
 /**
- * Enables your repository to implement Zenstruck\Collection\Matchable.
+ * Enables your repository to implement {@see Filterable}.
  *
  * @author Kevin Bond <kevinbond@gmail.com>
  *
  * @template V
  */
-trait IsMatchable
+trait IsFilterable
 {
     /**
      * @return Result<V>

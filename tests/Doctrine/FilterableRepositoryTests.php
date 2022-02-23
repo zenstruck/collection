@@ -9,12 +9,12 @@ use Zenstruck\Collection\Specification\Nested;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-trait MatchableRepositoryTests
+trait FilterableRepositoryTests
 {
     /**
      * @test
      */
-    public function match_and_x_composite(): void
+    public function filter_and_x_composite(): void
     {
         $repo = $this->createWithItems(3);
 
@@ -32,7 +32,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function match_or_x_composite(): void
+    public function filter_or_x_composite(): void
     {
         $objects = $this->createWithItems(3)->filter(
             Spec::orX(
@@ -49,7 +49,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function match_like(): void
+    public function filter_like(): void
     {
         $objects = $this->createWithItems(3)->filter(Spec::like('value', 'value 2'));
 
@@ -60,7 +60,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function match_like_wildcard(): void
+    public function filter_like_wildcard(): void
     {
         $objects = $this->createWithItems(3)->filter(Spec::like('value', 'value *')->allowWildcard());
 
@@ -73,7 +73,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function match_contains(): void
+    public function filter_contains(): void
     {
         $objects = $this->createWithItems(3)->filter(Spec::contains('value', 'value'));
 
@@ -86,7 +86,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function match_begins_with(): void
+    public function filter_begins_with(): void
     {
         $objects = $this->createWithItems(3)->filter(Spec::beginsWith('value', 'v'));
 
@@ -99,7 +99,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function match_ends_with(): void
+    public function filter_ends_with(): void
     {
         $objects = $this->createWithItems(3)->filter(Spec::endsWith('value', '2'));
 
@@ -110,7 +110,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function match_not_like(): void
+    public function filter_not_like(): void
     {
         $objects = $this->createWithItems(3)->filter(Spec::notLike('value', 'value 2'));
 
@@ -122,7 +122,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function match_not_like_wildcard(): void
+    public function filter_not_like_wildcard(): void
     {
         $objects = $this->createWithItems(3)->filter(Spec::notLike('value', 'value *')->allowWildcard());
 
@@ -132,7 +132,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function match_not_contains(): void
+    public function filter_not_contains(): void
     {
         $objects = $this->createWithItems(3)->filter(Spec::notContains('value', 'value'));
 
@@ -142,7 +142,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function match_not_beginning_with(): void
+    public function filter_not_beginning_with(): void
     {
         $objects = $this->createWithItems(3)->filter(Spec::notBeginningWith('value', 'value'));
 
@@ -152,7 +152,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function match_not_ends_with(): void
+    public function filter_not_ends_with(): void
     {
         $objects = $this->createWithItems(3)->filter(Spec::notEndingWith('value', '2'));
 
@@ -164,7 +164,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function match_equal(): void
+    public function filter_equal(): void
     {
         $objects = $this->createWithItems(3)->filter(Spec::eq('value', 'value 2'));
 
@@ -175,7 +175,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function match_not_equal(): void
+    public function filter_not_equal(): void
     {
         $objects = $this->createWithItems(3)->filter(Spec::neq('value', 'value 2'));
 
@@ -187,7 +187,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function match_is_null(): void
+    public function filter_is_null(): void
     {
         $objects = $this->createWithItems(3)->filter(Spec::isNull('value'));
 
@@ -197,7 +197,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function match_is_not_null(): void
+    public function filter_is_not_null(): void
     {
         $objects = $this->createWithItems(3)->filter(Spec::isNotNull('value'));
 
@@ -207,7 +207,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function match_in_string(): void
+    public function filter_in_string(): void
     {
         $objects = $this->createWithItems(3)->filter(Spec::in('value', ['value 1', 'value 3']));
 
@@ -219,7 +219,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function match_in_int(): void
+    public function filter_in_int(): void
     {
         $objects = $this->createWithItems(3)->filter(Spec::in('id', [1, 3]));
 
@@ -231,7 +231,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function match_in_numeric_string(): void
+    public function filter_in_numeric_string(): void
     {
         $objects = $this->createWithItems(3)->filter(Spec::in('id', ['1', '3']));
 
@@ -243,7 +243,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function match_in_mixed_str_field(): void
+    public function filter_in_mixed_str_field(): void
     {
         $objects = $this->createWithItems(3)->filter(Spec::in('value', ['1', 'value 2', 3]));
 
@@ -254,7 +254,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function match_in_mixed_int_field(): void
+    public function filter_in_mixed_int_field(): void
     {
         $objects = $this->createWithItems(3)->filter(Spec::in('id', ['1', 'value 2', 3]));
 
@@ -266,7 +266,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function match_not_in_string(): void
+    public function filter_not_in_string(): void
     {
         $objects = $this->createWithItems(3)->filter(Spec::notIn('value', ['value 1', 'value 3']));
 
@@ -277,7 +277,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function match_not_in_int(): void
+    public function filter_not_in_int(): void
     {
         $objects = $this->createWithItems(3)->filter(Spec::notIn('id', [1, 3]));
 
@@ -288,7 +288,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function match_not_in_numeric_string(): void
+    public function filter_not_in_numeric_string(): void
     {
         $objects = $this->createWithItems(3)->filter(Spec::notIn('id', ['1', '3']));
 
@@ -299,7 +299,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function match_not_in_mixed_str_field(): void
+    public function filter_not_in_mixed_str_field(): void
     {
         $objects = $this->createWithItems(3)->filter(Spec::notIn('value', ['1', 'value 2', 3]));
 
@@ -311,7 +311,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function match_not_in_mixed_int_field(): void
+    public function filter_not_in_mixed_int_field(): void
     {
         $objects = $this->createWithItems(3)->filter(Spec::notIn('id', ['1', 'value 2', 3]));
 
@@ -322,7 +322,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function match_less_than(): void
+    public function filter_less_than(): void
     {
         $objects = $this->createWithItems(3)->filter(Spec::lt('id', 3));
 
@@ -334,7 +334,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function match_less_than_equal(): void
+    public function filter_less_than_equal(): void
     {
         $objects = $this->createWithItems(3)->filter(Spec::lte('id', 2));
 
@@ -346,7 +346,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function match_greater_than(): void
+    public function filter_greater_than(): void
     {
         $objects = $this->createWithItems(3)->filter(Spec::gt('id', 1));
 
@@ -358,7 +358,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function match_greater_than_equal(): void
+    public function filter_greater_than_equal(): void
     {
         $objects = $this->createWithItems(3)->filter(Spec::gte('id', 2));
 
@@ -370,7 +370,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function match_sort_desc(): void
+    public function filter_sort_desc(): void
     {
         $objects = \iterator_to_array($this->createWithItems(3)->filter(Spec::sortDesc('value')));
 
@@ -382,7 +382,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function match_sort_asc(): void
+    public function filter_sort_asc(): void
     {
         $objects = \iterator_to_array($this->createWithItems(3)->filter(Spec::sortAsc('value')));
 
@@ -394,7 +394,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function match_composite_order_by(): void
+    public function filter_composite_order_by(): void
     {
         $objects = \iterator_to_array($this->createWithItems(3)->filter(
             Spec::andX(
@@ -411,7 +411,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function match_one_for_single_comparison(): void
+    public function filter_one_for_single_comparison(): void
     {
         $object = $this->createWithItems(3)->get(Spec::eq('value', 'value 2'));
 
@@ -421,7 +421,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function not_found_exception_found_for_match_one_if_no_result(): void
+    public function not_found_exception_found_for_filter_one_if_no_result(): void
     {
         $this->expectException(\RuntimeException::class);
 
@@ -446,7 +446,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function can_match_for_callback(): void
+    public function can_filter_for_callback(): void
     {
         $object = $this->createWithItems(3)->get(function(Context $context) {
             $context->qb()->where($context->prefixAlias("value = 'value 2'"));
@@ -458,7 +458,7 @@ trait MatchableRepositoryTests
     /**
      * @test
      */
-    public function can_match_for_callable_class(): void
+    public function can_filter_for_callable_class(): void
     {
         $object = $this->createWithItems(3)->get(new class() {
             public function __invoke(Context $context): void

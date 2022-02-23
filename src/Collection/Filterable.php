@@ -10,7 +10,7 @@ use Zenstruck\Collection;
  * @template K
  * @template V
  */
-interface Matchable
+interface Filterable
 {
     /**
      * Filter results that match the "specification".

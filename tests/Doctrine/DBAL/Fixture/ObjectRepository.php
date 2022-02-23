@@ -6,17 +6,17 @@ use Doctrine\DBAL\Connection;
 use Zenstruck\Collection;
 use Zenstruck\Collection\Doctrine\DBAL\ObjectRepository as BaseObjectRepository;
 use Zenstruck\Collection\Doctrine\DBAL\Repository\IsCollection;
-use Zenstruck\Collection\Doctrine\DBAL\Repository\IsMatchable;
-use Zenstruck\Collection\Matchable;
+use Zenstruck\Collection\Doctrine\DBAL\Repository\IsFilterable;
+use Zenstruck\Collection\Filterable;
 use Zenstruck\Collection\Paginatable;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class ObjectRepository extends BaseObjectRepository implements Collection, Matchable
+final class ObjectRepository extends BaseObjectRepository implements Collection, Filterable
 {
-    use IsCollection, IsMatchable, Paginatable;
+    use IsCollection, IsFilterable, Paginatable;
 
     private Connection $connection;
 

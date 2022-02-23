@@ -1,7 +1,7 @@
 <?php
 
 use Zenstruck\Collection;
-use Zenstruck\Collection\Doctrine\ORM\Repository\IsMatchable;
+use Zenstruck\Collection\Doctrine\ORM\Repository\IsFilterable;
 use Zenstruck\Collection\Doctrine\ORMResult;
 use Zenstruck\Collection\Doctrine\ORMRepository as BaseORMRepository;
 use Zenstruck\Collection\Paginatable;
@@ -13,8 +13,8 @@ use Zenstruck\Collection\Paginatable;
  */
 abstract class ORMRepository extends BaseORMRepository implements Collection
 {
-    /** @use IsMatchable<V,ORMResult> */
-    use IsMatchable;
+    /** @use IsFilterable<V,ORMResult> */
+    use IsFilterable;
 
     /** @use Paginatable<V> */
     use Paginatable;
