@@ -2,7 +2,7 @@
 
 namespace Zenstruck\Collection\Doctrine\ORM\Repository;
 
-use Zenstruck\Collection\Doctrine\ORM\Repository;
+use Zenstruck\Collection\Doctrine\ORM\ObjectRepository;
 
 /**
  * Allows your repository to remove objects from the db.
@@ -18,8 +18,8 @@ trait Removable
      */
     final public function remove(mixed $item, bool $flush = true): static
     {
-        if (!$this instanceof Repository) {
-            throw new \BadMethodCallException(\sprintf('"%s" can only be used on instances of "%s".', __TRAIT__, Repository::class));
+        if (!$this instanceof ObjectRepository) {
+            throw new \BadMethodCallException(\sprintf('"%s" can only be used on instances of "%s".', __TRAIT__, ObjectRepository::class));
         }
 
         if (!\is_a($item, $this->getClassName())) {

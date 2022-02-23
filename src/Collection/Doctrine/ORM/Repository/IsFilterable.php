@@ -3,13 +3,11 @@
 namespace Zenstruck\Collection\Doctrine\ORM\Repository;
 
 use Doctrine\ORM\QueryBuilder;
-use Zenstruck\Collection\Doctrine\ORM\Repository;
+use Zenstruck\Collection\Doctrine\ORM\ObjectRepository;
 use Zenstruck\Collection\Doctrine\ORM\Result;
 use Zenstruck\Collection\Doctrine\ORM\Specification\ORMContext;
 use Zenstruck\Collection\Filterable;
-use Zenstruck\Collection\Specification\Filter\Equal;
 use Zenstruck\Collection\Specification\Interpreter;
-use Zenstruck\Collection\Specification\Logic\AndX;
 use Zenstruck\Collection\Specification\SpecificationInterpreter;
 
 /**
@@ -18,28 +16,23 @@ use Zenstruck\Collection\Specification\SpecificationInterpreter;
  * @author Kevin Bond <kevinbond@gmail.com>
  *
  * @template V of object
- * @template R of Result
  */
 trait IsFilterable
 {
     /**
      * @param mixed|array<string,mixed> $specification
      *
-     * @return R<V>
+     * @return Result<V>
      */
     final public function filter(mixed $specification): Result
     {
-        if (!$this instanceof Repository) {
-            throw new \BadMethodCallException(\sprintf('"%s" can only be used on instances of "%s".', __TRAIT__, Repository::class));
+        if (!$this instanceof ObjectRepository) {
+            throw new \BadMethodCallException(\sprintf('"%s" can only be used on instances of "%s".', __TRAIT__, ObjectRepository::class));
         }
 
         if (\is_array($specification) && !array_is_list($specification)) {
             // using standard "criteria"
-            $specification = new AndX(...\array_map(
-                static fn(string $field, mixed $value) => new Equal($field, $value),
-                \array_keys($specification),
-                $specification
-            ));
+            return parent::filter($specification);
         }
 
         return static::createResult($this->qbForSpecification($specification));
@@ -50,8 +43,8 @@ trait IsFilterable
      */
     final public function get(mixed $specification): object
     {
-        if (!$this instanceof Repository) {
-            throw new \BadMethodCallException(\sprintf('"%s" can only be used on instances of "%s".', __TRAIT__, Repository::class));
+        if (!$this instanceof ObjectRepository) {
+            throw new \BadMethodCallException(\sprintf('"%s" can only be used on instances of "%s".', __TRAIT__, ObjectRepository::class));
         }
 
         if (\is_scalar($specification) || (\is_array($specification) && !array_is_list($specification))) {
