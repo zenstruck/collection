@@ -137,7 +137,7 @@ abstract class ResultTest extends TestCase
         $this->assertFalse($this->em->contains($result));
     }
 
-    protected function expectedValueAt(int $position): Entity
+    protected function expectedValueAt(int $position): object
     {
         return new Entity("value {$position}", $position);
     }

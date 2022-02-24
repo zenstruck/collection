@@ -14,6 +14,8 @@ use Zenstruck\Collection\Doctrine\ORM\Result\Deletable;
  *
  * @template V
  * @extends Result<V>
+ *
+ * @method self<ORM\EntityWithAggregates<V>> withAggregates() (https://github.com/phpstan/phpstan/issues/6692)
  */
 class ORMResult extends Result
 {

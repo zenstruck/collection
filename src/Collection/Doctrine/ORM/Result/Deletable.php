@@ -4,6 +4,7 @@ namespace Zenstruck\Collection\Doctrine\ORM\Result;
 
 use Doctrine\ORM\Mapping\MappingException;
 use Doctrine\ORM\ORMInvalidArgumentException;
+use Zenstruck\Collection\Doctrine\ORM\EntityWithAggregates;
 use Zenstruck\Collection\Doctrine\ORM\Result;
 
 /**
@@ -26,6 +27,8 @@ trait Deletable
         $count = 0;
 
         foreach ($this->batchProcess() as $entity) {
+            $entity = $entity instanceof EntityWithAggregates ? $entity->entity() : $entity;
+
             try {
                 $this->em()->remove($entity);
             } catch (ORMInvalidArgumentException|MappingException $e) {
