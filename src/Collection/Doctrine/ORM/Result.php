@@ -10,7 +10,6 @@ use Zenstruck\Collection;
 use Zenstruck\Collection\CallbackCollection;
 use Zenstruck\Collection\Doctrine\ORM\Batch\BatchIterator;
 use Zenstruck\Collection\Doctrine\ORM\Batch\BatchProcessor;
-use Zenstruck\Collection\Doctrine\ORM\Batch\IterableResultDecorator;
 use Zenstruck\Collection\IterableCollection;
 use Zenstruck\Collection\Paginatable;
 
@@ -94,15 +93,7 @@ class Result implements Collection
      */
     final protected function rawIterator(): iterable
     {
-        $query = $this->cloneQuery();
-
-        if (!\method_exists($query, 'toIterable')) {
-            // AbstractQuery::toIterable() was introduced in ORM 2.8 and fixes
-            // the issue IterableResultDecorator solves so it is no longer required.
-            return new IterableResultDecorator($this->cloneQuery()->iterate());
-        }
-
-        return $query->toIterable();
+        return $this->cloneQuery()->toIterable();
     }
 
     /**
