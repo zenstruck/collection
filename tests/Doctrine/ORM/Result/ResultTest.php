@@ -13,7 +13,7 @@ use Zenstruck\Collection\Tests\PagintableCollectionTests;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-abstract class ObjectResultTest extends TestCase
+abstract class ResultTest extends TestCase
 {
     use HasDatabase, PagintableCollectionTests;
 

@@ -8,7 +8,7 @@ use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class QueryBuilderObjectResultTest extends ObjectResultTest
+final class QueryBuilderResultTest extends ResultTest
 {
     protected function createWithItems(int $count): ORMResult
     {

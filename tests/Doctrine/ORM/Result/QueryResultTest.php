@@ -8,7 +8,7 @@ use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class QueryObjectResultTest extends ObjectResultTest
+final class QueryResultTest extends ResultTest
 {
     /**
      * @test
