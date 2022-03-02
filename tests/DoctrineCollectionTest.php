@@ -12,7 +12,7 @@ use Zenstruck\Collection\DoctrineCollection;
  */
 abstract class DoctrineCollectionTest extends TestCase
 {
-    use PagintableCollectionTests;
+    use CollectionTests, PagintableCollectionTests;
 
     private ?DoctrineCollection $collection = null;
 

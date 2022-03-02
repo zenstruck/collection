@@ -38,7 +38,8 @@
         "sort-packages": true
     },
     "autoload": {
-        "psr-4": { "Zenstruck\\": ["src/"] }
+        "psr-4": { "Zenstruck\\": ["src/"] },
+        "files": ["src/functions.php"]
     },
     "autoload-dev": {
         "psr-4": { "Zenstruck\\Collection\\Tests\\": ["tests/"] }

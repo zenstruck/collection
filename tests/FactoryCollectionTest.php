@@ -12,7 +12,7 @@ use Zenstruck\Collection\IterableCollection;
  */
 final class FactoryCollectionTest extends TestCase
 {
-    use PagintableCollectionTests;
+    use CollectionTests, PagintableCollectionTests;
 
     protected function createWithItems(int $count): Collection
     {

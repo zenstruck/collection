@@ -8,6 +8,7 @@ use Zenstruck\Collection\Doctrine\ORM\Batch\CountableBatchIterator;
 use Zenstruck\Collection\Doctrine\ORM\Batch\CountableBatchProcessor;
 use Zenstruck\Collection\Doctrine\ORM\Specification\Join;
 use Zenstruck\Collection\Spec;
+use Zenstruck\Collection\Tests\CollectionTests;
 use Zenstruck\Collection\Tests\Doctrine\FilterableRepositoryTests;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\ManagerRegistryStub;
@@ -21,7 +22,7 @@ use Zenstruck\Collection\Tests\PagintableCollectionTests;
  */
 final class RepositoryTest extends TestCase
 {
-    use FilterableRepositoryTests, HasDatabase, PagintableCollectionTests;
+    use CollectionTests, FilterableRepositoryTests, HasDatabase, PagintableCollectionTests;
 
     /**
      * @test

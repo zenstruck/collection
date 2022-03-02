@@ -7,7 +7,7 @@ use Zenstruck\Collection;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template K
+ * @template K of array-key
  * @template V
  * @implements Collection<K,V>
  */
@@ -37,7 +37,10 @@ final class IterableCollection implements Collection
         $this->source = $source;
     }
 
-    public function take(int $limit, int $offset = 0): Collection
+    /**
+     * @return self<K,V>
+     */
+    public function take(int $limit, int $offset = 0): self
     {
         if (\is_array($source = $this->normalizeSource())) {
             return new self(\array_slice($source, $offset, $limit, true));
@@ -70,6 +73,165 @@ final class IterableCollection implements Collection
                 }
             }
         });
+    }
+
+    /**
+     * @return array<K,V>
+     */
+    public function toArray(): array
+    {
+        if (\is_array($source = $this->normalizeSource())) {
+            return $source;
+        }
+
+        return \iterator_to_array($source);
+    }
+
+    /**
+     * @param callable(V,K):bool $func
+     *
+     * @return self<K,V>
+     */
+    public function filter(callable $func): self
+    {
+        return new self(function() use ($func) {
+            foreach ($this->normalizeSource() as $key => $value) {
+                if ($func($value, $key)) {
+                    yield $key => $value;
+                }
+            }
+        });
+    }
+
+    /**
+     * @param callable(V,K):bool $func
+     *
+     * @return self<K,V>
+     */
+    public function reject(callable $func): self
+    {
+        return $this->filter(fn($value, $key) => !$func($value, $key));
+    }
+
+    /**
+     * @template T of array-key
+     *
+     * @param callable(V,K):T $func
+     *
+     * @return self<T,V>
+     */
+    public function keyBy(callable $func): self
+    {
+        return new self(function() use ($func) {
+            foreach ($this->normalizeSource() as $key => $value) {
+                yield $func($value, $key) => $value;
+            }
+        });
+    }
+
+    /**
+     * @template T
+     *
+     * @param callable(V,K):T $func
+     *
+     * @return self<K,T>
+     */
+    public function map(callable $func): self
+    {
+        return new self(function() use ($func) {
+            foreach ($this->normalizeSource() as $key => $value) {
+                yield $key => $func($value, $key);
+            }
+        });
+    }
+
+    /**
+     * @template T of array-key
+     * @template U
+     *
+     * @param callable(V,K):iterable<T,U> $func
+     *
+     * @return self<T,U>
+     */
+    public function mapWithKeys(callable $func): self
+    {
+        return new self(function() use ($func) {
+            foreach ($this->normalizeSource() as $key => $value) {
+                foreach ($func($value, $key) as $newKey => $newValue) {
+                    yield $newKey => $newValue;
+
+                    continue 2;
+                }
+            }
+        });
+    }
+
+    /**
+     * @template D
+     *
+     * @param D $default
+     *
+     * @return V|D
+     */
+    public function first(mixed $default = null): mixed
+    {
+        foreach ($this as $value) {
+            return $value;
+        }
+
+        return $default;
+    }
+
+    /**
+     * @template D
+     *
+     * @param callable(V,K):bool $filter
+     * @param D                  $default
+     *
+     * @return V|D
+     */
+    public function firstWhere(callable $filter, mixed $default = null): mixed
+    {
+        foreach ($this as $key => $value) {
+            if ($filter($value, $key)) {
+                return $value;
+            }
+        }
+
+        return $default;
+    }
+
+    public function isEmpty(): bool
+    {
+        return 0 === $this->count();
+    }
+
+    /**
+     * @return ArrayCollection<K,V>
+     */
+    public function eager(): ArrayCollection
+    {
+        return new ArrayCollection($this->toArray());
+    }
+
+    /**
+     * @return self<K,V>
+     */
+    public function dump(): self
+    {
+        \function_exists('dump') ? dump($this->toArray()) : \var_dump($this->toArray());
+
+        return $this;
+    }
+
+    /**
+     * @return never
+     */
+    public function dd(): void
+    {
+        $this->dump();
+
+        exit;
     }
 
     public function getIterator(): \Traversable

@@ -4,6 +4,7 @@ namespace Zenstruck\Collection\Tests\Doctrine\DBAL;
 
 use PHPUnit\Framework\TestCase;
 use Zenstruck\Collection;
+use Zenstruck\Collection\Tests\CollectionTests;
 use Zenstruck\Collection\Tests\Doctrine\DBAL\Fixture\Repository;
 use Zenstruck\Collection\Tests\Doctrine\HasDatabase;
 use Zenstruck\Collection\Tests\PagintableCollectionTests;
@@ -13,7 +14,7 @@ use Zenstruck\Collection\Tests\PagintableCollectionTests;
  */
 final class RepositoryTest extends TestCase
 {
-    use HasDatabase, PagintableCollectionTests;
+    use CollectionTests, HasDatabase, PagintableCollectionTests;
 
     protected function createWithItems(int $count): Collection
     {

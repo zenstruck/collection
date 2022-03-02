@@ -4,6 +4,7 @@ namespace Zenstruck\Collection\Tests\Doctrine\ORM\Result;
 
 use PHPUnit\Framework\TestCase;
 use Zenstruck\Collection\Doctrine\ORMResult;
+use Zenstruck\Collection\Tests\CollectionTests;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
 use Zenstruck\Collection\Tests\Doctrine\HasDatabase;
 use Zenstruck\Collection\Tests\PagintableCollectionTests;
@@ -13,7 +14,7 @@ use Zenstruck\Collection\Tests\PagintableCollectionTests;
  */
 final class QueryFieldsResultTest extends TestCase
 {
-    use HasDatabase, PagintableCollectionTests;
+    use CollectionTests, HasDatabase, PagintableCollectionTests;
 
     /**
      * @test

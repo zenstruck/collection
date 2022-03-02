@@ -1,7 +1,17 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Property Zenstruck\\\\Collection\\\\IterableCollection\\<K,V\\>\\:\\:\\$source \\(\\(Closure\\(\\)\\: iterable\\<K, V\\>\\)\\|iterable\\<K, V\\>\\) does not accept \\(callable\\(\\)\\: iterable\\<K, V\\>&Traversable\\<mixed, mixed\\>\\)\\|\\(Closure\\(\\)\\: mixed\\)\\|iterable\\<K, V\\>\\.$#"
+			message: "#^Property Zenstruck\\\\Collection\\\\ArrayCollection\\<K of \\(int\\|string\\),V\\>\\:\\:\\$source \\(array\\<K of \\(int\\|string\\), V\\>\\) does not accept array\\.$#"
+			count: 1
+			path: src/Collection/ArrayCollection.php
+
+		-
+			message: "#^Parameter \\#1 \\$callback of static method Closure\\:\\:fromCallable\\(\\) expects callable\\(\\)\\: mixed, array\\|\\(callable\\(\\)\\: iterable\\<K of \\(int\\|string\\), V\\>\\)\\|\\(callable\\(\\)\\: iterable\\<K of \\(int\\|string\\), V\\>&iterable\\)\\|\\(callable\\(\\)\\: iterable\\<K of \\(int\\|string\\), V\\>&iterable\\<K of \\(int\\|string\\), V\\>\\) given\\.$#"
+			count: 1
+			path: src/Collection/IterableCollection.php
+
+		-
+			message: "#^Property Zenstruck\\\\Collection\\\\IterableCollection\\<K of \\(int\\|string\\),V\\>\\:\\:\\$source \\(\\(Closure\\(\\)\\: iterable\\<K of \\(int\\|string\\), V\\>\\)\\|iterable\\<K of \\(int\\|string\\), V\\>\\) does not accept array\\<K, \\*NEVER\\*&V\\>\\|\\(callable\\(\\)\\: iterable\\<K of \\(int\\|string\\), V\\>&Traversable\\<mixed, mixed\\>\\)\\|\\(Closure\\(\\)\\: mixed\\)\\|iterable\\<K of \\(int\\|string\\), V\\>\\.$#"
 			count: 1
 			path: src/Collection/IterableCollection.php
 

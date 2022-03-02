@@ -7,8 +7,6 @@ namespace Zenstruck\Collection\Tests;
  */
 trait PagintableCollectionTests
 {
-    use CollectionTests;
-
     /**
      * @test
      */
