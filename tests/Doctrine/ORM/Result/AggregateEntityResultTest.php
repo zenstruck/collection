@@ -5,16 +5,12 @@ namespace Zenstruck\Collection\Tests\Doctrine\ORM\Result;
 use Zenstruck\Collection\Doctrine\ORM\EntityWithAggregates;
 use Zenstruck\Collection\Doctrine\ORM\Result;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
-use Zenstruck\Collection\Tests\Doctrine\HasDatabase;
-use Zenstruck\Collection\Tests\PagintableCollectionTests;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class AggregateFieldsResultTest extends ResultTest
+final class AggregateEntityResultTest extends EntityResultTest
 {
-    use HasDatabase, PagintableCollectionTests;
-
     /**
      * @test
      */
