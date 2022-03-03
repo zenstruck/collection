@@ -164,6 +164,9 @@ final class Result implements Collection
      */
     public function asScalar(): self
     {
+        $this->query->setHydrationMode(Query::HYDRATE_SCALAR_COLUMN);
+        $this->useOutputWalkers = false;
+
         return $this;
     }
 
@@ -172,6 +175,8 @@ final class Result implements Collection
      */
     public function asInt(): self
     {
+        $this->asScalar();
+
         return $this;
     }
 
@@ -180,6 +185,8 @@ final class Result implements Collection
      */
     public function asFloat(): self
     {
+        $this->asScalar();
+
         return $this;
     }
 
@@ -188,6 +195,8 @@ final class Result implements Collection
      */
     public function asString(): self
     {
+        $this->asScalar();
+
         return $this;
     }
 
@@ -196,6 +205,8 @@ final class Result implements Collection
      */
     public function asArray(): self
     {
+        $this->query->setHydrationMode(Query::HYDRATE_ARRAY);
+
         return $this;
     }
 
@@ -226,9 +237,9 @@ final class Result implements Collection
      */
     private function rawIterator(): iterable
     {
-        if (!$this->hasAggregates) {
+        if (!$this->hasAggregates && Query::HYDRATE_SCALAR_COLUMN !== $this->query->getHydrationMode()) {
             try {
-                yield from $this->cloneQuery()->toIterable();
+                yield from $this->cloneQuery()->toIterable([], $this->query->getHydrationMode());
             } catch (QueryException $e) {
                 if ($e->getMessage() === QueryException::iterateWithMixedResultNotAllowed()->getMessage()) {
                     throw new \LogicException(\sprintf('Results contain aggregate fields, call %s::withAggregates().', self::class), 0, $e);

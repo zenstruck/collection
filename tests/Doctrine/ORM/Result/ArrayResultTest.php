@@ -3,6 +3,7 @@
 namespace Zenstruck\Collection\Tests\Doctrine\ORM\Result;
 
 use Zenstruck\Collection\Doctrine\ORM\Result;
+use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
 use Zenstruck\Collection\Tests\Doctrine\ORM\ResultTest;
 
 /**
@@ -10,13 +11,18 @@ use Zenstruck\Collection\Tests\Doctrine\ORM\ResultTest;
  */
 final class ArrayResultTest extends ResultTest
 {
-    protected function setUp(): void
+    protected function expectedValueAt(int $position): array
     {
-        $this->markTestIncomplete();
+        return [
+            'id' => $position,
+            'value' => 'value '.$position,
+        ];
     }
 
     protected function createWithItems(int $count): Result
     {
-        // TODO: Implement createWithItems() method.
+        $this->persistEntities($count);
+
+        return (new Result($this->em->createQueryBuilder()->select('e')->from(Entity::class, 'e')))->asArray();
     }
 }

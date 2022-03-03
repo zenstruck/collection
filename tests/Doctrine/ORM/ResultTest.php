@@ -35,5 +35,13 @@ abstract class ResultTest extends TestCase
         $this->assertSame('default', $results->first('default'));
     }
 
+    /**
+     * @test
+     */
+    public function ensure_type_matches(): void
+    {
+        $this->markTestIncomplete();
+    }
+
     abstract protected function createWithItems(int $count): Result;
 }
