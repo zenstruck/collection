@@ -41,6 +41,7 @@ return $config
         'phpdoc_to_comment' => false,
         'function_declaration' => ['closure_function_spacing' => 'none'],
         'nullable_type_declaration_for_default_null_value' => true,
+        'phpdoc_types_order' => ['null_adjustment' => 'none', 'sort_algorithm' => 'none'],
     ])
     ->setRiskyAllowed(true)
     ->setFinder($finder)

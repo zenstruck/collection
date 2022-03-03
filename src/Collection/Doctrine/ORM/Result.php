@@ -3,6 +3,8 @@
 namespace Zenstruck\Collection\Doctrine\ORM;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\MappingException;
+use Doctrine\ORM\ORMInvalidArgumentException;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\QueryException;
 use Doctrine\ORM\QueryBuilder;
@@ -21,7 +23,7 @@ use Zenstruck\Collection\Paginatable;
  * @template V
  * @implements Collection<int,V>
  */
-class Result implements Collection
+final class Result implements Collection
 {
     /** @use Paginatable<V> */
     use Paginatable;
@@ -32,7 +34,7 @@ class Result implements Collection
     private ?int $count = null;
     private bool $hasAggregates = false;
 
-    final public function __construct(Query|QueryBuilder $query, bool $fetchCollection = true, ?bool $useOutputWalkers = null)
+    public function __construct(Query|QueryBuilder $query, bool $fetchCollection = true, ?bool $useOutputWalkers = null)
     {
         if ($query instanceof QueryBuilder) {
             $query = $query->getQuery();
@@ -43,7 +45,7 @@ class Result implements Collection
         $this->useOutputWalkers = $useOutputWalkers;
     }
 
-    final public function take(int $limit, int $offset = 0): Collection
+    public function take(int $limit, int $offset = 0): Collection
     {
         $collection = new IterableCollection(
             fn() => \iterator_to_array($this->paginatorFor($this->cloneQuery()->setFirstResult($offset)->setMaxResults($limit)))
@@ -55,7 +57,7 @@ class Result implements Collection
 
         return new FactoryCollection($collection, function(mixed $result): EntityWithAggregates {
             if (!\is_array($result) || !isset($result[0]) || !\is_object($result[0])) {
-                throw new \LogicException(\sprintf('Results does not contain aggregate fields, do not call %s::withAggregates().', static::class));
+                throw new \LogicException(\sprintf('Results does not contain aggregate fields, do not call %s::withAggregates().', self::class));
             }
 
             $entity = $result[0];
@@ -79,7 +81,7 @@ class Result implements Collection
     /**
      * @return \Traversable<int,V>
      */
-    final public function batch(int $chunkSize = 100): \Traversable
+    public function batch(int $chunkSize = 100): \Traversable
     {
         return BatchIterator::for($this->callbackCollection(), $this->em(), $chunkSize);
     }
@@ -87,12 +89,43 @@ class Result implements Collection
     /**
      * @return \Traversable<int,V>
      */
-    final public function batchProcess(int $chunkSize = 100): \Traversable
+    public function batchProcess(int $chunkSize = 100): \Traversable
     {
         return BatchProcessor::for($this->callbackCollection(), $this->em(), $chunkSize);
     }
 
-    final public function count(): int
+    /**
+     * Delete the current result set from the database.
+     *
+     * @param null|callable(object):void $callback
+     */
+    public function delete(?callable $callback = null): int
+    {
+        $count = 0;
+
+        foreach ($this->batchProcess() as $entity) {
+            $entity = $entity instanceof EntityWithAggregates ? $entity->entity() : $entity;
+
+            try {
+                $this->em()->remove($entity);
+            } catch (ORMInvalidArgumentException|MappingException $e) {
+                throw new \LogicException('Can only delete results of the managed object.', 0, $e);
+            }
+
+            if ($callback) {
+                $callback($entity);
+            }
+
+            ++$count;
+        }
+
+        // reset the cached count for the result set
+        $this->count = null;
+
+        return $count;
+    }
+
+    public function count(): int
     {
         return $this->count ??= $this->paginatorFor($this->cloneQuery())->count();
     }
@@ -108,38 +141,31 @@ class Result implements Collection
      * results directly chunk the results into groups of 20. Each
      * chunk requires additional queries.
      *
-     * @todo can this be detected from the query and done automatically?
-     *
-     * @return $this<EntityWithAggregates<V>> (https://github.com/phpstan/phpstan/issues/6692)
+     * @return self<EntityWithAggregates<V>>
      */
-    final public function withAggregates(): static
+    public function withAggregates(): self
     {
         $this->hasAggregates = true;
 
         return $this;
     }
 
-    final protected function em(): EntityManagerInterface
+    private function em(): EntityManagerInterface
     {
         return $this->query->getEntityManager();
-    }
-
-    final protected function resetCount(): void
-    {
-        $this->count = null;
     }
 
     /**
      * @return iterable<mixed>
      */
-    final protected function rawIterator(): iterable
+    private function rawIterator(): iterable
     {
         if (!$this->hasAggregates) {
             try {
                 yield from $this->cloneQuery()->toIterable();
             } catch (QueryException $e) {
                 if ($e->getMessage() === QueryException::iterateWithMixedResultNotAllowed()->getMessage()) {
-                    throw new \LogicException(\sprintf('Results contain aggregate fields, call %s::withAggregates().', static::class), 0, $e);
+                    throw new \LogicException(\sprintf('Results contain aggregate fields, call %s::withAggregates().', self::class), 0, $e);
                 }
 
                 throw $e;

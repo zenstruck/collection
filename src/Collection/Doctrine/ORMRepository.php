@@ -2,7 +2,6 @@
 
 namespace Zenstruck\Collection\Doctrine;
 
-use Doctrine\ORM\QueryBuilder;
 use Zenstruck\Collection;
 use Zenstruck\Collection\Doctrine\ORM\ObjectRepository;
 use Zenstruck\Collection\Doctrine\ORM\Repository\AsEntityRepository;
@@ -47,12 +46,4 @@ abstract class ORMRepository extends ObjectRepository implements Store
      * @use Writable<V>
      */
     use Flushable, Removable, Writable;
-
-    /**
-     * @return ORMResult<V>
-     */
-    protected static function createResult(QueryBuilder $qb, bool $fetchCollection = true, ?bool $useOutputWalkers = null): ORMResult
-    {
-        return new ORMResult($qb, $fetchCollection, $useOutputWalkers);
-    }
 }

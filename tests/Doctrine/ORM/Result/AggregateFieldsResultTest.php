@@ -3,7 +3,7 @@
 namespace Zenstruck\Collection\Tests\Doctrine\ORM\Result;
 
 use Zenstruck\Collection\Doctrine\ORM\EntityWithAggregates;
-use Zenstruck\Collection\Doctrine\ORMResult;
+use Zenstruck\Collection\Doctrine\ORM\Result;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
 use Zenstruck\Collection\Tests\Doctrine\HasDatabase;
 use Zenstruck\Collection\Tests\PagintableCollectionTests;
@@ -93,12 +93,12 @@ final class AggregateFieldsResultTest extends ResultTest
     {
         $this->persistEntities(3);
 
-        $result = (new ORMResult($this->em->createQuery(\sprintf('SELECT e FROM %s e', Entity::class))))
+        $result = (new Result($this->em->createQuery(\sprintf('SELECT e FROM %s e', Entity::class))))
             ->withAggregates()
         ;
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage(\sprintf('Results does not contain aggregate fields, do not call %s::withAggregates().', ORMResult::class));
+        $this->expectExceptionMessage(\sprintf('Results does not contain aggregate fields, do not call %s::withAggregates().', Result::class));
 
         \iterator_to_array($result);
     }
@@ -110,12 +110,12 @@ final class AggregateFieldsResultTest extends ResultTest
     {
         $this->persistEntities(3);
 
-        $result = (new ORMResult($this->em->createQuery(\sprintf('SELECT e FROM %s e', Entity::class))))
+        $result = (new Result($this->em->createQuery(\sprintf('SELECT e FROM %s e', Entity::class))))
             ->withAggregates()
         ;
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage(\sprintf('Results does not contain aggregate fields, do not call %s::withAggregates().', ORMResult::class));
+        $this->expectExceptionMessage(\sprintf('Results does not contain aggregate fields, do not call %s::withAggregates().', Result::class));
 
         \iterator_to_array($result->paginate());
     }
@@ -127,10 +127,10 @@ final class AggregateFieldsResultTest extends ResultTest
     {
         $this->persistEntities(3);
 
-        $result = new ORMResult($this->em->createQuery(\sprintf('SELECT e, UPPER(e.value) AS extra FROM %s e', Entity::class)));
+        $result = new Result($this->em->createQuery(\sprintf('SELECT e, UPPER(e.value) AS extra FROM %s e', Entity::class)));
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage(\sprintf('Results contain aggregate fields, call %s::withAggregates().', ORMResult::class));
+        $this->expectExceptionMessage(\sprintf('Results contain aggregate fields, call %s::withAggregates().', Result::class));
 
         \iterator_to_array($result);
     }
@@ -144,21 +144,21 @@ final class AggregateFieldsResultTest extends ResultTest
 
         $this->persistEntities(3);
 
-        $result = new ORMResult($this->em->createQuery(\sprintf('SELECT e, UPPER(e.value) AS extra FROM %s e', Entity::class)));
+        $result = new Result($this->em->createQuery(\sprintf('SELECT e, UPPER(e.value) AS extra FROM %s e', Entity::class)));
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage(\sprintf('Results contain aggregate fields, call %s::withAggregates().', ORMResult::class));
+        $this->expectExceptionMessage(\sprintf('Results contain aggregate fields, call %s::withAggregates().', Result::class));
 
         \iterator_to_array($result->paginate());
     }
 
-    protected function createWithItems(int $count): ORMResult
+    protected function createWithItems(int $count): Result
     {
         $this->persistEntities($count);
 
         $query = $this->em->createQuery(\sprintf('SELECT e, UPPER(e.value) AS extra FROM %s e', Entity::class));
 
-        return (new ORMResult($query))->withAggregates();
+        return (new Result($query))->withAggregates();
     }
 
     /**

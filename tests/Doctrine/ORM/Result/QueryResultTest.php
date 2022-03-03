@@ -2,7 +2,7 @@
 
 namespace Zenstruck\Collection\Tests\Doctrine\ORM\Result;
 
-use Zenstruck\Collection\Doctrine\ORMResult;
+use Zenstruck\Collection\Doctrine\ORM\Result;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
 
 /**
@@ -17,16 +17,16 @@ final class QueryResultTest extends ResultTest
     {
         $this->persistEntities(3);
 
-        $result = new ORMResult($this->em->createQuery(\sprintf('SELECT e.id FROM %s e', Entity::class)));
+        $result = new Result($this->em->createQuery(\sprintf('SELECT e.id FROM %s e', Entity::class)));
 
         $this->expectException(\LogicException::class);
         $result->delete();
     }
 
-    protected function createWithItems(int $count): ORMResult
+    protected function createWithItems(int $count): Result
     {
         $this->persistEntities($count);
 
-        return new ORMResult($this->em->createQuery(\sprintf('SELECT e FROM %s e', Entity::class)));
+        return new Result($this->em->createQuery(\sprintf('SELECT e FROM %s e', Entity::class)));
     }
 }

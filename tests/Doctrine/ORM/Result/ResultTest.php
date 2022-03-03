@@ -5,7 +5,7 @@ namespace Zenstruck\Collection\Tests\Doctrine\ORM\Result;
 use PHPUnit\Framework\TestCase;
 use Zenstruck\Collection\Doctrine\ORM\Batch\CountableBatchIterator;
 use Zenstruck\Collection\Doctrine\ORM\Batch\CountableBatchProcessor;
-use Zenstruck\Collection\Doctrine\ORMResult;
+use Zenstruck\Collection\Doctrine\ORM\Result;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
 use Zenstruck\Collection\Tests\Doctrine\HasDatabase;
 use Zenstruck\Collection\Tests\PagintableCollectionTests;
@@ -142,5 +142,5 @@ abstract class ResultTest extends TestCase
         return new Entity("value {$position}", $position);
     }
 
-    abstract protected function createWithItems(int $count): ORMResult;
+    abstract protected function createWithItems(int $count): Result;
 }

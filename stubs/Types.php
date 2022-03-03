@@ -32,9 +32,9 @@ assertType('Zenstruck\Collection\PageCollection<User>', $ormRepository->pages())
 assertType('Zenstruck\Collection\Page<User>', $ormRepository->pages()->get(1));
 assertType('Traversable<int, Zenstruck\Collection\Page<User>>', $ormRepository->pages()->getIterator());
 
-assertType('Zenstruck\Collection\Doctrine\ORMResult<User>', $ormRepository->filter('spec'));
+assertType('Zenstruck\Collection\Doctrine\ORM\Result<User>', $ormRepository->filter('spec'));
 // todo https://github.com/phpstan/phpstan/issues/6692
-assertType('Zenstruck\Collection\Doctrine\ORMResult<Zenstruck\Collection\Doctrine\ORM\EntityWithAggregates<User>>', $ormRepository->filter('spec')->withAggregates());
+assertType('Zenstruck\Collection\Doctrine\ORM\Result<Zenstruck\Collection\Doctrine\ORM\EntityWithAggregates<User>>', $ormRepository->filter('spec')->withAggregates());
 assertType('Traversable<int, User>', $ormRepository->filter('spec')->getIterator());
 assertType('Zenstruck\Collection\Page<User>', $ormRepository->filter('spec')->paginate());
 assertType('User', $ormRepository->get('spec'));

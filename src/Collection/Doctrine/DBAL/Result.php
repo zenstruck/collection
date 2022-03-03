@@ -25,7 +25,7 @@ class Result implements Collection
     private ?int $count = null;
 
     /**
-     * @param callable(QueryBuilder):QueryBuilder|null $countModifier
+     * @param null|callable(QueryBuilder):QueryBuilder $countModifier
      */
     public function __construct(QueryBuilder $qb, ?callable $countModifier = null)
     {
