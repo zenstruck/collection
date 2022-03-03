@@ -33,8 +33,19 @@ assertType('Zenstruck\Collection\Page<User>', $ormRepository->pages()->get(1));
 assertType('Traversable<int, Zenstruck\Collection\Page<User>>', $ormRepository->pages()->getIterator());
 
 assertType('Zenstruck\Collection\Doctrine\ORM\Result<User>', $ormRepository->filter('spec'));
-// todo https://github.com/phpstan/phpstan/issues/6692
+assertType('User|null', $ormRepository->filter('spec')->first());
+assertType('Zenstruck\Collection\Doctrine\ORM\Result<bool|float|int|string>', $ormRepository->filter('spec')->asScalar());
+assertType('bool|float|int|string|null', $ormRepository->filter('spec')->asScalar()->first());
+assertType('Zenstruck\Collection\Doctrine\ORM\Result<float>', $ormRepository->filter('spec')->asFloat());
+assertType('float|null', $ormRepository->filter('spec')->asFloat()->first());
+assertType('Zenstruck\Collection\Doctrine\ORM\Result<int>', $ormRepository->filter('spec')->asInt());
+assertType('int|null', $ormRepository->filter('spec')->asInt()->first());
+assertType('Zenstruck\Collection\Doctrine\ORM\Result<string>', $ormRepository->filter('spec')->asString());
+assertType('string|null', $ormRepository->filter('spec')->asString()->first());
+assertType('Zenstruck\Collection\Doctrine\ORM\Result<array>', $ormRepository->filter('spec')->asArray());
+assertType('array|null', $ormRepository->filter('spec')->asArray()->first());
 assertType('Zenstruck\Collection\Doctrine\ORM\Result<Zenstruck\Collection\Doctrine\ORM\EntityWithAggregates<User>>', $ormRepository->filter('spec')->withAggregates());
+assertType('Zenstruck\Collection\Doctrine\ORM\EntityWithAggregates<User>|null', $ormRepository->filter('spec')->withAggregates()->first());
 assertType('Traversable<int, User>', $ormRepository->filter('spec')->getIterator());
 assertType('Zenstruck\Collection\Page<User>', $ormRepository->filter('spec')->paginate());
 assertType('User', $ormRepository->get('spec'));

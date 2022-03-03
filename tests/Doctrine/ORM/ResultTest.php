@@ -14,5 +14,21 @@ abstract class ResultTest extends TestCase
 {
     use HasDatabase, PagintableCollectionTests;
 
+    /**
+     * @test
+     */
+    public function can_get_first_result(): void
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @test
+     */
+    public function first_returns_default_if_none(): void
+    {
+        $this->markTestIncomplete();
+    }
+
     abstract protected function createWithItems(int $count): Result;
 }

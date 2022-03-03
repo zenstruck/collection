@@ -45,6 +45,19 @@ final class Result implements Collection
         $this->useOutputWalkers = $useOutputWalkers;
     }
 
+    /**
+     * @template D
+     *
+     * @param D $default
+     *
+     * @return V|D
+     */
+    public function first(mixed $default = null): mixed
+    {
+        // todo
+        return $this->cloneQuery()->setMaxResults(1)->getSingleResult() ?? $default;
+    }
+
     public function take(int $limit, int $offset = 0): Collection
     {
         $collection = new IterableCollection(
@@ -141,12 +154,52 @@ final class Result implements Collection
      * results directly chunk the results into groups of 20. Each
      * chunk requires additional queries.
      *
-     * @return self<EntityWithAggregates<V>>
+     * @return self<EntityWithAggregates<V&object>>
      */
     public function withAggregates(): self
     {
         $this->hasAggregates = true;
 
+        return $this;
+    }
+
+    /**
+     * @return self<scalar>
+     */
+    public function asScalar(): self
+    {
+        return $this;
+    }
+
+    /**
+     * @return self<int>
+     */
+    public function asInt(): self
+    {
+        return $this;
+    }
+
+    /**
+     * @return self<float>
+     */
+    public function asFloat(): self
+    {
+        return $this;
+    }
+
+    /**
+     * @return self<string>
+     */
+    public function asString(): self
+    {
+        return $this;
+    }
+
+    /**
+     * @return self<mixed[]>
+     */
+    public function asArray(): self
+    {
         return $this;
     }
 
