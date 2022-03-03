@@ -4,6 +4,7 @@ namespace Zenstruck\Collection\Doctrine\ORM;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\MappingException;
+use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\QueryException;
@@ -54,8 +55,11 @@ final class Result implements Collection
      */
     public function first(mixed $default = null): mixed
     {
-        // todo
-        return $this->cloneQuery()->setMaxResults(1)->getSingleResult() ?? $default;
+        try {
+            return $this->normalizeResult($this->cloneQuery()->setMaxResults(1)->getSingleResult());
+        } catch (NoResultException) {
+            return $default;
+        }
     }
 
     public function take(int $limit, int $offset = 0): Collection
@@ -69,15 +73,7 @@ final class Result implements Collection
         }
 
         return new FactoryCollection($collection, function(mixed $result): EntityWithAggregates {
-            if (!\is_array($result) || !isset($result[0]) || !\is_object($result[0])) {
-                throw new \LogicException(\sprintf('Results does not contain aggregate fields, do not call %s::withAggregates().', self::class));
-            }
-
-            $entity = $result[0];
-
-            unset($result[0]);
-
-            return new EntityWithAggregates($entity, $result);
+            return $this->normalizeResult($result);
         });
     }
 
@@ -201,6 +197,23 @@ final class Result implements Collection
     public function asArray(): self
     {
         return $this;
+    }
+
+    private function normalizeResult(mixed $result): mixed
+    {
+        if (!$this->hasAggregates) {
+            return $result;
+        }
+
+        if (!\is_array($result) || !isset($result[0]) || !\is_object($result[0])) {
+            throw new \LogicException(\sprintf('Results does not contain aggregate fields, do not call %s::withAggregates().', self::class));
+        }
+
+        $entity = $result[0];
+
+        unset($result[0]);
+
+        return new EntityWithAggregates($entity, $result);
     }
 
     private function em(): EntityManagerInterface
