@@ -34,6 +34,7 @@ final class IterableCollection implements Collection
             $source = \Closure::fromCallable($source);
         }
 
+        /** @var \Closure():iterable<K,V>|iterable<K,V> $source */
         $this->source = $source;
     }
 
