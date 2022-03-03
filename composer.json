@@ -20,7 +20,7 @@
         "doctrine/annotations": "^1.11",
         "doctrine/collections": "^1.6",
         "doctrine/dbal": "^2.12|^3.0",
-        "doctrine/orm": "^2.8.2",
+        "doctrine/orm": "^2.10",
         "pagerfanta/pagerfanta": "^1.0|^2.0|^3.0",
         "phpstan/phpstan": "^1.4",
         "phpunit/phpunit": "^9.5.0",
@@ -29,7 +29,7 @@
         "symfony/var-dumper": "^4.4|^5.0|^6.0"
     },
     "suggest": {
-        "doctrine/orm": "To use ORM implementation and batch utilities (>=2.8.2).",
+        "doctrine/orm": "To use ORM implementation and batch utilities (>=2.10).",
         "doctrine/dbal": "To use DBAL implementation.",
         "doctrine/collections": "To use CollectionDecorator.",
         "pagerfanta/pagerfanta": "To use CollectionAdapter."
