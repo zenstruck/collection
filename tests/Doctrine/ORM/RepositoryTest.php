@@ -10,7 +10,6 @@ use Zenstruck\Collection\Doctrine\ORM\Specification\Join;
 use Zenstruck\Collection\Spec;
 use Zenstruck\Collection\Tests\Doctrine\FilterableRepositoryTests;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
-use Zenstruck\Collection\Tests\Doctrine\Fixture\ManagerRegistryStub;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Relation;
 use Zenstruck\Collection\Tests\Doctrine\HasDatabase;
 use Zenstruck\Collection\Tests\Doctrine\ORM\Fixture\KitchenSinkRepository;
@@ -354,10 +353,7 @@ final class RepositoryTest extends TestCase
 
     protected function repo(): KitchenSinkRepository
     {
-        $repo = new KitchenSinkRepository();
-        $repo->setManagerRegistry(new ManagerRegistryStub($this->em));
-
-        return $repo;
+        return new KitchenSinkRepository($this->em);
     }
 
     private function persistEntitiesForJoinTest(): void

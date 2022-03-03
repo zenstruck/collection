@@ -22,8 +22,8 @@ assertType('Traversable<int, User>', $ormRepository->batch());
 assertType('Traversable<int, User>', $ormRepository->batchProcess());
 
 assertType('User|null', $ormRepository->find(1));
-assertType('array<User>', $ormRepository->findAll());
-assertType('array<User>', $ormRepository->findBy([]));
+assertType('array<int, User>', $ormRepository->findAll());
+assertType('array<int, User>', $ormRepository->findBy([]));
 assertType('User|null', $ormRepository->findOneBy([]));
 
 assertType('Zenstruck\Collection\Page<User>', $ormRepository->paginate());
