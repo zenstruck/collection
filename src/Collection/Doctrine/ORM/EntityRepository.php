@@ -116,9 +116,9 @@ class EntityRepository extends BaseEntityRepository implements \IteratorAggregat
     /**
      * @return Result<V>
      */
-    final protected static function createResult(QueryBuilder $qb, bool $fetchCollection = true, ?bool $useOutputWalkers = null): Result
+    final protected static function createResult(QueryBuilder $qb): Result
     {
-        return new Result($qb, $fetchCollection, $useOutputWalkers);
+        return new Result($qb);
     }
 
     /**

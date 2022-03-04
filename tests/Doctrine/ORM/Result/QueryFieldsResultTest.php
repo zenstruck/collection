@@ -37,7 +37,7 @@ final class QueryFieldsResultTest extends ResultTest
 
         $query = $this->em->createQuery(\sprintf('SELECT e.id, e.value AS my_value FROM %s e', Entity::class));
 
-        return new Result($query, true, false);
+        return (new Result($query))->asArray();
     }
 
     protected function expectedValueAt(int $position): array

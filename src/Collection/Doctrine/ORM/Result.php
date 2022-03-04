@@ -30,20 +30,17 @@ final class Result implements Collection
     use Paginatable;
 
     private Query $query;
-    private bool $fetchCollection;
-    private ?bool $useOutputWalkers;
+    private ?bool $useOutputWalkers = null;
     private ?int $count = null;
     private bool $hasAggregates = false;
 
-    public function __construct(Query|QueryBuilder $query, bool $fetchCollection = true, ?bool $useOutputWalkers = null)
+    public function __construct(Query|QueryBuilder $query)
     {
         if ($query instanceof QueryBuilder) {
             $query = $query->getQuery();
         }
 
         $this->query = $query;
-        $this->fetchCollection = $fetchCollection;
-        $this->useOutputWalkers = $useOutputWalkers;
     }
 
     /**
@@ -206,6 +203,7 @@ final class Result implements Collection
     public function asArray(): self
     {
         $this->query->setHydrationMode(Query::HYDRATE_ARRAY);
+        $this->useOutputWalkers = false;
 
         return $this;
     }
@@ -269,7 +267,7 @@ final class Result implements Collection
      */
     private function paginatorFor(Query $query): Paginator
     {
-        return (new Paginator($query, $this->fetchCollection))->setUseOutputWalkers($this->useOutputWalkers);
+        return (new Paginator($query))->setUseOutputWalkers($this->useOutputWalkers);
     }
 
     private function cloneQuery(): Query
