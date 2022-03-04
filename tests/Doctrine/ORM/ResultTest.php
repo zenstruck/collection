@@ -46,12 +46,14 @@ abstract class ResultTest extends TestCase
         if (\is_object($expected)) {
             $this->assertEquals($this->expectedValueAt(1), $results->first());
             $this->assertEquals([$expected], \iterator_to_array($results));
+            $this->assertEquals([$expected], $results->toArray());
 
             return;
         }
 
         $this->assertSame($this->expectedValueAt(1), $results->first());
         $this->assertSame([$expected], \iterator_to_array($results));
+        $this->assertSame([$expected], $results->toArray());
     }
 
     abstract protected function createWithItems(int $count): Result;

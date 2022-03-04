@@ -233,6 +233,18 @@ final class Result implements Collection
         return $this;
     }
 
+    /**
+     * @return array<int,V>
+     */
+    public function toArray(): array
+    {
+        if ($this->resultNormalizer) {
+            return \array_map([$this, 'normalizeResult'], $this->query->execute());
+        }
+
+        return $this->query->execute();
+    }
+
     private function normalizeResult(mixed $result): mixed
     {
         if (!$this->resultNormalizer) {
