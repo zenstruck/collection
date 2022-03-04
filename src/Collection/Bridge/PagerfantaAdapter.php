@@ -8,7 +8,7 @@ use Zenstruck\Collection;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template K
+ * @template K of array-key
  * @template V
  * @implements AdapterInterface<V>
  */

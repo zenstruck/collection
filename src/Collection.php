@@ -5,7 +5,7 @@ namespace Zenstruck;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template K
+ * @template K of array-key
  * @template V
  * @extends \IteratorAggregate<K,V>
  */

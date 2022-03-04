@@ -7,7 +7,7 @@ use Zenstruck\Collection;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template K
+ * @template K of array-key
  * @template V
  * @implements Collection<K,V>
  */
@@ -16,11 +16,11 @@ final class IterableCollection implements Collection
     /** @use Paginatable<V> */
     use Paginatable;
 
-    /** @var \Closure():iterable<K,V>|iterable<K,V> */
+    /** @var iterable<K,V>|\Closure():iterable<K,V> */
     private \Closure|iterable $source;
 
     /**
-     * @param iterable<K,V>|callable():iterable<K,V>|null $source
+     * @param null|iterable<K,V>|callable():iterable<K,V> $source
      */
     public function __construct(iterable|callable|null $source = null)
     {
@@ -31,10 +31,9 @@ final class IterableCollection implements Collection
         }
 
         if (\is_callable($source) && (!\is_iterable($source) || \is_array($source))) {
-            $source = \Closure::fromCallable($source);
+            $source = $source instanceof \Closure ? $source : \Closure::fromCallable($source);
         }
 
-        /** @var \Closure():iterable<K,V>|iterable<K,V> $source */
         $this->source = $source;
     }
 
