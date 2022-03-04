@@ -32,7 +32,7 @@ final class Result implements Collection
     private Query $query;
     private ?bool $useOutputWalkers = null;
     private ?int $count = null;
-    private bool $hasAggregates = false;
+    private ?\Closure $resultNormalizer = null;
 
     public function __construct(Query|QueryBuilder $query)
     {
@@ -65,11 +65,11 @@ final class Result implements Collection
             fn() => \iterator_to_array($this->paginatorFor($this->cloneQuery()->setFirstResult($offset)->setMaxResults($limit)))
         );
 
-        if (!$this->hasAggregates) {
+        if (!$this->resultNormalizer) {
             return $collection;
         }
 
-        return new FactoryCollection($collection, function(mixed $result): EntityWithAggregates {
+        return new FactoryCollection($collection, function(mixed $result): mixed {
             return $this->normalizeResult($result);
         });
     }
@@ -151,7 +151,17 @@ final class Result implements Collection
      */
     public function withAggregates(): self
     {
-        $this->hasAggregates = true;
+        $this->resultNormalizer = static function(mixed $result): EntityWithAggregates {
+            if (!\is_array($result) || !isset($result[0]) || !\is_object($result[0])) {
+                throw new \LogicException(\sprintf('Results does not contain aggregate fields, do not call %s::withAggregates().', self::class));
+            }
+
+            $entity = $result[0];
+
+            unset($result[0]);
+
+            return new EntityWithAggregates($entity, $result);
+        };
 
         return $this;
     }
@@ -173,6 +183,13 @@ final class Result implements Collection
     public function asInt(): self
     {
         $this->asScalar();
+        $this->resultNormalizer = static function(mixed $value): int {
+            if (!\is_numeric($value)) {
+                throw new \LogicException(\sprintf('Expected result(s) to be "int" but got "%s".', \get_debug_type($value)));
+            }
+
+            return (int) $value;
+        };
 
         return $this;
     }
@@ -183,6 +200,13 @@ final class Result implements Collection
     public function asFloat(): self
     {
         $this->asScalar();
+        $this->resultNormalizer = static function(mixed $value): float {
+            if (!\is_numeric($value)) {
+                throw new \LogicException(\sprintf('Expected result(s) to be "float" but got "%s".', \get_debug_type($value)));
+            }
+
+            return (float) $value;
+        };
 
         return $this;
     }
@@ -193,6 +217,7 @@ final class Result implements Collection
     public function asString(): self
     {
         $this->asScalar();
+        $this->resultNormalizer = static fn(mixed $value): string => (string) $value;
 
         return $this;
     }
@@ -210,19 +235,11 @@ final class Result implements Collection
 
     private function normalizeResult(mixed $result): mixed
     {
-        if (!$this->hasAggregates) {
+        if (!$this->resultNormalizer) {
             return $result;
         }
 
-        if (!\is_array($result) || !isset($result[0]) || !\is_object($result[0])) {
-            throw new \LogicException(\sprintf('Results does not contain aggregate fields, do not call %s::withAggregates().', self::class));
-        }
-
-        $entity = $result[0];
-
-        unset($result[0]);
-
-        return new EntityWithAggregates($entity, $result);
+        return ($this->resultNormalizer)($result);
     }
 
     private function em(): EntityManagerInterface
@@ -235,22 +252,22 @@ final class Result implements Collection
      */
     private function rawIterator(): iterable
     {
-        if (!$this->hasAggregates && Query::HYDRATE_SCALAR_COLUMN !== $this->query->getHydrationMode()) {
-            try {
-                yield from $this->cloneQuery()->toIterable([], $this->query->getHydrationMode());
-            } catch (QueryException $e) {
-                if ($e->getMessage() === QueryException::iterateWithMixedResultNotAllowed()->getMessage()) {
-                    throw new \LogicException(\sprintf('Results contain aggregate fields, call %s::withAggregates().', self::class), 0, $e);
-                }
-
-                throw $e;
+        if ($this->resultNormalizer || Query::HYDRATE_SCALAR_COLUMN === $this->query->getHydrationMode()) {
+            foreach ($this->pages(20) as $page) {
+                yield from $page;
             }
 
             return;
         }
 
-        foreach ($this->pages(20) as $page) {
-            yield from $page;
+        try {
+            yield from $this->cloneQuery()->toIterable([], $this->query->getHydrationMode());
+        } catch (QueryException $e) {
+            if ($e->getMessage() === QueryException::iterateWithMixedResultNotAllowed()->getMessage()) {
+                throw new \LogicException(\sprintf('Results contain aggregate fields, call %s::withAggregates().', self::class), 0, $e);
+            }
+
+            throw $e;
         }
     }
 

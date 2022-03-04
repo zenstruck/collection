@@ -13,13 +13,13 @@ final class ScalarResultTest extends ResultTest
 {
     protected function expectedValueAt(int $position)
     {
-        return (string) $position;
+        return "value {$position}";
     }
 
     protected function createWithItems(int $count): Result
     {
         $this->persistEntities($count);
 
-        return (new Result($this->em->createQueryBuilder()->select('e.id')->from(Entity::class, 'e')))->asScalar();
+        return (new Result($this->em->createQueryBuilder()->select('e.value')->from(Entity::class, 'e')))->asScalar();
     }
 }

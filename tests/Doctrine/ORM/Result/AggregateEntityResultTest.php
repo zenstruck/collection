@@ -131,23 +131,6 @@ final class AggregateEntityResultTest extends EntityResultTest
         \iterator_to_array($result);
     }
 
-    /**
-     * @test
-     */
-    public function exception_when_paginating_if_result_has_aggregate_fields(): void
-    {
-        $this->markTestIncomplete('Revisit once Result only allows objects.');
-
-        $this->persistEntities(3);
-
-        $result = new Result($this->em->createQuery(\sprintf('SELECT e, UPPER(e.value) AS extra FROM %s e', Entity::class)));
-
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage(\sprintf('Results contain aggregate fields, call %s::withAggregates().', Result::class));
-
-        \iterator_to_array($result->paginate());
-    }
-
     protected function createWithItems(int $count): Result
     {
         $this->persistEntities($count);

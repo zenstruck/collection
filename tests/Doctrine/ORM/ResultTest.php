@@ -40,7 +40,18 @@ abstract class ResultTest extends TestCase
      */
     public function ensure_type_matches(): void
     {
-        $this->markTestIncomplete();
+        $results = $this->createWithItems(1);
+        $expected = $this->expectedValueAt(1);
+
+        if (\is_object($expected)) {
+            $this->assertEquals($this->expectedValueAt(1), $results->first());
+            $this->assertEquals([$expected], \iterator_to_array($results));
+
+            return;
+        }
+
+        $this->assertSame($this->expectedValueAt(1), $results->first());
+        $this->assertSame([$expected], \iterator_to_array($results));
     }
 
     abstract protected function createWithItems(int $count): Result;
