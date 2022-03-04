@@ -3,7 +3,6 @@
 namespace Zenstruck\Collection\Doctrine\ORM\Batch;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Internal\Hydration\IterableResult;
 
 /**
  * @author Marco Pivetta <ocramius@gmail.com>
@@ -24,10 +23,6 @@ class BatchProcessor implements \IteratorAggregate
      */
     private function __construct(iterable $items, EntityManagerInterface $em, int $chunkSize = 100)
     {
-        if ($items instanceof IterableResult) {
-            $items = new IterableResultDecorator($items);
-        }
-
         $this->items = $items;
         $this->em = $em;
         $this->chunkSize = $chunkSize;

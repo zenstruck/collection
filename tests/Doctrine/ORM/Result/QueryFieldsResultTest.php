@@ -2,19 +2,15 @@
 
 namespace Zenstruck\Collection\Tests\Doctrine\ORM\Result;
 
-use PHPUnit\Framework\TestCase;
-use Zenstruck\Collection\Doctrine\ORMResult;
+use Zenstruck\Collection\Doctrine\ORM\Result;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
-use Zenstruck\Collection\Tests\Doctrine\HasDatabase;
-use Zenstruck\Collection\Tests\PagintableCollectionTests;
+use Zenstruck\Collection\Tests\Doctrine\ORM\ResultTest;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class QueryFieldsResultTest extends TestCase
+final class QueryFieldsResultTest extends ResultTest
 {
-    use HasDatabase, PagintableCollectionTests;
-
     /**
      * @test
      */
@@ -35,13 +31,13 @@ final class QueryFieldsResultTest extends TestCase
         ], \iterator_to_array($result));
     }
 
-    protected function createWithItems(int $count): ORMResult
+    protected function createWithItems(int $count): Result
     {
         $this->persistEntities($count);
 
         $query = $this->em->createQuery(\sprintf('SELECT e.id, e.value AS my_value FROM %s e', Entity::class));
 
-        return new ORMResult($query, true, false);
+        return (new Result($query))->asArray();
     }
 
     protected function expectedValueAt(int $position): array

@@ -19,8 +19,7 @@ final class Iterator implements \Iterator
     {
     }
 
-    #[\ReturnTypeWillChange]
-    public function current()
+    public function current(): mixed
     {
         return $this->items[$this->position];
     }
@@ -30,8 +29,7 @@ final class Iterator implements \Iterator
         ++$this->position;
     }
 
-    #[\ReturnTypeWillChange]
-    public function key()
+    public function key(): mixed
     {
         return $this->position;
     }

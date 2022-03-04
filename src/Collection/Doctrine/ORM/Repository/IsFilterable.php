@@ -2,9 +2,9 @@
 
 namespace Zenstruck\Collection\Doctrine\ORM\Repository;
 
-use Doctrine\ORM\QueryBuilder;
-use Zenstruck\Collection\Doctrine\ORM\ObjectRepository;
+use Zenstruck\Collection\Doctrine\ORM\EntityRepository;
 use Zenstruck\Collection\Doctrine\ORM\Result;
+use Zenstruck\Collection\Doctrine\ORM\ResultQueryBuilder;
 use Zenstruck\Collection\Doctrine\ORM\Specification\ORMContext;
 use Zenstruck\Collection\Filterable;
 use Zenstruck\Collection\Specification\Interpreter;
@@ -26,8 +26,8 @@ trait IsFilterable
      */
     final public function filter(mixed $specification): Result
     {
-        if (!$this instanceof ObjectRepository) {
-            throw new \BadMethodCallException(\sprintf('"%s" can only be used on instances of "%s".', __TRAIT__, ObjectRepository::class));
+        if (!$this instanceof EntityRepository) {
+            throw new \BadMethodCallException(\sprintf('"%s" can only be used on instances of "%s".', __TRAIT__, EntityRepository::class));
         }
 
         if (\is_array($specification) && !array_is_list($specification)) {
@@ -35,7 +35,7 @@ trait IsFilterable
             return parent::filter($specification);
         }
 
-        return static::createResult($this->qbForSpecification($specification));
+        return $this->qbForSpecification($specification)->result();
     }
 
     /**
@@ -43,8 +43,8 @@ trait IsFilterable
      */
     final public function get(mixed $specification): object
     {
-        if (!$this instanceof ObjectRepository) {
-            throw new \BadMethodCallException(\sprintf('"%s" can only be used on instances of "%s".', __TRAIT__, ObjectRepository::class));
+        if (!$this instanceof EntityRepository) {
+            throw new \BadMethodCallException(\sprintf('"%s" can only be used on instances of "%s".', __TRAIT__, EntityRepository::class));
         }
 
         if (\is_scalar($specification) || (\is_array($specification) && !array_is_list($specification))) {
@@ -52,7 +52,7 @@ trait IsFilterable
             return parent::get($specification);
         }
 
-        if (!\is_object($result = $this->qbForSpecification($specification)->getQuery()->getOneOrNullResult())) {
+        if (!\is_object($result = $this->qbForSpecification($specification)->result()->first())) {
             throw $this->createNotFoundException($specification);
         }
 
@@ -60,11 +60,14 @@ trait IsFilterable
         return $result;
     }
 
-    protected function qbForSpecification(mixed $specification): QueryBuilder
+    /**
+     * @return ResultQueryBuilder<V>
+     */
+    protected function qbForSpecification(mixed $specification): ResultQueryBuilder
     {
         $result = $this->specificationInterpreter()->interpret(
             $specification,
-            new ORMContext($qb = $this->qb('entity'), 'entity')
+            new ORMContext($qb = $this->createQueryBuilder('entity'), 'entity')
         );
 
         if ($result) {

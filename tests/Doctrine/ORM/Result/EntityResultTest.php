@@ -2,21 +2,17 @@
 
 namespace Zenstruck\Collection\Tests\Doctrine\ORM\Result;
 
-use PHPUnit\Framework\TestCase;
 use Zenstruck\Collection\Doctrine\ORM\Batch\CountableBatchIterator;
 use Zenstruck\Collection\Doctrine\ORM\Batch\CountableBatchProcessor;
-use Zenstruck\Collection\Doctrine\ORMResult;
+use Zenstruck\Collection\Doctrine\ORM\Result;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
-use Zenstruck\Collection\Tests\Doctrine\HasDatabase;
-use Zenstruck\Collection\Tests\PagintableCollectionTests;
+use Zenstruck\Collection\Tests\Doctrine\ORM\ResultTest;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-abstract class ObjectResultTest extends TestCase
+class EntityResultTest extends ResultTest
 {
-    use HasDatabase, PagintableCollectionTests;
-
     /**
      * @test
      */
@@ -137,10 +133,28 @@ abstract class ObjectResultTest extends TestCase
         $this->assertFalse($this->em->contains($result));
     }
 
-    protected function expectedValueAt(int $position): Entity
+    /**
+     * @test
+     */
+    public function cannot_delete_non_managed_object_results(): void
+    {
+        $this->persistEntities(3);
+
+        $result = new Result($this->em->createQuery(\sprintf('SELECT e.id FROM %s e', Entity::class)));
+
+        $this->expectException(\LogicException::class);
+        $result->delete();
+    }
+
+    protected function expectedValueAt(int $position): object
     {
         return new Entity("value {$position}", $position);
     }
 
-    abstract protected function createWithItems(int $count): ORMResult;
+    protected function createWithItems(int $count): Result
+    {
+        $this->persistEntities($count);
+
+        return new Result($this->em->createQueryBuilder()->select('e')->from(Entity::class, 'e'));
+    }
 }
