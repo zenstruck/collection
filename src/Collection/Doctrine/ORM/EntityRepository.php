@@ -41,7 +41,7 @@ class EntityRepository extends BaseEntityRepository implements \IteratorAggregat
             $qb->andWhere("e.{$field} = :{$field}")->setParameter($field, $value);
         }
 
-        return self::createResult($qb);
+        return self::resultFor($qb);
     }
 
     /**
@@ -92,7 +92,7 @@ class EntityRepository extends BaseEntityRepository implements \IteratorAggregat
      */
     final public function batch(int $chunkSize = 100): \Traversable
     {
-        return static::createResult($this->createQueryBuilder('e'))->batch($chunkSize);
+        return self::resultFor($this->createQueryBuilder('e'))->batch($chunkSize);
     }
 
     /**
@@ -100,7 +100,7 @@ class EntityRepository extends BaseEntityRepository implements \IteratorAggregat
      */
     final public function batchProcess(int $chunkSize = 100): \Traversable
     {
-        return static::createResult($this->createQueryBuilder('e'))->batchProcess($chunkSize);
+        return self::resultFor($this->createQueryBuilder('e'))->batchProcess($chunkSize);
     }
 
     final public function count(array $criteria = []): int
@@ -110,13 +110,13 @@ class EntityRepository extends BaseEntityRepository implements \IteratorAggregat
 
     final public function getIterator(): \Traversable
     {
-        return static::createResult($this->createQueryBuilder('e'));
+        return self::resultFor($this->createQueryBuilder('e'));
     }
 
     /**
      * @return Result<V>
      */
-    final protected static function createResult(QueryBuilder $qb): Result
+    final protected static function resultFor(QueryBuilder $qb): Result
     {
         return new Result($qb);
     }

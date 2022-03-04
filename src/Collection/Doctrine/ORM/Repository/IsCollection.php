@@ -24,6 +24,6 @@ trait IsCollection
             throw new \BadMethodCallException(\sprintf('"%s" can only be used on instances of "%s".', __TRAIT__, EntityRepository::class));
         }
 
-        return static::createResult($this->createQueryBuilder('e'))->take($limit, $offset);
+        return static::resultFor($this->createQueryBuilder('e'))->take($limit, $offset);
     }
 }

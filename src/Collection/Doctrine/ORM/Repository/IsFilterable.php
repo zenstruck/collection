@@ -35,7 +35,7 @@ trait IsFilterable
             return parent::filter($specification);
         }
 
-        return static::createResult($this->qbForSpecification($specification));
+        return static::resultFor($this->qbForSpecification($specification));
     }
 
     /**
