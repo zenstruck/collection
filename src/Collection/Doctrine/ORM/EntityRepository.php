@@ -3,7 +3,6 @@
 namespace Zenstruck\Collection\Doctrine\ORM;
 
 use Doctrine\ORM\EntityRepository as BaseEntityRepository;
-use Doctrine\ORM\QueryBuilder;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -41,7 +40,7 @@ class EntityRepository extends BaseEntityRepository implements \IteratorAggregat
             $qb->andWhere("e.{$field} = :{$field}")->setParameter($field, $value);
         }
 
-        return self::resultFor($qb);
+        return $qb->result();
     }
 
     /**
@@ -92,7 +91,7 @@ class EntityRepository extends BaseEntityRepository implements \IteratorAggregat
      */
     final public function batch(int $chunkSize = 100): \Traversable
     {
-        return self::resultFor($this->createQueryBuilder('e'))->batch($chunkSize);
+        return $this->createQueryBuilder('e')->result()->batch($chunkSize);
     }
 
     /**
@@ -100,7 +99,7 @@ class EntityRepository extends BaseEntityRepository implements \IteratorAggregat
      */
     final public function batchProcess(int $chunkSize = 100): \Traversable
     {
-        return self::resultFor($this->createQueryBuilder('e'))->batchProcess($chunkSize);
+        return $this->createQueryBuilder('e')->result()->batchProcess($chunkSize);
     }
 
     final public function count(array $criteria = []): int
@@ -110,15 +109,21 @@ class EntityRepository extends BaseEntityRepository implements \IteratorAggregat
 
     final public function getIterator(): \Traversable
     {
-        return self::resultFor($this->createQueryBuilder('e'));
+        return $this->createQueryBuilder('e')->result();
     }
 
     /**
-     * @return Result<V>
+     * @param string $alias
+     * @param string $indexBy
+     *
+     * @return ResultQueryBuilder<V>
      */
-    final protected static function resultFor(QueryBuilder $qb): Result
+    public function createQueryBuilder($alias, $indexBy = null): ResultQueryBuilder
     {
-        return new Result($qb);
+        return (new ResultQueryBuilder($this->_em))
+            ->select($alias)
+            ->from($this->_entityName, $alias, $indexBy)
+        ;
     }
 
     /**

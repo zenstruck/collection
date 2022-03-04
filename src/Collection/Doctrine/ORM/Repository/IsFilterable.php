@@ -2,9 +2,9 @@
 
 namespace Zenstruck\Collection\Doctrine\ORM\Repository;
 
-use Doctrine\ORM\QueryBuilder;
 use Zenstruck\Collection\Doctrine\ORM\EntityRepository;
 use Zenstruck\Collection\Doctrine\ORM\Result;
+use Zenstruck\Collection\Doctrine\ORM\ResultQueryBuilder;
 use Zenstruck\Collection\Doctrine\ORM\Specification\ORMContext;
 use Zenstruck\Collection\Filterable;
 use Zenstruck\Collection\Specification\Interpreter;
@@ -35,7 +35,7 @@ trait IsFilterable
             return parent::filter($specification);
         }
 
-        return static::resultFor($this->qbForSpecification($specification));
+        return $this->qbForSpecification($specification)->result();
     }
 
     /**
@@ -52,7 +52,7 @@ trait IsFilterable
             return parent::get($specification);
         }
 
-        if (!\is_object($result = $this->qbForSpecification($specification)->getQuery()->getOneOrNullResult())) {
+        if (!\is_object($result = $this->qbForSpecification($specification)->result()->first())) {
             throw $this->createNotFoundException($specification);
         }
 
@@ -60,7 +60,10 @@ trait IsFilterable
         return $result;
     }
 
-    protected function qbForSpecification(mixed $specification): QueryBuilder
+    /**
+     * @return ResultQueryBuilder<V>
+     */
+    protected function qbForSpecification(mixed $specification): ResultQueryBuilder
     {
         $result = $this->specificationInterpreter()->interpret(
             $specification,
