@@ -47,6 +47,7 @@ abstract class ResultTest extends TestCase
             $this->assertEquals($this->expectedValueAt(1), $results->first());
             $this->assertEquals([$expected], \iterator_to_array($results));
             $this->assertEquals([$expected], $results->toArray());
+            $this->assertEquals([$expected], $results->eager()->all());
 
             return;
         }
@@ -54,6 +55,7 @@ abstract class ResultTest extends TestCase
         $this->assertSame($this->expectedValueAt(1), $results->first());
         $this->assertSame([$expected], \iterator_to_array($results));
         $this->assertSame([$expected], $results->toArray());
+        $this->assertSame([$expected], $results->eager()->all());
     }
 
     abstract protected function createWithItems(int $count): Result;

@@ -14,3 +14,21 @@ parameters:
             message: "#^Property Zenstruck\\\\Collection\\\\IterableCollection\\<K of \\(int\\|string\\),V\\>\\:\\:\\$source \\(\\(Closure\\(\\)\\: iterable\\<K of \\(int\\|string\\), V\\>\\)\\|iterable\\<K of \\(int\\|string\\), V\\>\\) does not accept array\\<K, \\*NEVER\\*&V\\>\\|\\(callable\\(\\)\\: iterable\\<K of \\(int\\|string\\), V\\>&Traversable\\<mixed, mixed\\>\\)\\|\\(Closure\\(\\)\\: mixed\\)\\|iterable\\<K of \\(int\\|string\\), V\\>\\.$#"
             count: 1
             path: src/Collection/IterableCollection.php
+        -
+            message: "#^Property Zenstruck\\\\Collection\\\\ArrayCollection\\<K of \\(int\\|string\\),V\\>\\:\\:\\$source \\(array\\<K of \\(int\\|string\\), V\\>\\) does not accept array\\.$#"
+            count: 1
+            path: src/Collection/ArrayCollection.php
+        -
+            message: "#^Method Zenstruck\\\\Collection\\\\ArrayCollection\\:\\:combine\\(\\) should return Zenstruck\\\\Collection\\\\ArrayCollection\\<\\(\\(int&V\\)\\|\\(string&V\\)\\), T\\> but returns Zenstruck\\\\Collection\\\\ArrayCollection\\<\\(int\\|string\\), V\\>\\.$#"
+            count: 1
+            path: src/Collection/ArrayCollection.php
+
+        -
+            message: "#^Parameter \\#1 \\$source of static method Zenstruck\\\\Collection\\\\ArrayCollection\\<K of \\(int\\|string\\),V\\>\\:\\:new\\(\\) expects \\(callable\\(\\)\\: iterable\\<K of \\(int\\|string\\), V\\>\\)\\|iterable\\<K of \\(int\\|string\\), V\\>\\|null, iterable\\<\\(int\\|string\\), T\\> given\\.$#"
+            count: 1
+            path: src/Collection/ArrayCollection.php
+
+        -
+            message: "#^Parameter \\#2 \\$callback of function array_filter expects callable\\(V, K of \\(int\\|string\\)\\)\\: mixed, \\(callable\\(V, K of \\(int\\|string\\)\\)\\: bool\\)\\|null given\\.$#"
+            count: 1
+            path: src/Collection/ArrayCollection.php

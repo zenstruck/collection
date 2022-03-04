@@ -13,8 +13,8 @@ use Zenstruck\Collection;
  */
 final class IterableCollection implements Collection
 {
-    /** @use Paginatable<V> */
-    use Paginatable;
+    /** @use ExtraMethods<K,V> */
+    use ExtraMethods;
 
     /** @var iterable<K,V>|\Closure():iterable<K,V> */
     private \Closure|iterable $source;
@@ -37,7 +37,10 @@ final class IterableCollection implements Collection
         $this->source = $source;
     }
 
-    public function take(int $limit, int $offset = 0): Collection
+    /**
+     * @return self<K,V>
+     */
+    public function take(int $limit, int $offset = 0): self
     {
         if (\is_array($source = $this->normalizeSource())) {
             return new self(\array_slice($source, $offset, $limit, true));
@@ -70,6 +73,18 @@ final class IterableCollection implements Collection
                 }
             }
         });
+    }
+
+    /**
+     * @return array<K,V>
+     */
+    public function toArray(): array
+    {
+        if (\is_array($source = $this->normalizeSource())) {
+            return $source;
+        }
+
+        return \iterator_to_array($source);
     }
 
     public function getIterator(): \Traversable

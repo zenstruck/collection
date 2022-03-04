@@ -11,6 +11,7 @@ use Doctrine\ORM\Query\QueryException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Zenstruck\Collection;
+use Zenstruck\Collection\ArrayCollection;
 use Zenstruck\Collection\CallbackCollection;
 use Zenstruck\Collection\Doctrine\ORM\Batch\BatchIterator;
 use Zenstruck\Collection\Doctrine\ORM\Batch\BatchProcessor;
@@ -264,6 +265,14 @@ final class Result implements Collection
         }
 
         return $this->query->execute();
+    }
+
+    /**
+     * @return ArrayCollection<int,V>
+     */
+    public function eager(): ArrayCollection
+    {
+        return new ArrayCollection($this->toArray());
     }
 
     private function normalizeResult(mixed $result): mixed
