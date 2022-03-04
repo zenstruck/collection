@@ -64,7 +64,7 @@ trait IsFilterable
     {
         $result = $this->specificationInterpreter()->interpret(
             $specification,
-            new ORMContext($qb = $this->qb('entity'), 'entity')
+            new ORMContext($qb = $this->createQueryBuilder('entity'), 'entity')
         );
 
         if ($result) {

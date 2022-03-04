@@ -35,7 +35,7 @@ class EntityRepository extends BaseEntityRepository implements \IteratorAggregat
      */
     public function filter(array $criteria): Result
     {
-        $qb = $this->qb('e');
+        $qb = $this->createQueryBuilder('e');
 
         foreach ($criteria as $field => $value) {
             $qb->andWhere("e.{$field} = :{$field}")->setParameter($field, $value);
@@ -92,7 +92,7 @@ class EntityRepository extends BaseEntityRepository implements \IteratorAggregat
      */
     final public function batch(int $chunkSize = 100): \Traversable
     {
-        return static::createResult($this->qb())->batch($chunkSize);
+        return static::createResult($this->createQueryBuilder('e'))->batch($chunkSize);
     }
 
     /**
@@ -100,7 +100,7 @@ class EntityRepository extends BaseEntityRepository implements \IteratorAggregat
      */
     final public function batchProcess(int $chunkSize = 100): \Traversable
     {
-        return static::createResult($this->qb())->batchProcess($chunkSize);
+        return static::createResult($this->createQueryBuilder('e'))->batchProcess($chunkSize);
     }
 
     final public function count(array $criteria = []): int
@@ -110,7 +110,7 @@ class EntityRepository extends BaseEntityRepository implements \IteratorAggregat
 
     final public function getIterator(): \Traversable
     {
-        return static::createResult($this->qb());
+        return static::createResult($this->createQueryBuilder('e'));
     }
 
     /**
@@ -119,11 +119,6 @@ class EntityRepository extends BaseEntityRepository implements \IteratorAggregat
     final protected static function createResult(QueryBuilder $qb, bool $fetchCollection = true, ?bool $useOutputWalkers = null): Result
     {
         return new Result($qb, $fetchCollection, $useOutputWalkers);
-    }
-
-    final protected function qb(string $alias = 'entity', ?string $indexBy = null): QueryBuilder
-    {
-        return $this->createQueryBuilder($alias, $indexBy);
     }
 
     /**
