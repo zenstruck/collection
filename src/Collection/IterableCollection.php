@@ -42,7 +42,7 @@ final class IterableCollection implements Collection
      */
     public function take(int $limit, int $offset = 0): self
     {
-        if (\is_array($source = $this->normalizeSource())) {
+        if (\is_array($source = &$this->normalizeSource())) {
             return new self(\array_slice($source, $offset, $limit, true));
         }
 
@@ -80,7 +80,7 @@ final class IterableCollection implements Collection
      */
     public function toArray(): array
     {
-        if (\is_array($source = $this->normalizeSource())) {
+        if (\is_array($source = &$this->normalizeSource())) {
             return $source;
         }
 
@@ -89,14 +89,16 @@ final class IterableCollection implements Collection
 
     public function getIterator(): \Traversable
     {
-        foreach ($this->normalizeSource() as $key => $value) {
+        $source = &$this->normalizeSource();
+
+        foreach ($source as $key => $value) {
             yield $key => $value;
         }
     }
 
     public function count(): int
     {
-        if (\is_countable($source = $this->normalizeSource())) {
+        if (\is_countable($source = &$this->normalizeSource())) {
             return \count($source);
         }
 
@@ -106,7 +108,7 @@ final class IterableCollection implements Collection
     /**
      * @return iterable<K,V>
      */
-    private function normalizeSource(): iterable
+    private function &normalizeSource(): iterable
     {
         if (\is_iterable($this->source)) {
             return $this->source;
@@ -124,6 +126,8 @@ final class IterableCollection implements Collection
             throw new \InvalidArgumentException('$source callback must return iterable.');
         }
 
-        return $this->source = $source;
+        $this->source = $source;
+
+        return $this->source;
     }
 }
