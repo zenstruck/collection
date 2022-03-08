@@ -44,6 +44,14 @@ final class Result implements Collection
     }
 
     /**
+     * @return self<V>
+     */
+    public static function for(Query|QueryBuilder $query): self
+    {
+        return new self($query);
+    }
+
+    /**
      * @template D
      *
      * @param D $default

@@ -20,6 +20,6 @@ final class StringResultTest extends ResultTest
     {
         $this->persistEntities($count);
 
-        return (new Result($this->em->createQueryBuilder()->select('e.id')->from(Entity::class, 'e')))->asString();
+        return Result::for($this->em->createQueryBuilder()->select('e.id')->from(Entity::class, 'e'))->asString();
     }
 }
