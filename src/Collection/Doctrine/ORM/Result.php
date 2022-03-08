@@ -31,6 +31,7 @@ final class Result implements Collection
 
     private Query $query;
     private ?bool $useOutputWalkers = null;
+    private bool $fetchJoinCollection = true;
     private ?int $count = null;
     private ?\Closure $resultNormalizer = null;
 
@@ -142,6 +143,18 @@ final class Result implements Collection
     public function count(): int
     {
         return $this->count ??= $this->paginatorFor($this->cloneQuery())->count();
+    }
+
+    /**
+     * @see Paginator::__construct()
+     *
+     * @return $this
+     */
+    public function disableFetchJoinCollection(): self
+    {
+        $this->fetchJoinCollection = false;
+
+        return $this;
     }
 
     /**
@@ -304,7 +317,7 @@ final class Result implements Collection
      */
     private function paginatorFor(Query $query): Paginator
     {
-        return (new Paginator($query))->setUseOutputWalkers($this->useOutputWalkers);
+        return (new Paginator($query, $this->fetchJoinCollection))->setUseOutputWalkers($this->useOutputWalkers);
     }
 
     private function cloneQuery(): Query
