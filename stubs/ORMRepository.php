@@ -2,7 +2,7 @@
 
 use Zenstruck\Collection;
 use Zenstruck\Collection\Doctrine\ORM\EntityRepository;
-use Zenstruck\Collection\Doctrine\ORM\Repository\IsFilterable;
+use Zenstruck\Collection\Doctrine\ORM\Repository\Specification;
 use Zenstruck\Collection\Doctrine\ORM\Repository\IsCollection;
 use Zenstruck\Collection\Paginatable;
 
@@ -13,8 +13,8 @@ use Zenstruck\Collection\Paginatable;
  */
 abstract class ORMRepository extends EntityRepository implements Collection
 {
-    /** @use IsFilterable<V> */
-    use IsFilterable;
+    /** @use Specification<V> */
+    use Specification;
 
     /** @use Paginatable<V> */
     use Paginatable;

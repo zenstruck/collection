@@ -3,8 +3,7 @@
 use Zenstruck\Collection;
 use Zenstruck\Collection\Doctrine\DBAL\ObjectRepository;
 use Zenstruck\Collection\Doctrine\DBAL\Repository\IsCollection;
-use Zenstruck\Collection\Doctrine\DBAL\Repository\IsFilterable;
-use Zenstruck\Collection\Filterable;
+use Zenstruck\Collection\Doctrine\DBAL\Repository\Specification;
 use Zenstruck\Collection\Paginatable;
 
 /**
@@ -13,15 +12,14 @@ use Zenstruck\Collection\Paginatable;
  * @template V
  * @extends ObjectRepository<V>
  * @implements Collection<int,V>
- * @implements Filterable<int,V>
  */
-abstract class DBALRepository extends ObjectRepository implements Collection, Filterable
+abstract class DBALRepository extends ObjectRepository implements Collection
 {
     /** @use IsCollection<V> */
     use IsCollection;
 
-    /** @use IsFilterable<V> */
-    use IsFilterable;
+    /** @use Specification<V> */
+    use Specification;
 
     /** @use Paginatable<V> */
     use Paginatable;

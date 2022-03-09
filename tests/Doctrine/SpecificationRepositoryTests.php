@@ -9,7 +9,7 @@ use Zenstruck\Collection\Specification\Nested;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-trait FilterableRepositoryTests
+trait SpecificationRepositoryTests
 {
     /**
      * @test

@@ -6,18 +6,17 @@ use Zenstruck\Collection\Doctrine\ORM\EntityRepository;
 use Zenstruck\Collection\Doctrine\ORM\Result;
 use Zenstruck\Collection\Doctrine\ORM\ResultQueryBuilder;
 use Zenstruck\Collection\Doctrine\ORM\Specification\ORMContext;
-use Zenstruck\Collection\Filterable;
 use Zenstruck\Collection\Specification\Interpreter;
 use Zenstruck\Collection\Specification\SpecificationInterpreter;
 
 /**
- * Enables your repository to implement {@see Filterable}.
+ * Enables your repository to use the specification system.
  *
  * @author Kevin Bond <kevinbond@gmail.com>
  *
  * @template V of object
  */
-trait IsFilterable
+trait Specification
 {
     /**
      * @param mixed|array<string,mixed> $specification
