@@ -39,6 +39,18 @@ final class ArrayCollection implements Collection, \ArrayAccess
     }
 
     /**
+     * @return self<array-key,mixed>
+     */
+    public static function wrap(mixed $value): self
+    {
+        if (null === $value) {
+            $value = [];
+        }
+
+        return new self(\is_iterable($value) ? $value : [$value]);
+    }
+
+    /**
      * Create instance using {@see explode()}.
      *
      * Normalizes empty result into empty array: [''] => [].

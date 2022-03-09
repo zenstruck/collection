@@ -329,6 +329,17 @@ final class ArrayCollectionTest extends TestCase
     /**
      * @test
      */
+    public function wrap_constructor(): void
+    {
+        $this->assertSame([], Arr::wrap(null)->all());
+        $this->assertSame(['foo'], Arr::wrap(['foo'])->all());
+        $this->assertSame(['foo'], Arr::wrap('foo')->all());
+        $this->assertSame(['foo'], Arr::wrap(new \ArrayIterator(['foo']))->all());
+    }
+
+    /**
+     * @test
+     */
     public function fill_constructor(): void
     {
         $this->assertSame([2 => null, 3 => null, 4 => null], Arr::fill(2, 3, null)->all());
