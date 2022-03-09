@@ -7,14 +7,13 @@ use Zenstruck\Collection\Tests\Doctrine\DBAL\Fixture\ObjectRepository;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
 use Zenstruck\Collection\Tests\Doctrine\HasDatabase;
 use Zenstruck\Collection\Tests\Doctrine\SpecificationRepositoryTests;
-use Zenstruck\Collection\Tests\PagintableCollectionTests;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
 final class ObjectRepositoryTest extends TestCase
 {
-    use HasDatabase, PagintableCollectionTests, SpecificationRepositoryTests;
+    use HasDatabase, SpecificationRepositoryTests;
 
     protected function createWithItems(int $count): ObjectRepository
     {

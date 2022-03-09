@@ -14,14 +14,13 @@ use Zenstruck\Collection\Tests\Doctrine\HasDatabase;
 use Zenstruck\Collection\Tests\Doctrine\ORM\Fixture\DummyManagerRegistry;
 use Zenstruck\Collection\Tests\Doctrine\ORM\Fixture\KitchenSinkRepository;
 use Zenstruck\Collection\Tests\Doctrine\SpecificationRepositoryTests;
-use Zenstruck\Collection\Tests\PagintableCollectionTests;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
 final class RepositoryTest extends TestCase
 {
-    use HasDatabase, PagintableCollectionTests, SpecificationRepositoryTests;
+    use HasDatabase, SpecificationRepositoryTests;
 
     /**
      * @test
