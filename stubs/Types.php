@@ -1,10 +1,10 @@
 <?php
 
-use Zenstruck\Collection\IterableCollection;
+use Zenstruck\Collection\LazyCollection;
 use Zenstruck\Collection\DoctrineCollection;
 use function PHPStan\Testing\assertType;
 
-assertType('Zenstruck\Collection\IterableCollection<int, User>', new IterableCollection([new User]));
+assertType('Zenstruck\Collection\LazyCollection<int, User>', new LazyCollection([new User]));
 
 /** @var DoctrineCollection<int,User> $doctrineCollection */
 

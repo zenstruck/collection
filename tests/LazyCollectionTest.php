@@ -3,12 +3,12 @@
 namespace Zenstruck\Collection\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Zenstruck\Collection\IterableCollection;
+use Zenstruck\Collection\LazyCollection;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-abstract class IterableCollectionTest extends TestCase
+abstract class LazyCollectionTest extends TestCase
 {
     use ExtraMethodsTests;
 
@@ -26,5 +26,5 @@ abstract class IterableCollectionTest extends TestCase
         );
     }
 
-    abstract protected function createWithItems(int $count): IterableCollection;
+    abstract protected function createWithItems(int $count): LazyCollection;
 }

@@ -16,13 +16,13 @@ final class CallbackCollection implements Collection
     /** @use Paginatable<V> */
     use Paginatable;
 
-    /** @var IterableCollection<K,V> */
-    private IterableCollection $iterator;
+    /** @var LazyCollection<K,V> */
+    private LazyCollection $iterator;
     private \Closure $count;
 
     public function __construct(callable $iterator, callable $count)
     {
-        $this->iterator = new IterableCollection($iterator);
+        $this->iterator = new LazyCollection($iterator);
         $this->count = \Closure::fromCallable($count);
     }
 

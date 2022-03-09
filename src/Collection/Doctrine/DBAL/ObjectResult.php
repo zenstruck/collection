@@ -5,7 +5,7 @@ namespace Zenstruck\Collection\Doctrine\DBAL;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Zenstruck\Collection;
 use Zenstruck\Collection\FactoryCollection;
-use Zenstruck\Collection\IterableCollection;
+use Zenstruck\Collection\LazyCollection;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -31,6 +31,6 @@ class ObjectResult extends Result
 
     public function getIterator(): \Traversable
     {
-        return new FactoryCollection(new IterableCollection(fn() => parent::getIterator()), $this->factory);
+        return new FactoryCollection(new LazyCollection(fn() => parent::getIterator()), $this->factory);
     }
 }

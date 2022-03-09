@@ -11,7 +11,7 @@ use Zenstruck\Collection\Tests\Fixture\Stringable;
  */
 final class ArrayCollectionTest extends TestCase
 {
-    use ExtraMethodsTests;
+    use ExtraMethodsTests { eager as private; }
 
     /**
      * @test
@@ -31,14 +31,6 @@ final class ArrayCollectionTest extends TestCase
         $this->assertSame([], Arr::new([])->reject()->all());
         $this->assertSame(['foo' => false, 'bar' => null, 'baz' => 0], Arr::new(['foo' => false, 'bar' => null, 'baz' => 0])->reject()->all());
         $this->assertSame([], Arr::new(['foo' => true, 'bar' => new \stdClass(), 'baz' => 1])->reject()->all());
-    }
-
-    /**
-     * @test
-     */
-    public function eager(): void
-    {
-        $this->markTestSkipped('Does not have eager() method.');
     }
 
     /**

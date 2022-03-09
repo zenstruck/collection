@@ -1,15 +1,15 @@
 <?php
 
-namespace Zenstruck\Collection\Tests\Iterable;
+namespace Zenstruck\Collection\Tests\Lazy;
 
-use Zenstruck\Collection\IterableCollection;
+use Zenstruck\Collection\LazyCollection;
 use Zenstruck\Collection\Tests\Fixture\Iterator;
-use Zenstruck\Collection\Tests\IterableCollectionTest;
+use Zenstruck\Collection\Tests\LazyCollectionTest;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class IteratorTest extends IterableCollectionTest
+final class IteratorTest extends LazyCollectionTest
 {
     /**
      * @test
@@ -31,8 +31,8 @@ final class IteratorTest extends IterableCollectionTest
         $this->createWithItems(1)->take(5, -1);
     }
 
-    protected function createWithItems(int $count): IterableCollection
+    protected function createWithItems(int $count): LazyCollection
     {
-        return new IterableCollection(new Iterator($count));
+        return new LazyCollection(new Iterator($count));
     }
 }

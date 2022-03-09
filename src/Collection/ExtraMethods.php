@@ -18,11 +18,11 @@ trait ExtraMethods
     /**
      * @param callable(V,K):bool $predicate
      *
-     * @return IterableCollection<K,V>
+     * @return LazyCollection<K,V>
      */
-    public function filter(callable $predicate): IterableCollection
+    public function filter(callable $predicate): LazyCollection
     {
-        return new IterableCollection(function() use ($predicate) {
+        return new LazyCollection(function() use ($predicate) {
             foreach ($this as $key => $value) {
                 if ($predicate($value, $key)) {
                     yield $key => $value;
@@ -36,9 +36,9 @@ trait ExtraMethods
      *
      * @param callable(V,K):bool $predicate
      *
-     * @return IterableCollection<K,V>
+     * @return LazyCollection<K,V>
      */
-    public function reject(callable $predicate): IterableCollection
+    public function reject(callable $predicate): LazyCollection
     {
         return $this->filter(fn($value, $key) => !$predicate($value, $key));
     }
@@ -48,11 +48,11 @@ trait ExtraMethods
      *
      * @param callable(V,K):T $function
      *
-     * @return IterableCollection<array-key,V>
+     * @return LazyCollection<array-key,V>
      */
-    public function keyBy(callable $function): IterableCollection
+    public function keyBy(callable $function): LazyCollection
     {
-        return new IterableCollection(function() use ($function) {
+        return new LazyCollection(function() use ($function) {
             foreach ($this as $key => $value) {
                 $key = $function($value, $key);
 
@@ -66,11 +66,11 @@ trait ExtraMethods
      *
      * @param callable(V,K):T $function
      *
-     * @return IterableCollection<K,T>
+     * @return LazyCollection<K,T>
      */
-    public function map(callable $function): IterableCollection
+    public function map(callable $function): LazyCollection
     {
-        return new IterableCollection(function() use ($function) {
+        return new LazyCollection(function() use ($function) {
             foreach ($this as $key => $value) {
                 yield $key => $function($value, $key);
             }
@@ -83,11 +83,11 @@ trait ExtraMethods
      *
      * @param callable(V,K):iterable<T,U> $function
      *
-     * @return IterableCollection<array-key,U>
+     * @return LazyCollection<array-key,U>
      */
-    public function mapWithKeys(callable $function): IterableCollection
+    public function mapWithKeys(callable $function): LazyCollection
     {
-        return new IterableCollection(function() use ($function) {
+        return new LazyCollection(function() use ($function) {
             foreach ($this as $key => $value) {
                 foreach ($function($value, $key) as $newKey => $newValue) {
                     yield $newKey instanceof \Stringable ? (string) $newKey : $newKey => $newValue;

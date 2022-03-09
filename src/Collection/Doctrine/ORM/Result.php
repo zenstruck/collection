@@ -16,7 +16,7 @@ use Zenstruck\Collection\CallbackCollection;
 use Zenstruck\Collection\Doctrine\ORM\Batch\BatchIterator;
 use Zenstruck\Collection\Doctrine\ORM\Batch\BatchProcessor;
 use Zenstruck\Collection\FactoryCollection;
-use Zenstruck\Collection\IterableCollection;
+use Zenstruck\Collection\LazyCollection;
 use Zenstruck\Collection\Paginatable;
 
 /**
@@ -71,7 +71,7 @@ final class Result implements Collection
 
     public function take(int $limit, int $offset = 0): Collection
     {
-        $collection = new IterableCollection(
+        $collection = new LazyCollection(
             fn() => \iterator_to_array($this->paginatorFor($this->cloneQuery()->setFirstResult($offset)->setMaxResults($limit)))
         );
 

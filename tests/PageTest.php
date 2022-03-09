@@ -3,7 +3,7 @@
 namespace Zenstruck\Collection\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Zenstruck\Collection\IterableCollection;
+use Zenstruck\Collection\LazyCollection;
 use Zenstruck\Collection\Page;
 
 /**
@@ -149,6 +149,6 @@ final class PageTest extends TestCase
 
     private function createPage(array $results, int $page, int $limit = Page::DEFAULT_LIMIT): Page
     {
-        return new Page(new IterableCollection($results), $page, $limit);
+        return new Page(new LazyCollection($results), $page, $limit);
     }
 }

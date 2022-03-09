@@ -11,7 +11,7 @@ use Zenstruck\Collection;
  * @template V
  * @implements Collection<K,V>
  */
-final class IterableCollection implements Collection
+final class LazyCollection implements Collection
 {
     /** @use ExtraMethods<K,V> */
     use ExtraMethods;

@@ -25,7 +25,7 @@ final class ArrayCollection implements Collection, \ArrayAccess
      */
     public function __construct(iterable|callable|null $source = null)
     {
-        $this->source = \is_array($source) ? $source : (new IterableCollection($source))->toArray();
+        $this->source = \is_array($source) ? $source : (new LazyCollection($source))->toArray();
     }
 
     /**

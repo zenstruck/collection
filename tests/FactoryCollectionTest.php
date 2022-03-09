@@ -5,7 +5,7 @@ namespace Zenstruck\Collection\Tests;
 use PHPUnit\Framework\TestCase;
 use Zenstruck\Collection;
 use Zenstruck\Collection\FactoryCollection;
-use Zenstruck\Collection\IterableCollection;
+use Zenstruck\Collection\LazyCollection;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -16,7 +16,7 @@ final class FactoryCollectionTest extends TestCase
 
     protected function createWithItems(int $count): Collection
     {
-        return new FactoryCollection(new IterableCollection($count ? \range(1, $count) : []), fn($position) => "value {$position}");
+        return new FactoryCollection(new LazyCollection($count ? \range(1, $count) : []), fn($position) => "value {$position}");
     }
 
     protected function expectedValueAt(int $position): string
