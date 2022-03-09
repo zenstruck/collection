@@ -33,7 +33,7 @@ final class ArrayCollection implements Collection, \ArrayAccess
      *
      * @return self<K,V>
      */
-    public static function new(iterable|callable|null $source = null): self
+    public static function for(iterable|callable|null $source = null): self
     {
         return new self($source);
     }
@@ -139,7 +139,7 @@ final class ArrayCollection implements Collection, \ArrayAccess
     public function merge(iterable ...$with): self
     {
         return new self(
-            \array_merge($this->source, ...\array_map(static fn(iterable $x) => self::new($x)->source, $with))
+            \array_merge($this->source, ...\array_map(static fn(iterable $x) => self::for($x)->source, $with))
         );
     }
 
@@ -309,7 +309,7 @@ final class ArrayCollection implements Collection, \ArrayAccess
      */
     public function combine(iterable $values): self
     {
-        return new self(\array_combine($this->source, self::new($values)->source));
+        return new self(\array_combine($this->source, self::for($values)->source));
     }
 
     /**

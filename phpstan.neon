@@ -24,7 +24,7 @@ parameters:
             path: src/Collection/ArrayCollection.php
 
         -
-            message: "#^Parameter \\#1 \\$source of static method Zenstruck\\\\Collection\\\\ArrayCollection\\<K of \\(int\\|string\\),V\\>\\:\\:new\\(\\) expects \\(callable\\(\\)\\: iterable\\<K of \\(int\\|string\\), V\\>\\)\\|iterable\\<K of \\(int\\|string\\), V\\>\\|null, iterable\\<\\(int\\|string\\), T\\> given\\.$#"
+            message: "#^Parameter \\#1 \\$source of static method Zenstruck\\\\Collection\\\\ArrayCollection\\<K of \\(int\\|string\\),V\\>\\:\\:for\\(\\) expects \\(callable\\(\\)\\: iterable\\<K of \\(int\\|string\\), V\\>\\)\\|iterable\\<K of \\(int\\|string\\), V\\>\\|null, iterable\\<\\(int\\|string\\), T\\> given\\.$#"
             count: 1
             path: src/Collection/ArrayCollection.php
 

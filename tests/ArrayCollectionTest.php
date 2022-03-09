@@ -18,9 +18,9 @@ final class ArrayCollectionTest extends TestCase
      */
     public function filter_no_callable(): void
     {
-        $this->assertSame([], Arr::new([])->filter()->all());
-        $this->assertSame([], Arr::new(['foo' => false, 'bar' => null, 'baz' => 0])->filter()->all());
-        $this->assertSame(['bar' => 1], Arr::new(['foo' => false, 'bar' => 1, 'baz' => 0])->filter()->all());
+        $this->assertSame([], Arr::for([])->filter()->all());
+        $this->assertSame([], Arr::for(['foo' => false, 'bar' => null, 'baz' => 0])->filter()->all());
+        $this->assertSame(['bar' => 1], Arr::for(['foo' => false, 'bar' => 1, 'baz' => 0])->filter()->all());
     }
 
     /**
@@ -28,9 +28,9 @@ final class ArrayCollectionTest extends TestCase
      */
     public function reject_no_callable(): void
     {
-        $this->assertSame([], Arr::new([])->reject()->all());
-        $this->assertSame(['foo' => false, 'bar' => null, 'baz' => 0], Arr::new(['foo' => false, 'bar' => null, 'baz' => 0])->reject()->all());
-        $this->assertSame([], Arr::new(['foo' => true, 'bar' => new \stdClass(), 'baz' => 1])->reject()->all());
+        $this->assertSame([], Arr::for([])->reject()->all());
+        $this->assertSame(['foo' => false, 'bar' => null, 'baz' => 0], Arr::for(['foo' => false, 'bar' => null, 'baz' => 0])->reject()->all());
+        $this->assertSame([], Arr::for(['foo' => true, 'bar' => new \stdClass(), 'baz' => 1])->reject()->all());
     }
 
     /**
@@ -66,7 +66,7 @@ final class ArrayCollectionTest extends TestCase
      */
     public function values(): void
     {
-        $this->assertSame([0, 1], Arr::new(['foo' => 0, 'bar' => 1])->values()->all());
+        $this->assertSame([0, 1], Arr::for(['foo' => 0, 'bar' => 1])->values()->all());
     }
 
     /**
@@ -88,7 +88,7 @@ final class ArrayCollectionTest extends TestCase
      */
     public function slice(): void
     {
-        $collection = Arr::new(['a', 'b', 'c', 'd', 'e']);
+        $collection = Arr::for(['a', 'b', 'c', 'd', 'e']);
 
         $this->assertSame(['a', 'b'], $collection->slice(0, -3)->all());
         $this->assertSame([2 => 'c', 3 => 'd'], $collection->slice(-3, 2)->all());
@@ -99,8 +99,8 @@ final class ArrayCollectionTest extends TestCase
      */
     public function merge(): void
     {
-        $this->assertSame(['foo', 'bar', 'baz', 'foo'], Arr::new(['foo'])->merge(['bar'], new \ArrayIterator(['baz']), ['foo'])->all());
-        $this->assertSame(['foo' => 1, 'bar' => 3], Arr::new(['foo' => 2])->merge(['foo' => 1], ['bar' => 1], ['bar' => 3])->all());
+        $this->assertSame(['foo', 'bar', 'baz', 'foo'], Arr::for(['foo'])->merge(['bar'], new \ArrayIterator(['baz']), ['foo'])->all());
+        $this->assertSame(['foo' => 1, 'bar' => 3], Arr::for(['foo' => 2])->merge(['foo' => 1], ['bar' => 1], ['bar' => 3])->all());
     }
 
     /**
@@ -108,8 +108,8 @@ final class ArrayCollectionTest extends TestCase
      */
     public function sort(): void
     {
-        $this->assertSame([0, 1, 2], Arr::new([2, 1, 0])->sort()->values()->all());
-        $this->assertEquals([new \DateTime('2022-01-01'), new \DateTime('2022-01-02'), new \DateTime('2022-01-03')], Arr::new([new \DateTime('2022-01-03'), new \DateTime('2022-01-01'), new \DateTime('2022-01-02')])->sort()->values()->all());
+        $this->assertSame([0, 1, 2], Arr::for([2, 1, 0])->sort()->values()->all());
+        $this->assertEquals([new \DateTime('2022-01-01'), new \DateTime('2022-01-02'), new \DateTime('2022-01-03')], Arr::for([new \DateTime('2022-01-03'), new \DateTime('2022-01-01'), new \DateTime('2022-01-02')])->sort()->values()->all());
     }
 
     /**
@@ -117,8 +117,8 @@ final class ArrayCollectionTest extends TestCase
      */
     public function sort_desc(): void
     {
-        $this->assertSame([2, 1, 0], Arr::new([2, 1, 0])->sortDesc()->values()->all());
-        $this->assertEquals([new \DateTime('2022-01-03'), new \DateTime('2022-01-02'), new \DateTime('2022-01-01')], Arr::new([new \DateTime('2022-01-03'), new \DateTime('2022-01-01'), new \DateTime('2022-01-02')])->sortDesc()->values()->all());
+        $this->assertSame([2, 1, 0], Arr::for([2, 1, 0])->sortDesc()->values()->all());
+        $this->assertEquals([new \DateTime('2022-01-03'), new \DateTime('2022-01-02'), new \DateTime('2022-01-01')], Arr::for([new \DateTime('2022-01-03'), new \DateTime('2022-01-01'), new \DateTime('2022-01-02')])->sortDesc()->values()->all());
     }
 
     /**
@@ -126,8 +126,8 @@ final class ArrayCollectionTest extends TestCase
      */
     public function sort_by(): void
     {
-        $this->assertSame([0, 1, 2], Arr::new([2, 1, 0])->sortBy(fn($v) => $v)->values()->all());
-        $this->assertEquals([new \DateTime('2022-01-01'), new \DateTime('2022-01-02'), new \DateTime('2022-01-03')], Arr::new([new \DateTime('2022-01-03'), new \DateTime('2022-01-01'), new \DateTime('2022-01-02')])->sortBy(fn($v) => $v)->values()->all());
+        $this->assertSame([0, 1, 2], Arr::for([2, 1, 0])->sortBy(fn($v) => $v)->values()->all());
+        $this->assertEquals([new \DateTime('2022-01-01'), new \DateTime('2022-01-02'), new \DateTime('2022-01-03')], Arr::for([new \DateTime('2022-01-03'), new \DateTime('2022-01-01'), new \DateTime('2022-01-02')])->sortBy(fn($v) => $v)->values()->all());
     }
 
     /**
@@ -135,8 +135,8 @@ final class ArrayCollectionTest extends TestCase
      */
     public function sort_by_desc(): void
     {
-        $this->assertSame([2, 1, 0], Arr::new([2, 1, 0])->sortByDesc(fn($v) => $v)->values()->all());
-        $this->assertEquals([new \DateTime('2022-01-03'), new \DateTime('2022-01-02'), new \DateTime('2022-01-01')], Arr::new([new \DateTime('2022-01-03'), new \DateTime('2022-01-01'), new \DateTime('2022-01-02')])->sortByDesc(fn($v) => $v)->values()->all());
+        $this->assertSame([2, 1, 0], Arr::for([2, 1, 0])->sortByDesc(fn($v) => $v)->values()->all());
+        $this->assertEquals([new \DateTime('2022-01-03'), new \DateTime('2022-01-02'), new \DateTime('2022-01-01')], Arr::for([new \DateTime('2022-01-03'), new \DateTime('2022-01-01'), new \DateTime('2022-01-02')])->sortByDesc(fn($v) => $v)->values()->all());
     }
 
     /**
@@ -144,7 +144,7 @@ final class ArrayCollectionTest extends TestCase
      */
     public function sort_keys(): void
     {
-        $this->assertSame([0 => null, 1 => null, 2 => null], Arr::new([2 => null, 1 => null, 0 => null])->sortKeys()->all());
+        $this->assertSame([0 => null, 1 => null, 2 => null], Arr::for([2 => null, 1 => null, 0 => null])->sortKeys()->all());
     }
 
     /**
@@ -152,7 +152,7 @@ final class ArrayCollectionTest extends TestCase
      */
     public function sort_keys_desc(): void
     {
-        $this->assertSame([2 => null, 1 => null, 0 => null], Arr::new([2 => null, 1 => null, 0 => null])->sortKeysDesc()->all());
+        $this->assertSame([2 => null, 1 => null, 0 => null], Arr::for([2 => null, 1 => null, 0 => null])->sortKeysDesc()->all());
     }
 
     /**
@@ -165,7 +165,7 @@ final class ArrayCollectionTest extends TestCase
                 'foo' => 1,
                 'bar' => 2,
             ],
-            Arr::new(['foo', 'bar'])->combine([1, 2])->all()
+            Arr::for(['foo', 'bar'])->combine([1, 2])->all()
         );
     }
 
@@ -179,7 +179,7 @@ final class ArrayCollectionTest extends TestCase
                 'foo' => 'foo',
                 'bar' => 'bar',
             ],
-            Arr::new(['foo', 'bar'])->combineWithSelf()->all()
+            Arr::for(['foo', 'bar'])->combineWithSelf()->all()
         );
     }
 
@@ -188,7 +188,7 @@ final class ArrayCollectionTest extends TestCase
      */
     public function group_by(): void
     {
-        $arr = Arr::new(
+        $arr = Arr::for(
             [
                 $first = ['name' => 'kevin', 'country' => 'CA'],
                 $second = ['name' => 'ryan', 'country' => new Stringable('US')],
@@ -212,7 +212,7 @@ final class ArrayCollectionTest extends TestCase
      */
     public function get(): void
     {
-        $items = Arr::new([0 => 5, 'foo' => 'bar', 'baz' => null]);
+        $items = Arr::for([0 => 5, 'foo' => 'bar', 'baz' => null]);
 
         $this->assertSame(5, $items->get(0));
         $this->assertSame('bar', $items->get('foo'));
@@ -227,7 +227,7 @@ final class ArrayCollectionTest extends TestCase
      */
     public function set(): void
     {
-        $items = Arr::new([0 => 5]);
+        $items = Arr::for([0 => 5]);
 
         $this->assertSame([0 => 10, 'foo' => 'bar'], $items->set(0, 10)->set('foo', 'bar')->all());
     }
@@ -237,7 +237,7 @@ final class ArrayCollectionTest extends TestCase
      */
     public function unset(): void
     {
-        $this->assertSame(['foo' => null], Arr::new(['foo' => null, 'bar' => null, 'baz' => null])->unset('bar', 'baz')->all());
+        $this->assertSame(['foo' => null], Arr::for(['foo' => null, 'bar' => null, 'baz' => null])->unset('bar', 'baz')->all());
     }
 
     /**
@@ -245,7 +245,7 @@ final class ArrayCollectionTest extends TestCase
      */
     public function only(): void
     {
-        $this->assertSame(['bar' => null, 'baz' => null], Arr::new(['foo' => null, 'bar' => null, 'baz' => null])->only('bar', 'baz')->all());
+        $this->assertSame(['bar' => null, 'baz' => null], Arr::for(['foo' => null, 'bar' => null, 'baz' => null])->only('bar', 'baz')->all());
     }
 
     /**
@@ -253,7 +253,7 @@ final class ArrayCollectionTest extends TestCase
      */
     public function push(): void
     {
-        $this->assertSame([0, 1, 5, 10], Arr::new([0])->push(1, 5, 10)->all());
+        $this->assertSame([0, 1, 5, 10], Arr::for([0])->push(1, 5, 10)->all());
     }
 
     /**
@@ -261,7 +261,7 @@ final class ArrayCollectionTest extends TestCase
      */
     public function in(): void
     {
-        $items = Arr::new([0 => 1, 'foo' => 'bar']);
+        $items = Arr::for([0 => 1, 'foo' => 'bar']);
 
         $this->assertTrue($items->in(1));
         $this->assertTrue($items->in('bar'));
@@ -273,7 +273,7 @@ final class ArrayCollectionTest extends TestCase
      */
     public function key_exists(): void
     {
-        $items = Arr::new([0 => 1, 'foo' => 'bar', 'baz' => null]);
+        $items = Arr::for([0 => 1, 'foo' => 'bar', 'baz' => null]);
 
         $this->assertTrue($items->keyExists(0));
         $this->assertTrue($items->keyExists('foo'));
@@ -286,7 +286,7 @@ final class ArrayCollectionTest extends TestCase
      */
     public function implode(): void
     {
-        $this->assertSame('foo.bar', Arr::new(['foo', 'bar'])->implode('.'));
+        $this->assertSame('foo.bar', Arr::for(['foo', 'bar'])->implode('.'));
     }
 
     /**
@@ -294,7 +294,7 @@ final class ArrayCollectionTest extends TestCase
      */
     public function array_accessor(): void
     {
-        $items = Arr::new([0 => 5]);
+        $items = Arr::for([0 => 5]);
 
         $items[0] = 10;
         $items['foo'] = 'bar';
