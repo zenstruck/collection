@@ -13,8 +13,10 @@ use Zenstruck\Collection;
  */
 final class LazyCollection implements Collection
 {
-    /** @use ExtraMethods<K,V> */
-    use ExtraMethods;
+    /** @use IterableCollection<K,V> */
+    use IterableCollection {
+        take as private traitTake;
+    }
 
     /** @var iterable<K,V>|\Closure():iterable<K,V> */
     private \Closure|iterable $source;
@@ -46,33 +48,7 @@ final class LazyCollection implements Collection
             return new self(\array_slice($source, $offset, $limit, true));
         }
 
-        if ($limit < 0) {
-            throw new \InvalidArgumentException('$limit cannot be negative');
-        }
-
-        if ($offset < 0) {
-            throw new \InvalidArgumentException('$offset cannot be negative');
-        }
-
-        if (0 === $limit) {
-            return new self();
-        }
-
-        return new self(function() use ($limit, $offset) {
-            $i = 0;
-
-            foreach ($this as $key => $value) {
-                if ($i++ < $offset) {
-                    continue;
-                }
-
-                yield $key => $value;
-
-                if ($i >= $offset + $limit) {
-                    break;
-                }
-            }
-        });
+        return $this->traitTake($limit, $offset);
     }
 
     /**

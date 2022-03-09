@@ -11,7 +11,7 @@ use Zenstruck\Collection\Tests\Fixture\Stringable;
  */
 final class ArrayCollectionTest extends TestCase
 {
-    use ExtraMethodsTests { eager as private; }
+    use IterableCollectionTests { eager as private; }
 
     /**
      * @test

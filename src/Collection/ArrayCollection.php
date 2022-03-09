@@ -14,8 +14,8 @@ use Zenstruck\Collection;
  */
 final class ArrayCollection implements Collection, \ArrayAccess
 {
-    /** @use ExtraMethods<K,V> */
-    use ExtraMethods { eager as private; }
+    /** @use IterableCollection<K,V> */
+    use IterableCollection { eager as private; }
 
     /** @var array<K,V> */
     private array $source;

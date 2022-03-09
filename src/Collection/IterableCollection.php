@@ -3,17 +3,52 @@
 namespace Zenstruck\Collection;
 
 /**
- * Adds extra useful collection methods that are "lazy".
+ * Convert any {@see \Traversable} into a {@see Collection} with
+ * extra, "lazy" methods.
  *
  * @author Kevin Bond <kevinbond@gmail.com>
  *
  * @template K of array-key
  * @template V
  */
-trait ExtraMethods
+trait IterableCollection
 {
     /** @use Paginatable<V> */
     use Paginatable;
+
+    /**
+     * @return LazyCollection<K,V>
+     */
+    public function take(int $limit, int $offset = 0): LazyCollection
+    {
+        if ($limit < 0) {
+            throw new \InvalidArgumentException('$limit cannot be negative');
+        }
+
+        if ($offset < 0) {
+            throw new \InvalidArgumentException('$offset cannot be negative');
+        }
+
+        if (0 === $limit) {
+            return new self();
+        }
+
+        return new self(function() use ($limit, $offset) {
+            $i = 0;
+
+            foreach ($this as $key => $value) {
+                if ($i++ < $offset) {
+                    continue;
+                }
+
+                yield $key => $value;
+
+                if ($i >= $offset + $limit) {
+                    break;
+                }
+            }
+        });
+    }
 
     /**
      * @param callable(V,K):bool $predicate
@@ -136,6 +171,11 @@ trait ExtraMethods
     public function isEmpty(): bool
     {
         return 0 === $this->count();
+    }
+
+    public function count(): int
+    {
+        return \iterator_count($this);
     }
 
     public function dump(): static

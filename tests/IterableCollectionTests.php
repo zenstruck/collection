@@ -10,7 +10,7 @@ use Zenstruck\Collection\Tests\Fixture\Stringable;
  *
  * @mixin TestCase
  */
-trait ExtraMethodsTests
+trait IterableCollectionTests
 {
     use PagintableCollectionTests;
 
