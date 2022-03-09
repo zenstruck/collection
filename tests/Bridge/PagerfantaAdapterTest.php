@@ -5,7 +5,7 @@ namespace Zenstruck\Collection\Tests\Bridge;
 use Pagerfanta\Pagerfanta;
 use PHPUnit\Framework\TestCase;
 use Zenstruck\Collection\Bridge\PagerfantaAdapter;
-use Zenstruck\Collection\IterableCollection;
+use Zenstruck\Collection\LazyCollection;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -17,7 +17,7 @@ final class PagerfantaAdapterTest extends TestCase
      */
     public function it_counts_total_number_of_results(): void
     {
-        $pagerfanta = new Pagerfanta(new PagerfantaAdapter(new IterableCollection([1, 2, 3, 4])));
+        $pagerfanta = new Pagerfanta(new PagerfantaAdapter(new LazyCollection([1, 2, 3, 4])));
 
         $this->assertEquals(4, $pagerfanta->getNbResults());
     }
@@ -27,7 +27,7 @@ final class PagerfantaAdapterTest extends TestCase
      */
     public function it_iterates_slice(): void
     {
-        $pagerfanta = new Pagerfanta(new PagerfantaAdapter(new IterableCollection([1, 2, 3, 4])));
+        $pagerfanta = new Pagerfanta(new PagerfantaAdapter(new LazyCollection([1, 2, 3, 4])));
 
         $pagerfanta->setMaxPerPage(2);
         $pagerfanta->setCurrentPage(1);

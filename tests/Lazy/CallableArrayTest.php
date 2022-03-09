@@ -1,16 +1,16 @@
 <?php
 
-namespace Zenstruck\Collection\Tests\Iterable;
+namespace Zenstruck\Collection\Tests\Lazy;
 
-use Zenstruck\Collection\IterableCollection;
-use Zenstruck\Collection\Tests\IterableCollectionTest;
+use Zenstruck\Collection\LazyCollection;
+use Zenstruck\Collection\Tests\LazyCollectionTest;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class CallableArrayTest extends IterableCollectionTest
+final class CallableArrayTest extends LazyCollectionTest
 {
-    protected function createWithItems(int $count): IterableCollection
+    protected function createWithItems(int $count): LazyCollection
     {
         $object = new class($count) {
             public function __construct(private $count)
@@ -23,6 +23,6 @@ final class CallableArrayTest extends IterableCollectionTest
             }
         };
 
-        return new IterableCollection([$object, 'values']);
+        return new LazyCollection([$object, 'values']);
     }
 }

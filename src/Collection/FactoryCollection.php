@@ -13,8 +13,8 @@ use Zenstruck\Collection;
  */
 final class FactoryCollection implements Collection
 {
-    /** @use Paginatable<V> */
-    use Paginatable;
+    /** @use IterableCollection<K,V> */
+    use IterableCollection;
 
     /** @var Collection<K,V> */
     private Collection $inner;
@@ -27,11 +27,6 @@ final class FactoryCollection implements Collection
     {
         $this->inner = $collection;
         $this->factory = \Closure::fromCallable($factory);
-    }
-
-    public function take(int $limit, int $offset = 0): Collection
-    {
-        return new self($this->inner->take($limit, $offset), $this->factory);
     }
 
     public function getIterator(): \Traversable

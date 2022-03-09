@@ -1,14 +1,14 @@
 <?php
 
-namespace Zenstruck\Collection\Tests\Iterable;
+namespace Zenstruck\Collection\Tests\Lazy;
 
-use Zenstruck\Collection\IterableCollection;
-use Zenstruck\Collection\Tests\IterableCollectionTest;
+use Zenstruck\Collection\LazyCollection;
+use Zenstruck\Collection\Tests\LazyCollectionTest;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class ClosureGeneratorTest extends IterableCollectionTest
+final class ClosureGeneratorTest extends LazyCollectionTest
 {
     /**
      * @test
@@ -20,7 +20,7 @@ final class ClosureGeneratorTest extends IterableCollectionTest
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('$source must not be a generator directly as generators cannot be rewound. Try wrapping in a closure.');
 
-        new IterableCollection($generator());
+        new LazyCollection($generator());
     }
 
     /**
@@ -34,9 +34,9 @@ final class ClosureGeneratorTest extends IterableCollectionTest
         $this->assertCount(5, $collection);
     }
 
-    protected function createWithItems(int $count): IterableCollection
+    protected function createWithItems(int $count): LazyCollection
     {
-        return new IterableCollection(static function() use ($count) {
+        return new LazyCollection(static function() use ($count) {
             for ($i = 1; $i <= $count; ++$i) {
                 yield $i;
             }

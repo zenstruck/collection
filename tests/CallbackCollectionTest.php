@@ -11,7 +11,7 @@ use Zenstruck\Collection\CallbackCollection;
  */
 final class CallbackCollectionTest extends TestCase
 {
-    use PagintableCollectionTests;
+    use CollectionTests;
 
     /**
      * @test

@@ -12,7 +12,7 @@ use Zenstruck\Collection\DoctrineCollection;
  */
 abstract class DoctrineCollectionTest extends TestCase
 {
-    use PagintableCollectionTests;
+    use CollectionTests;
 
     private ?DoctrineCollection $collection = null;
 
@@ -76,49 +76,6 @@ abstract class DoctrineCollectionTest extends TestCase
             return 'other' === $e;
         });
         $this->assertFalse($exists);
-    }
-
-    /**
-     * @test
-     */
-    public function map(): void
-    {
-        $this->collection->add(1);
-        $this->collection->add(2);
-        $res = $this->collection->map(static function($e) {
-            return $e * 2;
-        });
-        $this->assertEquals([2, 4], $res->toArray());
-    }
-
-    /**
-     * @test
-     */
-    public function filter(): void
-    {
-        $this->collection->add(1);
-        $this->collection->add('foo');
-        $this->collection->add(3);
-        $res = $this->collection->filter(static function($e) {
-            return \is_numeric($e);
-        });
-        $this->assertEquals([0 => 1, 2 => 3], $res->toArray());
-    }
-
-    /**
-     * @test
-     */
-    public function filter_by_value_and_key(): void
-    {
-        $this->collection->add(1);
-        $this->collection->add('foo');
-        $this->collection->add(3);
-        $this->collection->add(4);
-        $this->collection->add(5);
-        $res = $this->collection->filter(static function($v, $k) {
-            return \is_numeric($v) && 0 === $k % 2;
-        });
-        $this->assertSame([0 => 1, 2 => 3, 4 => 5], $res->toArray());
     }
 
     /**

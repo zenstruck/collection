@@ -11,12 +11,13 @@ use Doctrine\ORM\Query\QueryException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Zenstruck\Collection;
+use Zenstruck\Collection\ArrayCollection;
 use Zenstruck\Collection\CallbackCollection;
 use Zenstruck\Collection\Doctrine\ORM\Batch\BatchIterator;
 use Zenstruck\Collection\Doctrine\ORM\Batch\BatchProcessor;
 use Zenstruck\Collection\FactoryCollection;
 use Zenstruck\Collection\IterableCollection;
-use Zenstruck\Collection\Paginatable;
+use Zenstruck\Collection\LazyCollection;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -26,8 +27,8 @@ use Zenstruck\Collection\Paginatable;
  */
 final class Result implements Collection
 {
-    /** @use Paginatable<V> */
-    use Paginatable;
+    /** @use IterableCollection<int,V> */
+    use IterableCollection;
 
     private Query $query;
     private ?bool $useOutputWalkers = null;
@@ -52,13 +53,6 @@ final class Result implements Collection
         return new self($query);
     }
 
-    /**
-     * @template D
-     *
-     * @param D $default
-     *
-     * @return V|D
-     */
     public function first(mixed $default = null): mixed
     {
         try {
@@ -70,7 +64,7 @@ final class Result implements Collection
 
     public function take(int $limit, int $offset = 0): Collection
     {
-        $collection = new IterableCollection(
+        $collection = new LazyCollection(
             fn() => \iterator_to_array($this->paginatorFor($this->cloneQuery()->setFirstResult($offset)->setMaxResults($limit)))
         );
 
@@ -264,6 +258,14 @@ final class Result implements Collection
         }
 
         return $this->query->execute();
+    }
+
+    /**
+     * @return ArrayCollection<int,V>
+     */
+    public function eager(): ArrayCollection
+    {
+        return new ArrayCollection($this->toArray());
     }
 
     private function normalizeResult(mixed $result): mixed

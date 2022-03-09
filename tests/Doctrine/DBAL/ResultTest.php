@@ -5,16 +5,16 @@ namespace Zenstruck\Collection\Tests\Doctrine\DBAL;
 use PHPUnit\Framework\TestCase;
 use Zenstruck\Collection;
 use Zenstruck\Collection\Doctrine\DBAL\Result;
+use Zenstruck\Collection\Tests\CollectionTests;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
 use Zenstruck\Collection\Tests\Doctrine\HasDatabase;
-use Zenstruck\Collection\Tests\PagintableCollectionTests;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
 final class ResultTest extends TestCase
 {
-    use HasDatabase, PagintableCollectionTests;
+    use CollectionTests, HasDatabase;
 
     protected function createWithItems(int $count): Collection
     {

@@ -13,22 +13,17 @@ use Zenstruck\Collection;
  */
 final class CallbackCollection implements Collection
 {
-    /** @use Paginatable<V> */
-    use Paginatable;
+    /** @use IterableCollection<K,V> */
+    use IterableCollection;
 
-    /** @var IterableCollection<K,V> */
-    private IterableCollection $iterator;
+    /** @var LazyCollection<K,V> */
+    private LazyCollection $iterator;
     private \Closure $count;
 
     public function __construct(callable $iterator, callable $count)
     {
-        $this->iterator = new IterableCollection($iterator);
+        $this->iterator = new LazyCollection($iterator);
         $this->count = \Closure::fromCallable($count);
-    }
-
-    public function take(int $limit, int $offset = 0): Collection
-    {
-        return $this->iterator->take($limit, $offset);
     }
 
     public function getIterator(): \Traversable

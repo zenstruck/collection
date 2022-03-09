@@ -5,7 +5,7 @@ namespace Zenstruck\Collection\Doctrine\DBAL;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Zenstruck\Collection;
 use Zenstruck\Collection\IterableCollection;
-use Zenstruck\Collection\Paginatable;
+use Zenstruck\Collection\LazyCollection;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -15,8 +15,8 @@ use Zenstruck\Collection\Paginatable;
  */
 class Result implements Collection
 {
-    /** @use Paginatable<V> */
-    use Paginatable;
+    /** @use IterableCollection<int,V> */
+    use IterableCollection;
 
     private QueryBuilder $qb;
 
@@ -37,7 +37,7 @@ class Result implements Collection
 
     public function take(int $limit, int $offset = 0): Collection
     {
-        return new IterableCollection(
+        return new LazyCollection(
             fn() => (clone $this->qb)->setFirstResult($offset)->setMaxResults($limit)->{self::executeMethod()}()->fetchAllAssociative()
         );
     }
@@ -49,7 +49,7 @@ class Result implements Collection
 
     public function getIterator(): \Traversable
     {
-        return new IterableCollection(function() {
+        return new LazyCollection(function() {
             $stmt = $this->qb->{self::executeMethod()}();
 
             while ($data = $stmt->fetchAssociative()) {
