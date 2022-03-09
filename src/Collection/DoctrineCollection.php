@@ -119,13 +119,6 @@ final class DoctrineCollection implements Collection, Inner
         return $this->inner->toArray();
     }
 
-    /**
-     * @template D
-     *
-     * @param D $default
-     *
-     * @return V|D
-     */
     public function first(mixed $default = null): mixed
     {
         return false === ($result = $this->inner->first()) ? $default : $result;
@@ -157,8 +150,6 @@ final class DoctrineCollection implements Collection, Inner
     }
 
     /**
-     * @param \Closure|callable(V,K):bool $p
-     *
      * @return self<K,V>
      */
     public function filter(\Closure|callable $p): self

@@ -53,13 +53,6 @@ final class Result implements Collection
         return new self($query);
     }
 
-    /**
-     * @template D
-     *
-     * @param D $default
-     *
-     * @return V|D
-     */
     public function first(mixed $default = null): mixed
     {
         try {

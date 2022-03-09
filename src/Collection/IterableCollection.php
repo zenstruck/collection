@@ -48,8 +48,6 @@ trait IterableCollection
     }
 
     /**
-     * @param callable(V,K):bool $predicate
-     *
      * @return LazyCollection<K,V>
      */
     public function filter(callable $predicate): LazyCollection
@@ -76,10 +74,6 @@ trait IterableCollection
     }
 
     /**
-     * @template T of array-key|\Stringable
-     *
-     * @param callable(V,K):T $function
-     *
      * @return LazyCollection<array-key,V>
      */
     public function keyBy(callable $function): LazyCollection
@@ -146,13 +140,6 @@ trait IterableCollection
         return new PageCollection($this, $limit);
     }
 
-    /**
-     * @template D
-     *
-     * @param D $default
-     *
-     * @return V|D
-     */
     public function first(mixed $default = null): mixed
     {
         foreach ($this as $value) {
