@@ -16,15 +16,15 @@ trait ExtraMethods
     use Paginatable;
 
     /**
-     * @param callable(V,K):bool $func
+     * @param callable(V,K):bool $predicate
      *
      * @return IterableCollection<K,V>
      */
-    public function filter(callable $func): IterableCollection
+    public function filter(callable $predicate): IterableCollection
     {
-        return new IterableCollection(function() use ($func) {
+        return new IterableCollection(function() use ($predicate) {
             foreach ($this as $key => $value) {
-                if ($func($value, $key)) {
+                if ($predicate($value, $key)) {
                     yield $key => $value;
                 }
             }
@@ -34,27 +34,27 @@ trait ExtraMethods
     /**
      * Opposite of {@see filter()}.
      *
-     * @param callable(V,K):bool $func
+     * @param callable(V,K):bool $predicate
      *
      * @return IterableCollection<K,V>
      */
-    public function reject(callable $func): IterableCollection
+    public function reject(callable $predicate): IterableCollection
     {
-        return $this->filter(fn($value, $key) => !$func($value, $key));
+        return $this->filter(fn($value, $key) => !$predicate($value, $key));
     }
 
     /**
      * @template T of array-key|\Stringable
      *
-     * @param callable(V,K):T $func
+     * @param callable(V,K):T $function
      *
      * @return IterableCollection<array-key,V>
      */
-    public function keyBy(callable $func): IterableCollection
+    public function keyBy(callable $function): IterableCollection
     {
-        return new IterableCollection(function() use ($func) {
+        return new IterableCollection(function() use ($function) {
             foreach ($this as $key => $value) {
-                $key = $func($value, $key);
+                $key = $function($value, $key);
 
                 yield $key instanceof \Stringable ? (string) $key : $key => $value;
             }
@@ -64,15 +64,15 @@ trait ExtraMethods
     /**
      * @template T
      *
-     * @param callable(V,K):T $func
+     * @param callable(V,K):T $function
      *
      * @return IterableCollection<K,T>
      */
-    public function map(callable $func): IterableCollection
+    public function map(callable $function): IterableCollection
     {
-        return new IterableCollection(function() use ($func) {
+        return new IterableCollection(function() use ($function) {
             foreach ($this as $key => $value) {
-                yield $key => $func($value, $key);
+                yield $key => $function($value, $key);
             }
         });
     }
@@ -81,15 +81,15 @@ trait ExtraMethods
      * @template T of array-key|\Stringable
      * @template U
      *
-     * @param callable(V,K):iterable<T,U> $func
+     * @param callable(V,K):iterable<T,U> $function
      *
      * @return IterableCollection<array-key,U>
      */
-    public function mapWithKeys(callable $func): IterableCollection
+    public function mapWithKeys(callable $function): IterableCollection
     {
-        return new IterableCollection(function() use ($func) {
+        return new IterableCollection(function() use ($function) {
             foreach ($this as $key => $value) {
-                foreach ($func($value, $key) as $newKey => $newValue) {
+                foreach ($function($value, $key) as $newKey => $newValue) {
                     yield $newKey instanceof \Stringable ? (string) $newKey : $newKey => $newValue;
 
                     continue 2;
@@ -117,15 +117,15 @@ trait ExtraMethods
     /**
      * @template D
      *
-     * @param callable(V,K):bool $filter
+     * @param callable(V,K):bool $predicate
      * @param D                  $default
      *
      * @return V|D
      */
-    public function firstWhere(callable $filter, mixed $default = null): mixed
+    public function firstWhere(callable $predicate, mixed $default = null): mixed
     {
         foreach ($this as $key => $value) {
-            if ($filter($value, $key)) {
+            if ($predicate($value, $key)) {
                 return $value;
             }
         }

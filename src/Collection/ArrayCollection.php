@@ -144,42 +144,42 @@ final class ArrayCollection implements Collection, \ArrayAccess
     }
 
     /**
-     * @param null|callable(V,K):bool $func
+     * @param null|callable(V,K):bool $predicate
      *
      * @return self<K,V>
      */
-    public function filter(?callable $func = null): self
+    public function filter(?callable $predicate = null): self
     {
-        return new self(\array_filter($this->source, $func, \ARRAY_FILTER_USE_BOTH));
+        return new self(\array_filter($this->source, $predicate, \ARRAY_FILTER_USE_BOTH));
     }
 
     /**
      * Opposite of {@see filter()}.
      *
-     * @param null|callable(V,K):bool $func
+     * @param null|callable(V,K):bool $predicate
      *
      * @return self<K,V>
      */
-    public function reject(?callable $func = null): self
+    public function reject(?callable $predicate = null): self
     {
-        $func ??= static fn($value, $key) => (bool) $value;
+        $predicate ??= static fn($value, $key) => (bool) $value;
 
-        return $this->filter(fn($value, $key) => !$func($value, $key));
+        return $this->filter(fn($value, $key) => !$predicate($value, $key));
     }
 
     /**
      * @template T of array-key|\Stringable
      *
-     * @param callable(V,K):T $func
+     * @param callable(V,K):T $function
      *
      * @return self<array-key,V>
      */
-    public function keyBy(callable $func): self
+    public function keyBy(callable $function): self
     {
         $results = [];
 
         foreach ($this->source as $key => $value) {
-            $key = $func($value, $key);
+            $key = $function($value, $key);
 
             $results[$key instanceof \Stringable ? (string) $key : $key] = $value;
         }
@@ -190,31 +190,31 @@ final class ArrayCollection implements Collection, \ArrayAccess
     /**
      * @template T
      *
-     * @param callable(V,K):T $func
+     * @param callable(V,K):T $function
      *
      * @return self<K,T>
      */
-    public function map(callable $func): self
+    public function map(callable $function): self
     {
         $keys = \array_keys($this->source);
 
-        return new self(\array_combine($keys, \array_map($func, $this->source, $keys)));
+        return new self(\array_combine($keys, \array_map($function, $this->source, $keys)));
     }
 
     /**
      * @template T of array-key|\Stringable
      * @template U
      *
-     * @param callable(V,K):iterable<T,U> $func
+     * @param callable(V,K):iterable<T,U> $function
      *
      * @return self<array-key,U>
      */
-    public function mapWithKeys(callable $func): self
+    public function mapWithKeys(callable $function): self
     {
         $results = [];
 
         foreach ($this->source as $key => $value) {
-            foreach ($func($value, $key) as $newKey => $newValue) {
+            foreach ($function($value, $key) as $newKey => $newValue) {
                 $results[$newKey instanceof \Stringable ? (string) $newKey : $newKey] = $newValue;
 
                 continue 2;
@@ -244,17 +244,17 @@ final class ArrayCollection implements Collection, \ArrayAccess
     }
 
     /**
-     * @param callable(V,K):mixed $func
+     * @param callable(V,K):mixed $function
      *
      * @return self<K,V>
      */
-    public function sortBy(callable $func, int $flags = \SORT_REGULAR): self
+    public function sortBy(callable $function, int $flags = \SORT_REGULAR): self
     {
         $results = [];
 
         // calculate comparator
         foreach ($this->source as $key => $value) {
-            $results[$key] = $func($value, $key);
+            $results[$key] = $function($value, $key);
         }
 
         \asort($results, $flags);
@@ -267,13 +267,13 @@ final class ArrayCollection implements Collection, \ArrayAccess
     }
 
     /**
-     * @param callable(V,K):mixed $func
+     * @param callable(V,K):mixed $function
      *
      * @return self<K,V>
      */
-    public function sortByDesc(callable $func, int $flags = \SORT_REGULAR): self
+    public function sortByDesc(callable $function, int $flags = \SORT_REGULAR): self
     {
-        return $this->sortBy($func, $flags)->reverse();
+        return $this->sortBy($function, $flags)->reverse();
     }
 
     /**
@@ -323,16 +323,16 @@ final class ArrayCollection implements Collection, \ArrayAccess
     /**
      * @template T of array-key|\Stringable
      *
-     * @param callable(V,K):T $func
+     * @param callable(V,K):T $function
      *
      * @return self<array-key,non-empty-array<int,V>>
      */
-    public function groupBy(callable $func): self
+    public function groupBy(callable $function): self
     {
         $results = [];
 
         foreach ($this->source as $key => $value) {
-            $newKey = $func($value, $key);
+            $newKey = $function($value, $key);
 
             $results[$newKey instanceof \Stringable ? (string) $newKey : $newKey][] = $value;
         }
