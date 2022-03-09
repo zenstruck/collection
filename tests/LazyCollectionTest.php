@@ -10,7 +10,7 @@ use Zenstruck\Collection\LazyCollection;
  */
 abstract class LazyCollectionTest extends TestCase
 {
-    use IterableCollectionTests;
+    use CollectionTests;
 
     /**
      * @test

@@ -3,8 +3,8 @@
 namespace Zenstruck\Collection;
 
 /**
- * Convert any {@see \Traversable} into a {@see Collection} with
- * extra, "lazy" methods.
+ * Convert any {@see \Traversable} class into a {@see Collection}
+ * with some extra, "lazy" methods.
  *
  * @author Kevin Bond <kevinbond@gmail.com>
  *
@@ -13,9 +13,6 @@ namespace Zenstruck\Collection;
  */
 trait IterableCollection
 {
-    /** @use Paginatable<V> */
-    use Paginatable;
-
     /**
      * @return LazyCollection<K,V>
      */
@@ -30,10 +27,10 @@ trait IterableCollection
         }
 
         if (0 === $limit) {
-            return new self();
+            return new LazyCollection();
         }
 
-        return new self(function() use ($limit, $offset) {
+        return new LazyCollection(function() use ($limit, $offset) {
             $i = 0;
 
             foreach ($this as $key => $value) {
@@ -131,6 +128,22 @@ trait IterableCollection
                 }
             }
         });
+    }
+
+    /**
+     * @return Page<V>
+     */
+    public function paginate(int $page = 1, int $limit = Page::DEFAULT_LIMIT): Page
+    {
+        return $this->pages($limit)->get($page);
+    }
+
+    /**
+     * @return PageCollection<V>
+     */
+    public function pages(int $limit = Page::DEFAULT_LIMIT): PageCollection
+    {
+        return new PageCollection($this, $limit);
     }
 
     /**

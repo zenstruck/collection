@@ -59,6 +59,8 @@ trait HasDatabase
 
     protected function persistEntities(int $count): void
     {
+        $this->setupEntityManager();
+
         for ($i = 0; $i < $count; ++$i) {
             $this->em->persist(new Entity('value '.($i + 1)));
         }

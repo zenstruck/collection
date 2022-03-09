@@ -16,8 +16,10 @@ use Zenstruck\Collection;
  */
 final class DoctrineCollection implements Collection, Inner
 {
-    /** @use Paginatable<V> */
-    use Paginatable;
+    /** @use IterableCollection<K,V> */
+    use IterableCollection {
+        map as private innerMap;
+    }
 
     /** @var Inner<K,V> */
     private Inner $inner;
@@ -117,9 +119,16 @@ final class DoctrineCollection implements Collection, Inner
         return $this->inner->toArray();
     }
 
-    public function first(): mixed
+    /**
+     * @template D
+     *
+     * @param D $default
+     *
+     * @return V|D
+     */
+    public function first(mixed $default = null): mixed
     {
-        return $this->inner->first();
+        return false === ($result = $this->inner->first()) ? $default : $result;
     }
 
     public function last(): mixed
@@ -148,11 +157,23 @@ final class DoctrineCollection implements Collection, Inner
     }
 
     /**
+     * @param \Closure|callable(V,K):bool $p
+     *
      * @return self<K,V>
      */
-    public function filter(\Closure $p): self
+    public function filter(\Closure|callable $p): self
     {
-        return new self($this->inner->filter($p));
+        return new self($this->inner->filter(\Closure::fromCallable($p)));
+    }
+
+    /**
+     * @param callable(V,K):bool $predicate
+     *
+     * @return self<K,V>
+     */
+    public function reject(callable $predicate): self
+    {
+        return $this->filter(fn($value, $key) => !$predicate($value, $key));
     }
 
     public function forAll(\Closure $p): bool
@@ -161,15 +182,15 @@ final class DoctrineCollection implements Collection, Inner
     }
 
     /**
-     * @template U
+     * @template T
      *
-     * @param \Closure():U $func
+     * @param \Closure|callable(V,K):T $func
      *
-     * @return self<K,U>
+     * @return self<K,T>
      */
-    public function map(\Closure $func): self
+    public function map(\Closure|callable $func): self
     {
-        return new self($this->inner->map($func));
+        return new self($this->innerMap($func));
     }
 
     public function partition(\Closure $p): array

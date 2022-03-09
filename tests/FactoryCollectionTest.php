@@ -12,7 +12,7 @@ use Zenstruck\Collection\LazyCollection;
  */
 final class FactoryCollectionTest extends TestCase
 {
-    use PagintableCollectionTests;
+    use CollectionTests;
 
     protected function createWithItems(int $count): Collection
     {

@@ -4,8 +4,8 @@ namespace Zenstruck\Collection\Doctrine\DBAL;
 
 use Doctrine\DBAL\Query\QueryBuilder;
 use Zenstruck\Collection;
+use Zenstruck\Collection\IterableCollection;
 use Zenstruck\Collection\LazyCollection;
-use Zenstruck\Collection\Paginatable;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -15,8 +15,8 @@ use Zenstruck\Collection\Paginatable;
  */
 class Result implements Collection
 {
-    /** @use Paginatable<V> */
-    use Paginatable;
+    /** @use IterableCollection<int,V> */
+    use IterableCollection;
 
     private QueryBuilder $qb;
 

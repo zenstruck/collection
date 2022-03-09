@@ -16,8 +16,8 @@ use Zenstruck\Collection\CallbackCollection;
 use Zenstruck\Collection\Doctrine\ORM\Batch\BatchIterator;
 use Zenstruck\Collection\Doctrine\ORM\Batch\BatchProcessor;
 use Zenstruck\Collection\FactoryCollection;
+use Zenstruck\Collection\IterableCollection;
 use Zenstruck\Collection\LazyCollection;
-use Zenstruck\Collection\Paginatable;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -27,8 +27,8 @@ use Zenstruck\Collection\Paginatable;
  */
 final class Result implements Collection
 {
-    /** @use Paginatable<V> */
-    use Paginatable;
+    /** @use IterableCollection<int,V> */
+    use IterableCollection;
 
     private Query $query;
     private ?bool $useOutputWalkers = null;
