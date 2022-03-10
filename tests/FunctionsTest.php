@@ -3,8 +3,8 @@
 namespace Zenstruck\Collection\Tests;
 
 use PHPUnit\Framework\TestCase;
-use function Zenstruck\collect;
 use function Zenstruck\arr;
+use function Zenstruck\collect;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>

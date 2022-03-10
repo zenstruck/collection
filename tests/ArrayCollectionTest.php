@@ -345,6 +345,33 @@ final class ArrayCollectionTest extends TestCase
         $this->assertSame([2 => null, 3 => null, 4 => null], Arr::fill(2, 3, null)->all());
     }
 
+    /**
+     * @test
+     */
+    public function construct_with_callable(): void
+    {
+        $generator = function() {
+            yield 1;
+            yield 2;
+        };
+
+        $this->assertSame([1, 2], Arr::for($generator)->all());
+        $this->assertSame([1, 2], Arr::for(fn() => [1, 2])->all());
+    }
+
+    /**
+     * @test
+     */
+    public function construct_with_generator(): void
+    {
+        $generator = function() {
+            yield 1;
+            yield 2;
+        };
+
+        $this->assertSame([1, 2], Arr::for($generator())->all());
+    }
+
     protected function createWithItems(int $count): Arr
     {
         return new Arr($count ? \range(1, $count) : []);

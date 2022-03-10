@@ -25,6 +25,10 @@ final class ArrayCollection implements Collection, \ArrayAccess
      */
     public function __construct(iterable|callable|null $source = null)
     {
+        if ($source instanceof \Traversable) {
+            $source = \iterator_to_array($source);
+        }
+
         $this->source = \is_array($source) ? $source : (new LazyCollection($source))->toArray();
     }
 
