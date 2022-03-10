@@ -26,7 +26,7 @@ function collect(iterable|callable|null $source = null): LazyCollection
  *
  * @return ArrayCollection<K,V>
  */
-function map(iterable|callable|null $source = null): ArrayCollection
+function arr(iterable|callable|null $source = null): ArrayCollection
 {
     return new ArrayCollection($source);
 }
