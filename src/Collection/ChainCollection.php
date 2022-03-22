@@ -17,6 +17,9 @@ final class ChainCollection implements Collection
     /** @use IterableCollection<K,V> */
     use IterableCollection;
 
+    /** @var Collection<K,V> */
+    private Collection $collections;
+
     /**
      * @param iterable<Collection<K,V>> $collections
      * @param bool                      $preserveKeys Whether to preserve the keys of the inner collections
@@ -24,8 +27,9 @@ final class ChainCollection implements Collection
      *                                                !NOTE! data may be lost when converting to array
      *                                                if inner collections have duplicated keys.
      */
-    public function __construct(private iterable $collections, private bool $preserveKeys = false)
+    public function __construct(iterable $collections, private bool $preserveKeys = false)
     {
+        $this->collections = $collections instanceof Collection ? $collections : new LazyCollection($collections);
     }
 
     public function getIterator(): \Traversable
@@ -45,12 +49,6 @@ final class ChainCollection implements Collection
 
     public function count(): int
     {
-        $count = 0;
-
-        foreach ($this->collections as $collection) {
-            $count += $collection->count();
-        }
-
-        return $count;
+        return (int) $this->collections->sum(fn(Collection $c) => $c->count());
     }
 }
