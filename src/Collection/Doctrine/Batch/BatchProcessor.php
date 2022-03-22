@@ -1,8 +1,9 @@
 <?php
 
-namespace Zenstruck\Collection\Doctrine\ORM\Batch;
+namespace Zenstruck\Collection\Doctrine\Batch;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ObjectManager;
 
 /**
  * @author Marco Pivetta <ocramius@gmail.com>
@@ -15,16 +16,16 @@ class BatchProcessor implements \IteratorAggregate
 {
     /** @var iterable<int,V> */
     protected iterable $items;
-    private EntityManagerInterface $em;
+    private ObjectManager $om;
     private int $chunkSize;
 
     /**
      * @param iterable<int,V> $items
      */
-    private function __construct(iterable $items, EntityManagerInterface $em, int $chunkSize = 100)
+    private function __construct(iterable $items, ObjectManager $om, int $chunkSize = 100)
     {
         $this->items = $items;
-        $this->em = $em;
+        $this->om = $om;
         $this->chunkSize = $chunkSize;
     }
 
@@ -33,20 +34,22 @@ class BatchProcessor implements \IteratorAggregate
      *
      * @return self<V>|CountableBatchProcessor<V>
      */
-    final public static function for(iterable $items, EntityManagerInterface $em, int $chunkSize = 100): self|CountableBatchProcessor
+    final public static function for(iterable $items, ObjectManager $om, int $chunkSize = 100): self|CountableBatchProcessor
     {
         if (\is_countable($items)) {
-            return new CountableBatchProcessor($items, $em, $chunkSize);
+            return new CountableBatchProcessor($items, $om, $chunkSize);
         }
 
-        return new self($items, $em, $chunkSize);
+        return new self($items, $om, $chunkSize);
     }
 
     final public function getIterator(): \Traversable
     {
-        $logger = $this->em->getConfiguration()->getSQLLogger();
-        $this->em->getConfiguration()->setSQLLogger(null);
-        $this->em->beginTransaction();
+        if ($this->om instanceof EntityManagerInterface) {
+            $logger = $this->om->getConfiguration()->getSQLLogger();
+            $this->om->getConfiguration()->setSQLLogger(null);
+            $this->om->beginTransaction();
+        }
 
         $iteration = 0;
 
@@ -57,14 +60,19 @@ class BatchProcessor implements \IteratorAggregate
                 $this->flushAndClearBatch(++$iteration);
             }
         } catch (\Throwable $e) {
-            $this->em->rollback();
+            if ($this->om instanceof EntityManagerInterface) {
+                $this->om->rollback();
+            }
 
             throw $e;
         }
 
         $this->flushAndClear();
-        $this->em->commit();
-        $this->em->getConfiguration()->setSQLLogger($logger);
+
+        if ($this->om instanceof EntityManagerInterface) {
+            $this->om->commit();
+            $this->om->getConfiguration()->setSQLLogger($logger);
+        }
     }
 
     private function flushAndClearBatch(int $iteration): void
@@ -78,7 +86,7 @@ class BatchProcessor implements \IteratorAggregate
 
     private function flushAndClear(): void
     {
-        $this->em->flush();
-        $this->em->clear();
+        $this->om->flush();
+        $this->om->clear();
     }
 }

@@ -1,10 +1,10 @@
 <?php
 
-namespace Zenstruck\Collection\Tests\Doctrine\ORM\Batch;
+namespace Zenstruck\Collection\Tests\Doctrine\Batch;
 
 use PHPUnit\Framework\TestCase;
-use Zenstruck\Collection\Doctrine\ORM\Batch\BatchIterator;
-use Zenstruck\Collection\Doctrine\ORM\Batch\CountableBatchIterator;
+use Zenstruck\Collection\Doctrine\Batch\BatchIterator;
+use Zenstruck\Collection\Doctrine\Batch\CountableBatchIterator;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
 use Zenstruck\Collection\Tests\Doctrine\HasDatabase;
 

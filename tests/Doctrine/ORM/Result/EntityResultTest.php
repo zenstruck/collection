@@ -2,8 +2,8 @@
 
 namespace Zenstruck\Collection\Tests\Doctrine\ORM\Result;
 
-use Zenstruck\Collection\Doctrine\ORM\Batch\CountableBatchIterator;
-use Zenstruck\Collection\Doctrine\ORM\Batch\CountableBatchProcessor;
+use Zenstruck\Collection\Doctrine\Batch\CountableBatchIterator;
+use Zenstruck\Collection\Doctrine\Batch\CountableBatchProcessor;
 use Zenstruck\Collection\Doctrine\ORM\Result;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
 use Zenstruck\Collection\Tests\Doctrine\ORM\ResultTest;

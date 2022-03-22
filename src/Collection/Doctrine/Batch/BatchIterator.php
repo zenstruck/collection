@@ -1,8 +1,8 @@
 <?php
 
-namespace Zenstruck\Collection\Doctrine\ORM\Batch;
+namespace Zenstruck\Collection\Doctrine\Batch;
 
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ObjectManager;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -14,16 +14,16 @@ class BatchIterator implements \IteratorAggregate
 {
     /** @var iterable<int,V> */
     protected iterable $items;
-    private EntityManagerInterface $em;
+    private ObjectManager $om;
     private int $chunkSize;
 
     /**
      * @param iterable<int,V> $items
      */
-    private function __construct(iterable $items, EntityManagerInterface $em, int $chunkSize = 100)
+    private function __construct(iterable $items, ObjectManager $om, int $chunkSize = 100)
     {
         $this->items = $items;
-        $this->em = $em;
+        $this->om = $om;
         $this->chunkSize = $chunkSize;
     }
 
@@ -32,13 +32,13 @@ class BatchIterator implements \IteratorAggregate
      *
      * @return self<V>|CountableBatchIterator<V>
      */
-    final public static function for(iterable $items, EntityManagerInterface $em, int $chunkSize = 100): self|CountableBatchIterator
+    final public static function for(iterable $items, ObjectManager $om, int $chunkSize = 100): self|CountableBatchIterator
     {
         if (\is_countable($items)) {
-            return new CountableBatchIterator($items, $em, $chunkSize);
+            return new CountableBatchIterator($items, $om, $chunkSize);
         }
 
-        return new self($items, $em, $chunkSize);
+        return new self($items, $om, $chunkSize);
     }
 
     final public function getIterator(): \Traversable
@@ -52,9 +52,9 @@ class BatchIterator implements \IteratorAggregate
                 continue;
             }
 
-            $this->em->clear();
+            $this->om->clear();
         }
 
-        $this->em->clear();
+        $this->om->clear();
     }
 }

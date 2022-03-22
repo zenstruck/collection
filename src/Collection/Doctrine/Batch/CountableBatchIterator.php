@@ -1,6 +1,6 @@
 <?php
 
-namespace Zenstruck\Collection\Doctrine\ORM\Batch;
+namespace Zenstruck\Collection\Doctrine\Batch;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>

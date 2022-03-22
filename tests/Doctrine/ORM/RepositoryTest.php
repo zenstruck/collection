@@ -4,8 +4,8 @@ namespace Zenstruck\Collection\Tests\Doctrine\ORM;
 
 use Doctrine\ORM\QueryBuilder;
 use PHPUnit\Framework\TestCase;
-use Zenstruck\Collection\Doctrine\ORM\Batch\CountableBatchIterator;
-use Zenstruck\Collection\Doctrine\ORM\Batch\CountableBatchProcessor;
+use Zenstruck\Collection\Doctrine\Batch\CountableBatchIterator;
+use Zenstruck\Collection\Doctrine\Batch\CountableBatchProcessor;
 use Zenstruck\Collection\Doctrine\ORM\Specification\Join;
 use Zenstruck\Collection\Spec;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
