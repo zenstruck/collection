@@ -220,5 +220,15 @@ trait CollectionTests
         $this->assertSame(15, $this->createWithItems(5)->reduce($function, 5));
     }
 
+    /**
+     * @test
+     */
+    public function sum(): void
+    {
+        $this->assertSame(0, $this->createWithItems(0)->sum(fn() => 10));
+        $this->assertSame(10, $this->createWithItems(5)->sum(fn($value, $key) => $key));
+        $this->assertSame(10.5, $this->createWithItems(5)->sum(fn($value, $key) => $key + 0.1));
+    }
+
     abstract protected function createWithItems(int $count): Collection;
 }

@@ -36,6 +36,16 @@ final class ArrayCollectionTest extends TestCase
     /**
      * @test
      */
+    public function sum_no_callable(): void
+    {
+        $this->assertSame(0, Arr::for([])->sum());
+        $this->assertSame(6, Arr::for([1, 2, 3])->sum());
+        $this->assertSame(15.5, Arr::for([1.1, 2.1, 3.1, 4.1, 5.1])->sum());
+    }
+
+    /**
+     * @test
+     */
     public function all(): void
     {
         $this->assertSame(

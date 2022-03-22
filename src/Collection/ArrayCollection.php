@@ -15,7 +15,10 @@ use Zenstruck\Collection;
 final class ArrayCollection implements Collection, \ArrayAccess
 {
     /** @use IterableCollection<K,V> */
-    use IterableCollection { eager as private; }
+    use IterableCollection {
+        eager as private;
+        sum as private traitSum;
+    }
 
     /** @var array<K,V> */
     private array $source;
@@ -181,6 +184,11 @@ final class ArrayCollection implements Collection, \ArrayAccess
         $predicate ??= static fn($value, $key) => (bool) $value;
 
         return $this->filter(fn($value, $key) => !$predicate($value, $key));
+    }
+
+    public function sum(?callable $selector = null): int|float
+    {
+        return $selector ? $this->traitSum($selector) : \array_sum($this->source);
     }
 
     /**
