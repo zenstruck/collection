@@ -208,5 +208,17 @@ trait CollectionTests
         );
     }
 
+    /**
+     * @test
+     */
+    public function reduce(): void
+    {
+        $function = fn($carry, $value, $key) => $carry + $key;
+
+        $this->assertNull($this->createWithItems(0)->reduce($function));
+        $this->assertSame(10, $this->createWithItems(5)->reduce($function));
+        $this->assertSame(15, $this->createWithItems(5)->reduce($function, 5));
+    }
+
     abstract protected function createWithItems(int $count): Collection;
 }

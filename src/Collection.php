@@ -59,4 +59,14 @@ interface Collection extends \IteratorAggregate, \Countable
      * @return V|D
      */
     public function first(mixed $default = null): mixed;
+
+    /**
+     * @template T
+     *
+     * @param callable(T,V,K):T $function
+     * @param T                 $initial
+     *
+     * @return T
+     */
+    public function reduce(callable $function, mixed $initial = null): mixed;
 }

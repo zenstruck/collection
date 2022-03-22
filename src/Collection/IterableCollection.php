@@ -168,6 +168,17 @@ trait IterableCollection
         return $default;
     }
 
+    public function reduce(callable $function, mixed $initial = null): mixed
+    {
+        $result = $initial;
+
+        foreach ($this as $key => $value) {
+            $result = $function($result, $value, $key);
+        }
+
+        return $result;
+    }
+
     public function isEmpty(): bool
     {
         return 0 === $this->count();
