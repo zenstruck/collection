@@ -52,7 +52,7 @@ trait Specification
         }
 
         if (!\is_object($result = $this->qbForSpecification($specification)->result()->first())) {
-            throw $this->createNotFoundException($specification);
+            throw $this->createNotFoundForSpecificationException($specification);
         }
 
         /** @var V $result */
@@ -76,12 +76,11 @@ trait Specification
         return $qb;
     }
 
-    protected function createNotFoundException(mixed $specification): \RuntimeException
+    /**
+     * Override to customize the "specification not found" exception.
+     */
+    protected function createNotFoundForSpecificationException(mixed $specification): \RuntimeException
     {
-        if (\is_scalar($specification) || (\is_array($specification) && !array_is_list($specification))) {
-            return parent::createNotFoundException($specification);
-        }
-
         return new \RuntimeException(\sprintf('Object "%s" not found for specification "%s".', $this->getClassName(), SpecificationInterpreter::stringify($specification)));
     }
 
