@@ -44,7 +44,7 @@ class EntityRepository extends BaseEntityRepository implements \IteratorAggregat
     }
 
     /**
-     * Save a new or existing object.
+     * Save a new or existing object (flushes immediately).
      *
      * @param V $item
      */
@@ -61,11 +61,11 @@ class EntityRepository extends BaseEntityRepository implements \IteratorAggregat
     }
 
     /**
-     * Add a new object (flushes immediately by default).
+     * Add a new object (with option to flush immediately).
      *
      * @param V $item
      */
-    final public function add(object $item, bool $flush = true): static
+    final public function add(object $item, bool $andFlush = false): static
     {
         if (!\is_a($item, $this->getClassName())) {
             throw new \InvalidArgumentException(\sprintf('%s::%s() can only be used on entities of type "%s".', static::class, __FUNCTION__, $this->getClassName()));
@@ -73,7 +73,7 @@ class EntityRepository extends BaseEntityRepository implements \IteratorAggregat
 
         $this->_em->persist($item);
 
-        if ($flush) {
+        if ($andFlush) {
             $this->_em->flush();
         }
 
@@ -81,11 +81,11 @@ class EntityRepository extends BaseEntityRepository implements \IteratorAggregat
     }
 
     /**
-     * Remove an existing object (flushes immediately by default).
+     * Remove an existing object (with option to flush immediately).
      *
      * @param V $item
      */
-    final public function remove(object $item, bool $flush = true): static
+    final public function remove(object $item, bool $andFlush = false): static
     {
         if (!\is_a($item, $this->getClassName())) {
             throw new \InvalidArgumentException(\sprintf('%s::%s() can only be used on entities of type "%s".', static::class, __FUNCTION__, $this->getClassName()));
@@ -93,7 +93,7 @@ class EntityRepository extends BaseEntityRepository implements \IteratorAggregat
 
         $this->_em->remove($item);
 
-        if ($flush) {
+        if ($andFlush) {
             $this->_em->flush();
         }
 

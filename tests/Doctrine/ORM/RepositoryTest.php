@@ -95,10 +95,16 @@ final class RepositoryTest extends TestCase
 
         $this->assertCount(0, $repo);
 
-        $repo->add(new Entity('foo'), false);
-        $repo->add(new Entity('bar'), false);
+        $repo->add(new Entity('foo'));
+        $repo->add(new Entity('bar'));
+
+        $this->assertCount(0, $repo);
+
         $repo->flush();
-        $repo->add(new Entity('baz'));
+
+        $this->assertCount(2, $repo);
+
+        $repo->add(new Entity('baz'), andFlush: true);
 
         $this->assertCount(3, $repo);
     }
@@ -129,10 +135,16 @@ final class RepositoryTest extends TestCase
 
         $this->assertCount(3, $repo);
 
-        $repo->remove($items[0], false);
-        $repo->remove($items[1], false);
+        $repo->remove($items[0]);
+        $repo->remove($items[1]);
+
+        $this->assertCount(3, $repo);
+
         $repo->flush();
-        $repo->remove($items[2]);
+
+        $this->assertCount(1, $repo);
+
+        $repo->remove($items[2], andFlush: true);
 
         $this->assertEmpty($repo);
     }
