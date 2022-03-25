@@ -53,6 +53,7 @@ assertType('User', $ormRepository->get('spec'));
 assertType('ORMRepository<User>', $ormRepository->flush());
 assertType('ORMRepository<User>', $ormRepository->remove(new User));
 assertType('ORMRepository<User>', $ormRepository->add(new User));
+assertType('ORMRepository<User>', $ormRepository->save(new User));
 
 /** @var DBALRepository<User> $dbalRepository */
 

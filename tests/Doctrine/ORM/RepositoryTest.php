@@ -106,6 +106,22 @@ final class RepositoryTest extends TestCase
     /**
      * @test
      */
+    public function can_save_entities(): void
+    {
+        $repo = $this->createWithItems(0);
+
+        $this->assertCount(0, $repo);
+
+        $repo->save(new Entity('foo'));
+        $repo->save(new Entity('bar'));
+        $repo->save(new Entity('baz'));
+
+        $this->assertCount(3, $repo);
+    }
+
+    /**
+     * @test
+     */
     public function can_remove_and_flush(): void
     {
         $repo = $this->createWithItems(3);

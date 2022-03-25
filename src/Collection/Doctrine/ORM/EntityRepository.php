@@ -44,6 +44,25 @@ class EntityRepository extends BaseEntityRepository implements \IteratorAggregat
     }
 
     /**
+     * Save a new or existing object.
+     *
+     * @param V $item
+     */
+    public function save(object $item): static
+    {
+        if (!\is_a($item, $this->getClassName())) {
+            throw new \InvalidArgumentException(\sprintf('%s::%s() can only be used on entities of type "%s".', static::class, __FUNCTION__, $this->getClassName()));
+        }
+
+        $this->_em->persist($item);
+        $this->_em->flush();
+
+        return $this;
+    }
+
+    /**
+     * Add a new object (flushes immediately by default).
+     *
      * @param V $item
      */
     final public function add(object $item, bool $flush = true): static
@@ -62,6 +81,8 @@ class EntityRepository extends BaseEntityRepository implements \IteratorAggregat
     }
 
     /**
+     * Remove an existing object (flushes immediately by default).
+     *
      * @param V $item
      */
     final public function remove(object $item, bool $flush = true): static
