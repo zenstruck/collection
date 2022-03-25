@@ -46,7 +46,7 @@ class EntityRepository extends BaseEntityRepository implements \IteratorAggregat
     /**
      * @param V $item
      */
-    final public function add(mixed $item, bool $flush = true): static
+    final public function add(object $item, bool $flush = true): static
     {
         if (!\is_a($item, $this->getClassName())) {
             throw new \InvalidArgumentException(\sprintf('%s::%s() can only be used on entities of type "%s".', static::class, __FUNCTION__, $this->getClassName()));
@@ -64,7 +64,7 @@ class EntityRepository extends BaseEntityRepository implements \IteratorAggregat
     /**
      * @param V $item
      */
-    final public function remove(mixed $item, bool $flush = true): static
+    final public function remove(object $item, bool $flush = true): static
     {
         if (!\is_a($item, $this->getClassName())) {
             throw new \InvalidArgumentException(\sprintf('%s::%s() can only be used on entities of type "%s".', static::class, __FUNCTION__, $this->getClassName()));
