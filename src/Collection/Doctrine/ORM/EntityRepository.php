@@ -152,9 +152,19 @@ class EntityRepository extends BaseEntityRepository implements \IteratorAggregat
      */
     protected function createNotFoundException(mixed $id): \RuntimeException
     {
-        return new \RuntimeException(\sprintf('"%s" with id "%s" not found.',
+        return new (static::notFoundExceptionClass())(\sprintf('"%s" with id "%s" not found.',
             $this->getClassName(),
             \is_scalar($id) ? $id : \sprintf('(%s)', \get_debug_type($id))
         ));
+    }
+
+    /**
+     * Override to set a custom exception class.
+     *
+     * @return class-string<\RuntimeException>
+     */
+    protected static function notFoundExceptionClass(): string
+    {
+        return \RuntimeException::class;
     }
 }

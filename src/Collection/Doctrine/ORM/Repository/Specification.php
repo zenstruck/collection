@@ -81,7 +81,7 @@ trait Specification
      */
     protected function createNotFoundForSpecificationException(mixed $specification): \RuntimeException
     {
-        return new \RuntimeException(\sprintf('Object "%s" not found for specification "%s".', $this->getClassName(), SpecificationInterpreter::stringify($specification)));
+        return new (static::notFoundExceptionClass())(\sprintf('Object "%s" not found for specification "%s".', $this->getClassName(), SpecificationInterpreter::stringify($specification)));
     }
 
     /**

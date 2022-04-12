@@ -70,7 +70,7 @@ trait Specification
      */
     protected function createNotFoundException(mixed $specification): \RuntimeException
     {
-        throw new \RuntimeException(\sprintf('Data from "%s" table not found for specification "%s".', static::tableName(), SpecificationInterpreter::stringify($specification)));
+        return new (static::notFoundExceptionClass())(\sprintf('Data from "%s" table not found for specification "%s".', static::tableName(), SpecificationInterpreter::stringify($specification)));
     }
 
     /**
@@ -79,5 +79,15 @@ trait Specification
     protected function specificationInterpreter(): Interpreter
     {
         return DBALContext::defaultInterpreter();
+    }
+
+    /**
+     * Override to set a custom exception class.
+     *
+     * @return class-string<\RuntimeException>
+     */
+    protected static function notFoundExceptionClass(): string
+    {
+        return \RuntimeException::class;
     }
 }
