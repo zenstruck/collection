@@ -1,5 +1,6 @@
 <?php
 
+use Zenstruck\Collection\Doctrine\DBAL\Repository;
 use Zenstruck\Collection\LazyCollection;
 use Zenstruck\Collection\DoctrineCollection;
 use function PHPStan\Testing\assertType;
@@ -55,7 +56,7 @@ assertType('ORMRepository<User>', $ormRepository->remove(new User));
 assertType('ORMRepository<User>', $ormRepository->add(new User));
 assertType('ORMRepository<User>', $ormRepository->save(new User));
 
-/** @var DBALRepository<User> $dbalRepository */
+/** @var Repository<User> $dbalRepository */
 
 assertType('Traversable<int, User>', $dbalRepository->getIterator());
 

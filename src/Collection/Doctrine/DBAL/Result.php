@@ -13,6 +13,7 @@ namespace Zenstruck\Collection\Doctrine\DBAL;
 
 use Doctrine\DBAL\Query\QueryBuilder;
 use Zenstruck\Collection;
+use Zenstruck\Collection\FactoryCollection;
 use Zenstruck\Collection\IterableCollection;
 use Zenstruck\Collection\LazyCollection;
 
@@ -29,26 +30,36 @@ class Result implements Collection
 
     private QueryBuilder $qb;
 
-    /** @var \Closure(QueryBuilder):QueryBuilder */
-    private \Closure $countModifier;
+    /** @var callable(QueryBuilder):QueryBuilder */
+    private $countModifier;
+
+    /** @var null|callable(array<string,mixed>):V */
+    private $resultFactory;
+
     private ?int $count = null;
 
     /**
      * @param null|callable(QueryBuilder):QueryBuilder $countModifier
+     * @param null|callable(array<string,mixed>):V     $resultFactory
      */
-    public function __construct(QueryBuilder $qb, ?callable $countModifier = null)
+    public function __construct(QueryBuilder $qb, ?callable $countModifier = null, ?callable $resultFactory = null)
     {
         $this->qb = $qb;
-        $this->countModifier = \Closure::fromCallable(
-            $countModifier ?? static fn(QueryBuilder $qb): QueryBuilder => $qb->select('COUNT(*)')
-        );
+        $this->countModifier = $countModifier ?? static fn(QueryBuilder $qb): QueryBuilder => $qb->select('COUNT(*)');
+        $this->resultFactory = $resultFactory;
     }
 
     public function take(int $limit, int $offset = 0): Collection
     {
-        return new LazyCollection(
+        $collection = new LazyCollection(
             fn() => (clone $this->qb)->setFirstResult($offset)->setMaxResults($limit)->{self::executeMethod()}()->fetchAllAssociative()
         );
+
+        if (!$this->resultFactory) {
+            return $collection;
+        }
+
+        return new FactoryCollection($collection, $this->resultFactory);
     }
 
     public function count(): int
@@ -58,13 +69,19 @@ class Result implements Collection
 
     public function getIterator(): \Traversable
     {
-        return new LazyCollection(function() {
+        $collection = new LazyCollection(function() {
             $stmt = $this->qb->{self::executeMethod()}();
 
             while ($data = $stmt->fetchAssociative()) {
                 yield $data;
             }
         });
+
+        if (!$this->resultFactory) {
+            return $collection;
+        }
+
+        return new FactoryCollection($collection, $this->resultFactory);
     }
 
     private static function executeMethod(): string

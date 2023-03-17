@@ -37,7 +37,7 @@ abstract class Repository implements \IteratorAggregate, \Countable
      */
     protected static function createResult(QueryBuilder $qb): Result
     {
-        return new Result($qb, static::countModifier());
+        return new Result($qb, static::countModifier(), self::resultFactory());
     }
 
     protected function qb(?string $alias = null): QueryBuilder
@@ -47,8 +47,20 @@ abstract class Repository implements \IteratorAggregate, \Countable
 
     /**
      * Override to define your own count modifier.
+     *
+     * @return null|callable(QueryBuilder):QueryBuilder
      */
     protected static function countModifier(): ?callable
+    {
+        return null;
+    }
+
+    /**
+     * Override to define your own result factory.
+     *
+     * @return null|callable(array<string,mixed>):V
+     */
+    protected static function resultFactory(): ?callable
     {
         return null;
     }

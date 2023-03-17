@@ -13,7 +13,7 @@ namespace Zenstruck\Collection\Tests\Doctrine\DBAL;
 
 use PHPUnit\Framework\TestCase;
 use Zenstruck\Collection;
-use Zenstruck\Collection\Doctrine\DBAL\ObjectResult;
+use Zenstruck\Collection\Doctrine\DBAL\Result;
 use Zenstruck\Collection\Tests\CollectionTests;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
 use Zenstruck\Collection\Tests\Doctrine\HasDatabase;
@@ -21,7 +21,7 @@ use Zenstruck\Collection\Tests\Doctrine\HasDatabase;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class ObjectResultTest extends TestCase
+final class ResultWithFactoryTest extends TestCase
 {
     use CollectionTests, HasDatabase;
 
@@ -29,9 +29,9 @@ final class ObjectResultTest extends TestCase
     {
         $this->persistEntities($count);
 
-        return new ObjectResult(
-            fn(array $data) => new Entity($data['value'], $data['id']),
-            $this->em->getConnection()->createQueryBuilder()->select('*')->from(Entity::TABLE, 'e')
+        return new Result(
+            $this->em->getConnection()->createQueryBuilder()->select('*')->from(Entity::TABLE, 'e'),
+            resultFactory: fn(array $data) => new Entity($data['value'], $data['id']),
         );
     }
 
