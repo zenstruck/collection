@@ -11,24 +11,24 @@
 
 namespace Zenstruck\Collection\Tests\Doctrine\ORM\Result;
 
-use Zenstruck\Collection\Doctrine\ORM\Result;
+use Zenstruck\Collection\Doctrine\ORM\EntityResult;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
-use Zenstruck\Collection\Tests\Doctrine\ORM\ResultTest;
+use Zenstruck\Collection\Tests\Doctrine\ORM\EntityResultTest;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class ScalarResultTest extends ResultTest
+final class ScalarResultTest extends EntityResultTest
 {
     protected function expectedValueAt(int $position)
     {
         return "value {$position}";
     }
 
-    protected function createWithItems(int $count): Result
+    protected function createWithItems(int $count): EntityResult
     {
         $this->persistEntities($count);
 
-        return (new Result($this->em->createQueryBuilder()->select('e.value')->from(Entity::class, 'e')))->asScalar();
+        return (new EntityResult($this->em->createQueryBuilder()->select('e.value')->from(Entity::class, 'e')))->asScalar();
     }
 }

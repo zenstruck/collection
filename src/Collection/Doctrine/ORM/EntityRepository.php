@@ -11,169 +11,106 @@
 
 namespace Zenstruck\Collection\Doctrine\ORM;
 
-use Doctrine\ORM\EntityRepository as BaseEntityRepository;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\QueryBuilder;
+use Zenstruck\Collection\Doctrine\ObjectRepository;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
  * @template V of object
- * @extends BaseEntityRepository<V>
- * @implements \IteratorAggregate<int,V>
+ * @implements ObjectRepository<V>
  */
-class EntityRepository extends BaseEntityRepository implements \IteratorAggregate, \Countable
+class EntityRepository implements ObjectRepository
 {
     /**
-     * @return V
-     *
-     * @throws \RuntimeException if not found
+     * @param class-string<V> $class
      */
-    public function get(mixed $id): object
+    public function __construct(private EntityManagerInterface $em, private string $class)
     {
-        if (!$object = $this->find($id)) {
-            throw $this->createNotFoundException($id);
-        }
-
-        return $object;
     }
 
     /**
-     * @param array<string,mixed> $criteria
-     *
-     * @return Result<V>
+     * @param mixed|Criteria|array<string,mixed>|callable(QueryBuilder):void $specification
      */
-    public function filter(array $criteria): Result
+    public function find(mixed $specification): ?object
     {
-        $qb = $this->createQueryBuilder('e');
+        try {
+            if ($specification instanceof Criteria) {
+                return $this->qb()->addCriteria($specification)->getQuery()->getSingleResult();
+            }
 
-        foreach ($criteria as $field => $value) {
+            if (\is_array($specification) && !array_is_list($specification)) {
+                return $this->em()->getUnitOfWork()->getEntityPersister($this->class)->load($specification, limit: 1); // @phpstan-ignore-line
+            }
+
+            if (\is_callable($specification)) {
+                $specification($qb = $this->qb(), 'e');
+
+                return $qb->getQuery()->getSingleResult();
+            }
+
+            return $this->em()->find($this->class, $specification);
+        } catch (NoResultException) {
+            return null;
+        }
+    }
+
+    /**
+     * @param Criteria|array<string,mixed>|callable(QueryBuilder):void $specification
+     *
+     * @return EntityResult<V>
+     */
+    public function filter(mixed $specification): EntityResult
+    {
+        $qb = $this->qb();
+
+        if ($specification instanceof Criteria) {
+            return $qb->addCriteria($specification)->result();
+        }
+
+        if (\is_callable($specification)) {
+            $specification($qb, 'e');
+
+            return $qb->result();
+        }
+
+        if (!\is_array($specification)) {
+            throw new \InvalidArgumentException(\sprintf('Unsupported specification type "%s" - only array|Criteria|callable(QueryBuilder) supported.', \get_debug_type($specification)));
+        }
+
+        foreach ($specification as $field => $value) {
             $qb->andWhere("e.{$field} = :{$field}")->setParameter($field, $value);
         }
 
         return $qb->result();
     }
 
-    /**
-     * Save a new or existing object (flushes immediately).
-     *
-     * @param V $item
-     */
-    public function save(object $item): static
+    public function count(): int
     {
-        if (!\is_a($item, $this->getClassName())) {
-            throw new \InvalidArgumentException(\sprintf('%s::%s() can only be used on entities of type "%s".', static::class, __FUNCTION__, $this->getClassName()));
-        }
+        return $this->qb()->result()->count();
+    }
 
-        $this->_em->persist($item);
-        $this->_em->flush();
-
-        return $this;
+    public function getIterator(): \Traversable
+    {
+        return $this->qb()->result()->batchIterate();
     }
 
     /**
-     * Add a new object (with option to flush immediately).
-     *
-     * @param V $item
+     * @return EntityResultQueryBuilder<V>
      */
-    final public function add(object $item, bool $andFlush = false): static
+    final protected function qb(string $alias = 'e', ?string $indexBy = null): EntityResultQueryBuilder
     {
-        if (!\is_a($item, $this->getClassName())) {
-            throw new \InvalidArgumentException(\sprintf('%s::%s() can only be used on entities of type "%s".', static::class, __FUNCTION__, $this->getClassName()));
-        }
-
-        $this->_em->persist($item);
-
-        if ($andFlush) {
-            $this->_em->flush();
-        }
-
-        return $this;
-    }
-
-    /**
-     * Remove an existing object (with option to flush immediately).
-     *
-     * @param V $item
-     */
-    final public function remove(object $item, bool $andFlush = false): static
-    {
-        if (!\is_a($item, $this->getClassName())) {
-            throw new \InvalidArgumentException(\sprintf('%s::%s() can only be used on entities of type "%s".', static::class, __FUNCTION__, $this->getClassName()));
-        }
-
-        $this->_em->remove($item);
-
-        if ($andFlush) {
-            $this->_em->flush();
-        }
-
-        return $this;
-    }
-
-    final public function flush(): static
-    {
-        $this->_em->flush();
-
-        return $this;
-    }
-
-    /**
-     * @return \Traversable<int,V>
-     */
-    final public function batch(int $chunkSize = 100): \Traversable
-    {
-        return $this->createQueryBuilder('e')->result()->batch($chunkSize);
-    }
-
-    /**
-     * @return \Traversable<int,V>
-     */
-    final public function batchProcess(int $chunkSize = 100): \Traversable
-    {
-        return $this->createQueryBuilder('e')->result()->batchProcess($chunkSize);
-    }
-
-    final public function count(array $criteria = []): int
-    {
-        return parent::count($criteria);
-    }
-
-    final public function getIterator(): \Traversable
-    {
-        return $this->createQueryBuilder('e')->result();
-    }
-
-    /**
-     * @param string $alias
-     * @param string $indexBy
-     *
-     * @return ResultQueryBuilder<V>
-     */
-    public function createQueryBuilder($alias, $indexBy = null): ResultQueryBuilder
-    {
-        return (new ResultQueryBuilder($this->_em))
+        return (new EntityResultQueryBuilder($this->em))
             ->select($alias)
-            ->from($this->_entityName, $alias, $indexBy)
+            ->from($this->class, $alias, $indexBy)
         ;
     }
 
-    /**
-     * Override to customize the not found exception.
-     */
-    protected function createNotFoundException(mixed $id): \RuntimeException
+    final protected function em(): EntityManagerInterface
     {
-        return new (static::notFoundExceptionClass())(\sprintf('"%s" with id "%s" not found.',
-            $this->getClassName(),
-            \is_scalar($id) ? $id : \sprintf('(%s)', \get_debug_type($id))
-        ));
-    }
-
-    /**
-     * Override to set a custom exception class.
-     *
-     * @return class-string<\RuntimeException>
-     */
-    protected static function notFoundExceptionClass(): string
-    {
-        return \RuntimeException::class;
+        return $this->em;
     }
 }

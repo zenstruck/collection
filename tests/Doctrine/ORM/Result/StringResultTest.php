@@ -11,24 +11,24 @@
 
 namespace Zenstruck\Collection\Tests\Doctrine\ORM\Result;
 
-use Zenstruck\Collection\Doctrine\ORM\Result;
+use Zenstruck\Collection\Doctrine\ORM\EntityResult;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
-use Zenstruck\Collection\Tests\Doctrine\ORM\ResultTest;
+use Zenstruck\Collection\Tests\Doctrine\ORM\EntityResultTest;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class StringResultTest extends ResultTest
+final class StringResultTest extends EntityResultTest
 {
     protected function expectedValueAt(int $position)
     {
         return (string) $position;
     }
 
-    protected function createWithItems(int $count): Result
+    protected function createWithItems(int $count): EntityResult
     {
         $this->persistEntities($count);
 
-        return Result::for($this->em->createQueryBuilder()->select('e.id')->from(Entity::class, 'e'))->asString();
+        return (new EntityResult($this->em->createQueryBuilder()->select('e.id')->from(Entity::class, 'e')))->asString();
     }
 }

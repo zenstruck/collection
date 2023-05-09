@@ -11,17 +11,14 @@
 
 namespace Zenstruck\Collection\Tests\Doctrine\ORM\Fixture;
 
-use Doctrine\Persistence\ManagerRegistry;
-use Zenstruck\Collection\Doctrine\ORM\ServiceEntityRepository;
-use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
+use Doctrine\ORM\EntityRepository;
+use Zenstruck\Collection\Doctrine\ObjectRepository;
+use Zenstruck\Collection\Doctrine\ORM\EntityRepositoryBridge;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class KitchenSinkRepository extends ServiceEntityRepository
+final class EntityRepositoryWithBridge extends EntityRepository implements ObjectRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, Entity::class);
-    }
+    use EntityRepositoryBridge;
 }

@@ -11,14 +11,14 @@
 
 namespace Zenstruck\Collection\Tests\Doctrine\ORM\Result;
 
-use Zenstruck\Collection\Doctrine\ORM\Result;
+use Zenstruck\Collection\Doctrine\ORM\EntityResult;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
-use Zenstruck\Collection\Tests\Doctrine\ORM\ResultTest;
+use Zenstruck\Collection\Tests\Doctrine\ORM\EntityResultTest;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class ArrayResultTest extends ResultTest
+final class ArrayResultTest extends EntityResultTest
 {
     protected function expectedValueAt(int $position): array
     {
@@ -28,10 +28,10 @@ final class ArrayResultTest extends ResultTest
         ];
     }
 
-    protected function createWithItems(int $count): Result
+    protected function createWithItems(int $count): EntityResult
     {
         $this->persistEntities($count);
 
-        return (new Result($this->em->createQueryBuilder()->select('e')->from(Entity::class, 'e')))->asArray();
+        return (new EntityResult($this->em->createQueryBuilder()->select('e')->from(Entity::class, 'e')))->asArray();
     }
 }

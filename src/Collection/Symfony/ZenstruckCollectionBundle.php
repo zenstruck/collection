@@ -9,22 +9,13 @@
  * file that was distributed with this source code.
  */
 
-namespace Zenstruck\Collection\Doctrine\ORM;
+namespace Zenstruck\Collection\Symfony;
 
-use Doctrine\ORM\QueryBuilder;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
- *
- * @template V
  */
-final class ResultQueryBuilder extends QueryBuilder
+final class ZenstruckCollectionBundle extends Bundle
 {
-    /**
-     * @return Result<V>
-     */
-    public function result(): Result
-    {
-        return new Result($this);
-    }
 }

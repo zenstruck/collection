@@ -1,53 +1,32 @@
 <?php
 
-use Zenstruck\Collection\Doctrine\DBAL\Repository;
+use Zenstruck\Collection\Doctrine\ObjectRepository;
+use Zenstruck\Collection\Doctrine\ORM\EntityRepository;
 use Zenstruck\Collection\LazyCollection;
-
 use function PHPStan\Testing\assertType;
 use function Zenstruck\collect;
 
 assertType('Zenstruck\Collection\LazyCollection<int, User>', new LazyCollection([new User]));
 
-/** @var ORMRepository<User> $ormRepository */
+/** @var ObjectRepository<User> $objectRepository */
 
-assertType('Traversable<int, User>', $ormRepository->getIterator());
-assertType('Traversable<int, User>', $ormRepository->batch());
-assertType('Traversable<int, User>', $ormRepository->batchProcess());
+assertType('Traversable<int, User>', $objectRepository->getIterator());
+assertType('User|null', $objectRepository->find(1));
+assertType('Zenstruck\Collection\Doctrine\Result<User>', $objectRepository->filter([]));
+assertType('array<int, User>', $objectRepository->filter([])->eager()->all());
+assertType('User|null', $objectRepository->filter([])->first());
+assertType('Zenstruck\Collection\Doctrine\Result<bool|float|int|string>', $objectRepository->filter([])->asScalar());
+assertType('Zenstruck\Collection\Doctrine\Result<string>', $objectRepository->filter([])->asString());
+assertType('Zenstruck\Collection\Doctrine\Result<int>', $objectRepository->filter([])->asInt());
+assertType('Zenstruck\Collection\Doctrine\Result<float>', $objectRepository->filter([])->asFloat());
+assertType('Zenstruck\Collection\Doctrine\Result<array<string, mixed>>', $objectRepository->filter([])->asArray());
+assertType('Zenstruck\Collection\Doctrine\Result<int>', $objectRepository->filter([])->as(fn(): int => 1));
+assertType('Zenstruck\Collection\Page<int, User>', $objectRepository->filter([])->paginate());
 
-assertType('User|null', $ormRepository->find(1));
-assertType('array<int, User>', $ormRepository->findAll());
-assertType('array<int, User>', $ormRepository->findBy([]));
-assertType('User|null', $ormRepository->findOneBy([]));
+/** @var EntityRepository<User> $ormRepository */
 
-assertType('Zenstruck\Collection\Doctrine\ORM\Result<User>', $ormRepository->filter([]));
-assertType('array<int, User>', $ormRepository->filter([])->toArray());
-assertType('User|null', $ormRepository->filter([])->first());
-assertType('Zenstruck\Collection\Doctrine\ORM\Result<bool|float|int|string>', $ormRepository->filter([])->asScalar());
-assertType('array<int, bool|float|int|string>', $ormRepository->filter([])->asScalar()->toArray());
-assertType('bool|float|int|string|null', $ormRepository->filter([])->asScalar()->first());
-assertType('Zenstruck\Collection\Doctrine\ORM\Result<float>', $ormRepository->filter([])->asFloat());
-assertType('array<int, float>', $ormRepository->filter([])->asFloat()->toArray());
-assertType('float|null', $ormRepository->filter([])->asFloat()->first());
-assertType('Zenstruck\Collection\Doctrine\ORM\Result<int>', $ormRepository->filter([])->asInt());
-assertType('array<int, int>', $ormRepository->filter([])->asInt()->toArray());
-assertType('int|null', $ormRepository->filter([])->asInt()->first());
-assertType('Zenstruck\Collection\Doctrine\ORM\Result<string>', $ormRepository->filter([])->asString());
-assertType('array<int, string>', $ormRepository->filter([])->asString()->toArray());
-assertType('string|null', $ormRepository->filter([])->asString()->first());
-assertType('Zenstruck\Collection\Doctrine\ORM\Result<array>', $ormRepository->filter([])->asArray());
-assertType('array<int, array>', $ormRepository->filter([])->asArray()->toArray());
-assertType('array|null', $ormRepository->filter([])->asArray()->first());
-assertType('Zenstruck\Collection\Doctrine\ORM\Result<Zenstruck\Collection\Doctrine\ORM\EntityWithAggregates<User>>', $ormRepository->filter([])->withAggregates());
-assertType('array<int, Zenstruck\Collection\Doctrine\ORM\EntityWithAggregates<User>>', $ormRepository->filter([])->withAggregates()->toArray());
-assertType('Zenstruck\Collection\Doctrine\ORM\EntityWithAggregates<User>|null', $ormRepository->filter([])->withAggregates()->first());
-assertType('Traversable<int, User>', $ormRepository->filter([])->getIterator());
-assertType('Zenstruck\Collection\Page<int, User>', $ormRepository->filter([])->paginate());
-assertType('User', $ormRepository->get([]));
-
-assertType('ORMRepository<User>', $ormRepository->flush());
-assertType('ORMRepository<User>', $ormRepository->remove(new User));
-assertType('ORMRepository<User>', $ormRepository->add(new User));
-assertType('ORMRepository<User>', $ormRepository->save(new User));
+assertType('Zenstruck\Collection\Doctrine\ORM\EntityResult<int>', $ormRepository->filter([])->as(fn(): int => 1));
+assertType('Zenstruck\Collection\Doctrine\ORM\EntityResult<Zenstruck\Collection\Doctrine\ORM\EntityWithAggregates<User>>', $ormRepository->filter([])->withAggregates());
 
 class User
 {

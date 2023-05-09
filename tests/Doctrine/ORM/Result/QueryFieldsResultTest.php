@@ -11,21 +11,21 @@
 
 namespace Zenstruck\Collection\Tests\Doctrine\ORM\Result;
 
-use Zenstruck\Collection\Doctrine\ORM\Result;
+use Zenstruck\Collection\Doctrine\ORM\EntityResult;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
-use Zenstruck\Collection\Tests\Doctrine\ORM\ResultTest;
+use Zenstruck\Collection\Tests\Doctrine\ORM\EntityResultTest;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class QueryFieldsResultTest extends ResultTest
+final class QueryFieldsResultTest extends EntityResultTest
 {
     /**
      * @test
      */
     public function can_batch_iterate(): void
     {
-        $result = $this->createWithItems(2)->batch();
+        $result = $this->createWithItems(2)->batchIterate();
 
         $this->assertCount(2, $result);
         $this->assertSame([
@@ -40,13 +40,13 @@ final class QueryFieldsResultTest extends ResultTest
         ], \iterator_to_array($result));
     }
 
-    protected function createWithItems(int $count): Result
+    protected function createWithItems(int $count): EntityResult
     {
         $this->persistEntities($count);
 
-        $query = $this->em->createQuery(\sprintf('SELECT e.id, e.value AS my_value FROM %s e', Entity::class));
+        $qb = $this->em->createQueryBuilder()->select('e.id, e.value AS my_value')->from(Entity::class, 'e');
 
-        return (new Result($query))->asArray();
+        return (new EntityResult($qb))->asArray();
     }
 
     protected function expectedValueAt(int $position): array

@@ -12,37 +12,16 @@
 namespace Zenstruck\Collection\Tests\Doctrine\ORM;
 
 use PHPUnit\Framework\TestCase;
-use Zenstruck\Collection\Doctrine\ORM\Result;
+use Zenstruck\Collection\Doctrine\ORM\EntityResult;
 use Zenstruck\Collection\Tests\CollectionTests;
 use Zenstruck\Collection\Tests\Doctrine\HasDatabase;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-abstract class ResultTest extends TestCase
+abstract class EntityResultTest extends TestCase
 {
     use CollectionTests, HasDatabase;
-
-    /**
-     * @test
-     */
-    public function can_get_first_result(): void
-    {
-        $result = $this->createWithItems(3);
-
-        $this->assertEquals($this->expectedValueAt(1), $result->first());
-    }
-
-    /**
-     * @test
-     */
-    public function first_returns_default_if_none(): void
-    {
-        $results = $this->createWithItems(0);
-
-        $this->assertNull($results->first());
-        $this->assertSame('default', $results->first('default'));
-    }
 
     /**
      * @test
@@ -55,7 +34,6 @@ abstract class ResultTest extends TestCase
         if (\is_object($expected)) {
             $this->assertEquals($this->expectedValueAt(1), $results->first());
             $this->assertEquals([$expected], \iterator_to_array($results));
-            $this->assertEquals([$expected], $results->toArray());
             $this->assertEquals([$expected], $results->eager()->all());
 
             return;
@@ -63,9 +41,8 @@ abstract class ResultTest extends TestCase
 
         $this->assertSame($this->expectedValueAt(1), $results->first());
         $this->assertSame([$expected], \iterator_to_array($results));
-        $this->assertSame([$expected], $results->toArray());
         $this->assertSame([$expected], $results->eager()->all());
     }
 
-    abstract protected function createWithItems(int $count): Result;
+    abstract protected function createWithItems(int $count): EntityResult;
 }

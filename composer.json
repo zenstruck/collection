@@ -19,14 +19,16 @@
         "composer-runtime-api": "^2.0",
         "doctrine/collections": "^1.6",
         "doctrine/dbal": "^2.12|^3.0",
-        "doctrine/doctrine-bundle": "^2.0",
+        "doctrine/doctrine-bundle": "^2.4",
         "doctrine/orm": "^2.11",
         "pagerfanta/pagerfanta": "^1.0|^2.0|^3.0",
         "phpstan/phpstan": "^1.4",
         "phpunit/phpunit": "^9.5.0",
-        "symfony/cache": "^4.4|^5.0|^6.0",
-        "symfony/phpunit-bridge": "^6.0",
-        "symfony/var-dumper": "^4.4|^5.0|^6.0"
+        "symfony/expression-language": "^5.4|^6.0",
+        "symfony/framework-bundle": "^5.4|^6.0",
+        "symfony/phpunit-bridge": "^6.3",
+        "symfony/var-dumper": "^5.4|^6.0",
+        "zenstruck/foundry": "^1.33"
     },
     "suggest": {
         "doctrine/orm": "To use ORM implementation and batch utilities (>=2.10).",

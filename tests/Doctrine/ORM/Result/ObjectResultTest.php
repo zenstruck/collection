@@ -13,50 +13,21 @@ namespace Zenstruck\Collection\Tests\Doctrine\ORM\Result;
 
 use Zenstruck\Collection\Doctrine\Batch\CountableBatchIterator;
 use Zenstruck\Collection\Doctrine\Batch\CountableBatchProcessor;
-use Zenstruck\Collection\Doctrine\ORM\Result;
+use Zenstruck\Collection\Doctrine\ORM\EntityResult;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
-use Zenstruck\Collection\Tests\Doctrine\ORM\ResultTest;
+use Zenstruck\Collection\Tests\Doctrine\ORM\EntityResultTest;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-class EntityResultTest extends ResultTest
+class ObjectResultTest extends EntityResultTest
 {
-    /**
-     * @test
-     */
-    public function can_delete(): void
-    {
-        $collection = $this->createWithItems(5);
-
-        $this->assertCount(5, $collection);
-        $this->assertSame(5, $collection->delete());
-        $this->assertCount(0, $collection);
-        $this->assertSame([], \iterator_to_array($collection));
-    }
-
-    /**
-     * @test
-     */
-    public function can_delete_with_callback(): void
-    {
-        $deleted = [];
-        $collection = $this->createWithItems(2);
-
-        $collection->delete(function(Entity $entity) use (&$deleted) {
-            $deleted[] = $entity;
-        });
-
-        $this->assertEquals([new Entity('value 1'), new Entity('value 2')], $deleted);
-        $this->assertCount(0, $collection);
-    }
-
     /**
      * @test
      */
     public function detaches_entity_from_em_on_batch_iterate(): void
     {
-        $result = \iterator_to_array($this->createWithItems(2)->batch())[0];
+        $result = \iterator_to_array($this->createWithItems(2)->batchIterate())[0];
 
         $this->assertFalse($this->em->contains($result));
     }
@@ -112,7 +83,7 @@ class EntityResultTest extends ResultTest
      */
     public function batch_iterator_is_countable(): void
     {
-        $iterator = $this->createWithItems(3)->batch();
+        $iterator = $this->createWithItems(3)->batchIterate();
 
         $this->assertInstanceOf(CountableBatchIterator::class, $iterator);
         $this->assertCount(3, $iterator);
@@ -132,27 +103,11 @@ class EntityResultTest extends ResultTest
     /**
      * @test
      */
-    public function detaches_entities_from_em_on_iterate(): void
+    public function can_set_as_readonly(): void
     {
-        $iterator = $this->createWithItems(3);
+        $entity = $this->createWithItems(1)->readonly()->first();
 
-        $result = \iterator_to_array($iterator)[0];
-
-        $this->assertInstanceOf(Entity::class, $result);
-        $this->assertFalse($this->em->contains($result));
-    }
-
-    /**
-     * @test
-     */
-    public function cannot_delete_non_managed_object_results(): void
-    {
-        $this->persistEntities(3);
-
-        $result = new Result($this->em->createQuery(\sprintf('SELECT e.id FROM %s e', Entity::class)));
-
-        $this->expectException(\LogicException::class);
-        $result->delete();
+        $this->assertFalse($this->em->contains($entity));
     }
 
     protected function expectedValueAt(int $position): object
@@ -160,10 +115,10 @@ class EntityResultTest extends ResultTest
         return new Entity("value {$position}", $position);
     }
 
-    protected function createWithItems(int $count): Result
+    protected function createWithItems(int $count): EntityResult
     {
         $this->persistEntities($count);
 
-        return new Result($this->em->createQueryBuilder()->select('e')->from(Entity::class, 'e'));
+        return new EntityResult($this->em->createQueryBuilder()->select('e')->from(Entity::class, 'e'));
     }
 }
