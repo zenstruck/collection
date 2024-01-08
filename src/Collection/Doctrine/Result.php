@@ -11,7 +11,9 @@
 
 namespace Zenstruck\Collection\Doctrine;
 
+use Doctrine\Common\Collections\Criteria;
 use Zenstruck\Collection;
+use Zenstruck\Collection\Matchable;
 
 /**
  * Represents a Doctrine result set.
@@ -21,8 +23,9 @@ use Zenstruck\Collection;
  * @immutable
  * @template V
  * @extends Collection<int,V>
+ * @extends Matchable<int,V>
  */
-interface Result extends Collection
+interface Result extends Collection, Matchable
 {
     /**
      * "Batch iterate" the result set, clearing the
@@ -39,6 +42,16 @@ interface Result extends Collection
      * @return \Traversable<V>
      */
     public function batchProcess(int $chunkSize = 100): \Traversable;
+
+    /**
+     * @param mixed|Criteria|callable(V,int):bool $specification
+     */
+    public function find(mixed $specification, mixed $default = null): mixed;
+
+    /**
+     * @param mixed|Criteria|callable(V,int):bool $specification
+     */
+    public function filter(mixed $specification): Collection;
 
     /**
      * If results are managed objects, detach them from the

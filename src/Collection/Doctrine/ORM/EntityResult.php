@@ -11,6 +11,7 @@
 
 namespace Zenstruck\Collection\Doctrine\ORM;
 
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query;
@@ -21,6 +22,7 @@ use Zenstruck\Collection;
 use Zenstruck\Collection\ArrayCollection;
 use Zenstruck\Collection\Doctrine\Batch;
 use Zenstruck\Collection\Doctrine\Result;
+use Zenstruck\Collection\Doctrine\Specification\CriteriaInterpreter;
 use Zenstruck\Collection\FactoryCollection;
 use Zenstruck\Collection\IterableCollection;
 use Zenstruck\Collection\LazyCollection;
@@ -34,7 +36,10 @@ use Zenstruck\Collection\LazyCollection;
 final class EntityResult implements Result
 {
     /** @use IterableCollection<int,V> */
-    use IterableCollection;
+    use IterableCollection {
+        find as private innerFind;
+        filter as private innerFilter;
+    }
 
     private const ENTITY_WITH_AGGREGATES = [EntityWithAggregates::class, 'create'];
 
@@ -50,6 +55,11 @@ final class EntityResult implements Result
 
     public function __construct(private QueryBuilder $qb)
     {
+    }
+
+    public function __clone(): void
+    {
+        $this->qb = clone $this->qb;
     }
 
     public function batchIterate(int $chunkSize = 100): \Traversable
@@ -91,6 +101,35 @@ final class EntityResult implements Result
         } catch (NoResultException $e) {
             return $default;
         }
+    }
+
+    public function filter(mixed $specification): Collection
+    {
+        if ($specification instanceof Criteria) {
+            $clone = clone $this;
+            $clone->qb = $clone->qb->addCriteria($specification);
+
+            return $clone;
+        }
+
+        if (!\is_callable($specification)) {
+            return $this->filter(CriteriaInterpreter::interpret($specification, self::class, 'filter'));
+        }
+
+        return $this->innerFilter($specification);
+    }
+
+    public function find(mixed $specification, mixed $default = null): mixed
+    {
+        if ($specification instanceof Criteria) {
+            return $this->filter($specification)->first($default);
+        }
+
+        if (!\is_callable($specification)) {
+            return $this->find(CriteriaInterpreter::interpret($specification, self::class, 'find'), $default);
+        }
+
+        return $this->innerFind($specification, $default);
     }
 
     /**

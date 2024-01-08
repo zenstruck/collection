@@ -11,6 +11,8 @@
 
 namespace Zenstruck\Collection\Exception;
 
+use Zenstruck\Collection\Specification\Util;
+
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
@@ -25,11 +27,9 @@ final class InvalidSpecification extends \InvalidArgumentException
             $what = \sprintf('%s (%s)', $what, \get_debug_type($what));
         }
 
-        if ($what instanceof \Stringable) {
-            $what = (string) $what;
+        if (\is_object($what) && !\is_callable($what)) {
+            $what = Util::stringify($what);
         }
-
-        // todo: stringify closures
 
         if (!\is_scalar($what)) {
             $what = \get_debug_type($what);

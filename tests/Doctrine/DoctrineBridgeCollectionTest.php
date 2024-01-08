@@ -19,6 +19,7 @@ use Zenstruck\Collection\LazyCollection;
 use Zenstruck\Collection\Tests\CollectionTests;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Relation;
+use Zenstruck\Collection\Tests\MatchableObjectTests;
 
 use function Zenstruck\collect;
 
@@ -27,7 +28,7 @@ use function Zenstruck\collect;
  */
 final class DoctrineBridgeCollectionTest extends TestCase
 {
-    use CollectionTests, HasDatabase;
+    use CollectionTests, HasDatabase, MatchableObjectTests;
 
     private DoctrineBridgeCollection $collection;
 
@@ -81,6 +82,32 @@ final class DoctrineBridgeCollectionTest extends TestCase
         }
 
         $this->assertFalse($persistentCollection->isInitialized());
+    }
+
+    /**
+     * @test
+     */
+    public function can_use_criteria_as_filter_specification(): void
+    {
+        $collection = $this->createWithItems(10);
+        $criteria = Criteria::create()->where(Criteria::expr()->lt('id', 5))
+            ->orderBy(['id' => Criteria::DESC])
+        ;
+
+        $this->assertSame('value 4', $collection->filter($criteria)->first()->value);
+    }
+
+    /**
+     * @test
+     */
+    public function can_use_criteria_as_find_specification(): void
+    {
+        $collection = $this->createWithItems(10);
+        $criteria = Criteria::create()->where(Criteria::expr()->lt('id', 5))
+            ->orderBy(['id' => Criteria::DESC])
+        ;
+
+        $this->assertSame('value 4', $collection->find($criteria)->value);
     }
 
     /**

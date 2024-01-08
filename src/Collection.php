@@ -12,6 +12,7 @@
 namespace Zenstruck;
 
 use Zenstruck\Collection\ArrayCollection;
+use Zenstruck\Collection\Exception\InvalidSpecification;
 use Zenstruck\Collection\Page;
 use Zenstruck\Collection\Pages;
 
@@ -28,11 +29,13 @@ use Zenstruck\Collection\Pages;
 interface Collection extends \IteratorAggregate, \Countable
 {
     /**
-     * @param callable(V,K):bool $predicate
+     * @param mixed|callable(V,K):bool $specification
      *
      * @return self<K,V>
+     *
+     * @throws InvalidSpecification if $specification is not valid
      */
-    public function filter(callable $predicate): self;
+    public function filter(mixed $specification): self;
 
     /**
      * @template T
@@ -69,12 +72,14 @@ interface Collection extends \IteratorAggregate, \Countable
     /**
      * @template D
      *
-     * @param callable(V,K):bool $predicate
-     * @param D                  $default
+     * @param mixed|callable(V,K):bool $specification
+     * @param D                        $default
      *
      * @return V|D
+     *
+     * @throws InvalidSpecification if $specification is not a valid specification
      */
-    public function find(callable $predicate, mixed $default = null): mixed;
+    public function find(mixed $specification, mixed $default = null): mixed;
 
     /**
      * @template T

@@ -13,14 +13,16 @@ namespace Zenstruck\Collection\Doctrine;
 
 use Doctrine\Common\Collections\Criteria;
 use Zenstruck\Collection\Exception\InvalidSpecification;
+use Zenstruck\Collection\Matchable;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
  * @template V of object
+ * @extends Matchable<int,V>
  * @extends \IteratorAggregate<int,V>
  */
-interface ObjectRepository extends \Countable, \IteratorAggregate
+interface ObjectRepository extends Matchable, \Countable, \IteratorAggregate
 {
     public const ALL = null;
 
@@ -32,11 +34,18 @@ interface ObjectRepository extends \Countable, \IteratorAggregate
     public function find(mixed $specification): ?object;
 
     /**
-     * @param mixed|self::ALL|array|Criteria $specification
+     * @param mixed|self::ALL|array|Criteria|object $specification
      *
      * @return Result<V>
      *
      * @throws InvalidSpecification if the specification is not supported
      */
     public function query(mixed $specification): Result;
+
+    /**
+     * @param mixed|self::ALL|array|Criteria|object $specification
+     *
+     * @return Result<V>
+     */
+    public function filter(mixed $specification): Result;
 }

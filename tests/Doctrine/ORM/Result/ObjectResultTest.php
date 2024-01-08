@@ -11,17 +11,21 @@
 
 namespace Zenstruck\Collection\Tests\Doctrine\ORM\Result;
 
+use Doctrine\Common\Collections\Criteria;
 use Zenstruck\Collection\Doctrine\Batch\CountableBatchIterator;
 use Zenstruck\Collection\Doctrine\Batch\CountableBatchProcessor;
 use Zenstruck\Collection\Doctrine\ORM\EntityResult;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
 use Zenstruck\Collection\Tests\Doctrine\ORM\EntityResultTest;
+use Zenstruck\Collection\Tests\MatchableObjectTests;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
 class ObjectResultTest extends EntityResultTest
 {
+    use MatchableObjectTests;
+
     /**
      * @test
      */
@@ -108,6 +112,32 @@ class ObjectResultTest extends EntityResultTest
         $entity = $this->createWithItems(1)->readonly()->first();
 
         $this->assertFalse($this->em->contains($entity));
+    }
+
+    /**
+     * @test
+     */
+    public function can_use_criteria_as_filter_specification(): void
+    {
+        $collection = $this->createWithItems(10);
+        $criteria = Criteria::create()->where(Criteria::expr()->lt('id', 5))
+            ->orderBy(['id' => Criteria::DESC])
+        ;
+
+        $this->assertEquals($this->expectedValueAt(4), $collection->filter($criteria)->first());
+    }
+
+    /**
+     * @test
+     */
+    public function can_use_criteria_as_find_specification(): void
+    {
+        $collection = $this->createWithItems(10);
+        $criteria = Criteria::create()->where(Criteria::expr()->lt('id', 5))
+            ->orderBy(['id' => Criteria::DESC])
+        ;
+
+        $this->assertEquals($this->expectedValueAt(4), $collection->find($criteria));
     }
 
     protected function expectedValueAt(int $position): object

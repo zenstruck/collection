@@ -12,6 +12,7 @@
 namespace Zenstruck\Collection\Tests;
 
 use Zenstruck\Collection;
+use Zenstruck\Collection\Exception\InvalidSpecification;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -177,6 +178,30 @@ trait CollectionTests
         $this->assertNull($this->createWithItems(0)->reduce($function));
         $this->assertSame(10, $this->createWithItems(5)->reduce($function));
         $this->assertSame(15, $this->createWithItems(5)->reduce($function, 5));
+    }
+
+    /**
+     * @test
+     */
+    public function invalid_filter_specification(): void
+    {
+        $collection = $this->createWithItems(1);
+
+        $this->expectException(InvalidSpecification::class);
+
+        $collection->filter(new \stdClass());
+    }
+
+    /**
+     * @test
+     */
+    public function invalid_find_specification(): void
+    {
+        $collection = $this->createWithItems(1);
+
+        $this->expectException(InvalidSpecification::class);
+
+        $collection->find(new \stdClass());
     }
 
     abstract protected function createWithItems(int $count): Collection;

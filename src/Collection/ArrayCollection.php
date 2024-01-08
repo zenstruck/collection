@@ -12,6 +12,7 @@
 namespace Zenstruck\Collection;
 
 use Zenstruck\Collection;
+use Zenstruck\Collection\Exception\InvalidSpecification;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -179,13 +180,17 @@ final class ArrayCollection implements Collection
     }
 
     /**
-     * @param null|callable(V,K):bool $predicate
+     * @param null|callable(V,K):bool $specification
      *
      * @return self<K,V>
      */
-    public function filter(?callable $predicate = null): self
+    public function filter(mixed $specification = null): self
     {
-        return new self(\array_filter($this->source, $predicate, \ARRAY_FILTER_USE_BOTH));
+        if (null !== $specification && !\is_callable($specification)) {
+            throw InvalidSpecification::build($specification, self::class, 'filter', 'Only null|callable(V,K):bool is supported.');
+        }
+
+        return new self(\array_filter($this->source, $specification, \ARRAY_FILTER_USE_BOTH));
     }
 
     /**

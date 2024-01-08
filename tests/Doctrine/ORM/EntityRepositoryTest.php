@@ -15,20 +15,24 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\QueryBuilder;
 use PHPUnit\Framework\TestCase;
 use Zenstruck\Collection\Doctrine\Batch\CountableBatchIterator;
+use Zenstruck\Collection\Doctrine\DoctrineSpec;
 use Zenstruck\Collection\Doctrine\ObjectRepository;
 use Zenstruck\Collection\Doctrine\ORM\EntityRepository;
+use Zenstruck\Collection\Doctrine\ORM\Specification\Join;
 use Zenstruck\Collection\Exception\InvalidSpecification;
+use Zenstruck\Collection\Spec;
 use Zenstruck\Collection\Tests\CountableIteratorTests;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Relation;
 use Zenstruck\Collection\Tests\Doctrine\HasDatabase;
+use Zenstruck\Collection\Tests\MatchableObjectTests;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
 class EntityRepositoryTest extends TestCase
 {
-    use CountableIteratorTests, HasDatabase;
+    use CountableIteratorTests, HasDatabase, MatchableObjectTests;
 
     /**
      * @test
@@ -192,6 +196,237 @@ class EntityRepositoryTest extends TestCase
         $this->assertEmpty($repo->query(function(QueryBuilder $qb, string $root) {
             $qb->andWhere($root.'.id = :id')->setParameter('id', 99);
         }));
+    }
+
+    /**
+     * @test
+     */
+    public function filter_contains_wildcard(): void
+    {
+        $repo = $this->createWithItems(3);
+
+        $results = $repo->filter(Spec::contains('value', 'v*ue 2'));
+        $this->assertCount(1, $results);
+        $this->assertSame('value 2', $results->first()->value);
+
+        $results = $repo->filter(Spec::contains('value', '*e 2'));
+        $this->assertCount(1, $results);
+        $this->assertSame('value 2', $results->first()->value);
+
+        $results = $repo->filter(Spec::contains('value', '*'));
+        $this->assertCount(3, $results);
+
+        $results = $repo->filter(Spec::contains('value', 'lue *'));
+        $this->assertCount(3, $results);
+    }
+
+    /**
+     * @test
+     */
+    public function filter_starts_with_wildcard(): void
+    {
+        $repo = $this->createWithItems(3);
+
+        $results = $repo->filter(Spec::contains('value', 'v*ue'));
+        $this->assertCount(3, $results);
+
+        $results = $repo->filter(Spec::contains('value', 'v*ue*'));
+        $this->assertCount(3, $results);
+    }
+
+    /**
+     * @test
+     */
+    public function filter_ends_with_wildcard(): void
+    {
+        $repo = $this->createWithItems(3);
+
+        $results = $repo->filter(Spec::contains('value', 'l*e 2'));
+        $this->assertCount(1, $results);
+        $this->assertSame('value 2', $results->first()->value);
+
+        $results = $repo->filter(Spec::contains('value', '*l*e 2'));
+        $this->assertCount(1, $results);
+        $this->assertSame('value 2', $results->first()->value);
+    }
+
+    /**
+     * @test
+     */
+    public function readonly_specification(): void
+    {
+        $results = $this->createWithItems(3)->filter(DoctrineSpec::readonly());
+
+        $this->assertCount(3, $results);
+        $this->assertFalse($this->em->contains($results->first()));
+    }
+
+    /**
+     * @test
+     */
+    public function delete_specification(): void
+    {
+        $repo = $this->createWithItems(3);
+
+        $result = $repo
+            ->filter(DoctrineSpec::andX(DoctrineSpec::gt('id', 1), DoctrineSpec::delete()))
+            ->first()
+        ;
+
+        $this->assertSame(2, $result);
+        $this->assertCount(1, $repo->filter(null));
+        $this->assertSame('value 1', $repo->filter(null)->first()->value);
+    }
+
+    /**
+     * @test
+     */
+    public function filter_with_inner_join(): void
+    {
+        $this->persistEntitiesForJoinTest();
+
+        $this->assertCount(5, $this->repo());
+
+        $results = \iterator_to_array($this->repo()->filter(Join::inner('relation')));
+
+        $this->assertCount(3, $results);
+        $this->assertQueryCount(2, function() use ($results) {
+            $this->assertSame(2, $results[1]->relation->value);
+            $this->assertSame(3, $results[2]->relation->value);
+        });
+    }
+
+    /**
+     * @test
+     */
+    public function filter_with_eager_inner_join(): void
+    {
+        $this->persistEntitiesForJoinTest();
+
+        $this->assertCount(5, $this->repo());
+
+        $results = \iterator_to_array($this->repo()->filter(Join::inner('relation')->eager()));
+
+        $this->assertCount(3, $results);
+        $this->assertQueryCount(0, function() use ($results) {
+            $this->assertSame(2, $results[1]->relation->value);
+            $this->assertSame(3, $results[2]->relation->value);
+        });
+    }
+
+    /**
+     * @test
+     */
+    public function filter_with_left_join(): void
+    {
+        $this->persistEntitiesForJoinTest();
+
+        $this->assertCount(5, $this->repo());
+
+        $results = \iterator_to_array($this->repo()->filter(Join::left('relation')));
+
+        $this->assertCount(5, $results);
+        $this->assertQueryCount(2, function() use ($results) {
+            $this->assertSame(1, $results[1]->relation->value);
+            $this->assertSame(2, $results[2]->relation->value);
+            $this->assertNull($results[3]->relation);
+        });
+    }
+
+    /**
+     * @test
+     */
+    public function filter_with_eager_left_join(): void
+    {
+        $this->persistEntitiesForJoinTest();
+
+        $this->assertCount(5, $this->repo());
+
+        $results = \iterator_to_array($this->repo()->filter(Join::left('relation')->eager()));
+
+        $this->assertCount(5, $results);
+        $this->assertQueryCount(0, function() use ($results) {
+            $this->assertSame(1, $results[1]->relation->value);
+            $this->assertSame(2, $results[2]->relation->value);
+            $this->assertNull($results[3]->relation);
+        });
+    }
+
+    /**
+     * @test
+     */
+    public function filter_with_join_and_scoped_select(): void
+    {
+        $this->persistEntitiesForJoinTest();
+
+        $this->assertCount(5, $this->repo());
+
+        $results = \iterator_to_array($this->repo()->filter(Join::inner('relation')->scope(
+            Spec::andX(Spec::gt('value', 1), Spec::lt('value', 3))
+        )));
+
+        $this->assertCount(1, $results);
+        $this->assertQueryCount(1, function() use ($results) {
+            $this->assertSame(2, $results[0]->relation->value);
+        });
+    }
+
+    /**
+     * @test
+     */
+    public function filter_with_join_and_eager_scoped_select(): void
+    {
+        $this->persistEntitiesForJoinTest();
+
+        $this->assertCount(5, $this->repo());
+
+        $results = \iterator_to_array($this->repo()->filter(Join::inner('relation')->eager()->scope(
+            Spec::andX(Spec::gt('value', 1), Spec::lt('value', 3))
+        )));
+
+        $this->assertCount(1, $results);
+        $this->assertQueryCount(0, function() use ($results) {
+            $this->assertSame(2, $results[0]->relation->value);
+        });
+    }
+
+    /**
+     * @test
+     */
+    public function filter_with_left_anti_join(): void
+    {
+        $this->persistEntitiesForJoinTest();
+
+        $this->assertCount(5, $this->repo());
+
+        $results = \iterator_to_array($this->repo()->filter(Join::anti('relation')));
+
+        $this->assertCount(2, $results);
+    }
+
+    /**
+     * @test
+     */
+    public function filter_with_join_and_multiple_scope(): void
+    {
+        $this->persistEntitiesForJoinTest();
+
+        $this->assertCount(5, $this->repo());
+
+        $results = $this->repo()->filter(
+            Spec::andX(
+                Join::inner('relation')->eager()->scope(Spec::gt('value', 1)),
+                Join::inner('relation')->eager()->scope(Spec::lt('value', 3))
+            )
+        );
+
+        $this->assertCount(1, $results);
+
+        $results = \iterator_to_array($results);
+
+        $this->assertQueryCount(0, function() use ($results) {
+            $this->assertSame(2, $results[0]->relation->value);
+        });
     }
 
     protected function createWithItems(int $count): ObjectRepository

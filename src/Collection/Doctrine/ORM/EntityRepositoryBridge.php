@@ -25,7 +25,7 @@ trait EntityRepositoryBridge
     private EntityRepository $collectionRepo;
 
     /**
-     * @param mixed|Criteria|array<string,mixed>|(object&callable(QueryBuilder):void) $specification
+     * @param mixed|Criteria|array<string,mixed>|(object&callable(QueryBuilder,string):void)|object $specification
      */
     public function find($specification, $lockMode = null, $lockVersion = null): ?object
     {
@@ -38,13 +38,23 @@ trait EntityRepositoryBridge
     }
 
     /**
-     * @param Criteria|null|array<string,mixed>|(object&callable(QueryBuilder):void) $specification
+     * @param Criteria|null|array<string,mixed>|(object&callable(QueryBuilder,string):void)|object $specification
      *
      * @return EntityResult<V>
      */
     public function query(mixed $specification): EntityResult
     {
         return $this->collectionRepo()->query($specification);
+    }
+
+    /**
+     * @param Criteria|null|array<string,mixed>|(object&callable(QueryBuilder,string):void)|object $specification
+     *
+     * @return EntityResult<V>
+     */
+    public function filter(mixed $specification): EntityResult
+    {
+        return $this->query($specification);
     }
 
     public function getIterator(): \Traversable

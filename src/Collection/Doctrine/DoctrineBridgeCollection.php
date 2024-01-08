@@ -14,9 +14,13 @@ namespace Zenstruck\Collection\Doctrine;
 use Doctrine\Common\Collections\AbstractLazyCollection;
 use Doctrine\Common\Collections\ArrayCollection as DoctrineArrayCollection;
 use Doctrine\Common\Collections\Collection as DoctrineCollection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Selectable;
 use Zenstruck\Collection;
 use Zenstruck\Collection\ArrayCollection;
+use Zenstruck\Collection\Doctrine\Specification\CriteriaInterpreter;
 use Zenstruck\Collection\IterableCollection;
+use Zenstruck\Collection\Matchable;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -25,13 +29,15 @@ use Zenstruck\Collection\IterableCollection;
  * @template V
  * @implements Collection<K,V>
  * @implements DoctrineCollection<K,V>
+ * @implements Matchable<K,V>
  */
-final class DoctrineBridgeCollection implements Collection, DoctrineCollection
+final class DoctrineBridgeCollection implements Collection, DoctrineCollection, Matchable
 {
     /** @use IterableCollection<K,V> */
     use IterableCollection {
         map as private innerMap;
         reduce as private innerReduce;
+        find as private innerFind;
     }
 
     /** @var DoctrineCollection<K,V> */
@@ -72,11 +78,41 @@ final class DoctrineBridgeCollection implements Collection, DoctrineCollection
     }
 
     /**
+     * @param Criteria|callable(V,K):bool $specification
+     */
+    public function find(mixed $specification, mixed $default = null): mixed
+    {
+        if ($specification instanceof Criteria) {
+            return $this->filter($specification->setMaxResults(1))->first($default);
+        }
+
+        if (!\is_callable($specification)) {
+            return $this->find(CriteriaInterpreter::interpret($specification, self::class, 'find'), $default);
+        }
+
+        return $this->innerFind($specification, $default);
+    }
+
+    /**
+     * @param Criteria|callable(V,K):bool $specification
+     *
      * @return self<K,V>
      */
-    public function filter(\Closure|callable $p): self
+    public function filter(mixed $specification): self
     {
-        return new self($this->inner->filter($p(...)));
+        if ($this->inner instanceof Selectable && $specification instanceof Criteria) {
+            return new self($this->inner->matching($specification));
+        }
+
+        if ($this->inner instanceof Criteria) {
+            throw new \LogicException(\sprintf('"%s" is not an instance of "%s". Cannot use Criteria as a specification.', $this->inner::class, Selectable::class));
+        }
+
+        if (!\is_callable($specification)) {
+            return $this->filter(CriteriaInterpreter::interpret($specification, self::class, 'filter'));
+        }
+
+        return new self($this->inner->filter($specification(...)));
     }
 
     public function reduce(\Closure|callable $function, mixed $initial = null): mixed

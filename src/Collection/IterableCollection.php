@@ -12,6 +12,7 @@
 namespace Zenstruck\Collection;
 
 use Zenstruck\Collection;
+use Zenstruck\Collection\Exception\InvalidSpecification;
 
 /**
  * Convert any {@see \Traversable} class into a {@see Collection}
@@ -67,11 +68,15 @@ trait IterableCollection
     /**
      * @return LazyCollection<K,V>
      */
-    public function filter(callable $predicate): Collection
+    public function filter(mixed $specification): Collection
     {
-        return new LazyCollection(function() use ($predicate) {
+        if (!\is_callable($specification)) {
+            throw InvalidSpecification::build($specification, static::class, 'filter', 'Only callable(V,K):bool is supported.');
+        }
+
+        return new LazyCollection(function() use ($specification) {
             foreach ($this as $key => $value) {
-                if ($predicate($value, $key)) {
+                if ($specification($value, $key)) {
                     yield $key => $value;
                 }
             }
@@ -131,10 +136,14 @@ trait IterableCollection
         return $default;
     }
 
-    public function find(callable $predicate, mixed $default = null): mixed
+    public function find(mixed $specification, mixed $default = null): mixed
     {
+        if (!\is_callable($specification)) {
+            throw InvalidSpecification::build($specification, static::class, 'find', 'Only callable(V,K):bool is supported.');
+        }
+
         foreach ($this as $key => $value) {
-            if ($predicate($value, $key)) {
+            if ($specification($value, $key)) {
                 return $value;
             }
         }
