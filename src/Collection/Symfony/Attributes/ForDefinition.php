@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Zenstruck\Collection\Symfony\Doctrine;
+namespace Zenstruck\Collection\Symfony\Attributes;
 
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
@@ -17,16 +17,16 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
  * @author Kevin Bond <kevinbond@gmail.com>
  */
 #[\Attribute(\Attribute::TARGET_PARAMETER)]
-final class ForObject extends Autowire
+final class ForDefinition extends Autowire
 {
-    public function __construct(
-        /**
-         * @var class-string $class
-         */
-        public readonly string $class,
-    ) {
+    public function __construct(string $name, ?string $key = null)
+    {
         parent::__construct(
-            expression: \sprintf('service(".zenstruck_collection.doctrine.chain_object_repo_factory").create("%s")', \addslashes($this->class)),
+            expression: \sprintf(
+                'service(".zenstruck_collection.grid_factory").createFor("%s", service("request_stack").getCurrentRequest(), "%s")',
+                \addslashes($name),
+                $key,
+            )
         );
     }
 }

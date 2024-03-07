@@ -9,20 +9,22 @@
  * file that was distributed with this source code.
  */
 
-namespace Zenstruck\Collection\Tests\Symfony\Fixture;
-
-use Zenstruck\Collection\Doctrine\ObjectRepository;
-use Zenstruck\Collection\Symfony\Attributes\ForObject;
-use Zenstruck\Collection\Tests\Symfony\Fixture\Entity\Category;
+namespace Zenstruck\Collection\Grid\Filter;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class Service2
+final class Choice implements \Stringable
 {
     public function __construct(
-        #[ForObject(Category::class)]
-        public ObjectRepository $categoryRepo,
+        public readonly ?string $value,
+        public readonly ?object $specification = null,
+        public readonly ?string $label = null,
     ) {
+    }
+
+    public function __toString(): string
+    {
+        return $this->label ?? $this->value ?? '';
     }
 }

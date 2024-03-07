@@ -22,7 +22,10 @@ final class OrderBy extends Field
     /** @var self::* */
     public readonly string $direction;
 
-    private function __construct(string $field, string $direction)
+    /**
+     * @param self::* $direction
+     */
+    public function __construct(string $field, string $direction)
     {
         parent::__construct($field);
 
@@ -34,11 +37,26 @@ final class OrderBy extends Field
 
     public static function asc(string $field): self
     {
-        return new self($field, 'ASC');
+        return new self($field, self::ASC);
     }
 
     public static function desc(string $field): self
     {
-        return new self($field, 'DESC');
+        return new self($field, self::DESC);
+    }
+
+    public function opposite(): self
+    {
+        return new self($this->field, self::ASC === $this->direction ? self::DESC : self::ASC);
+    }
+
+    public function isAsc(): bool
+    {
+        return self::ASC === $this->direction;
+    }
+
+    public function isDesc(): bool
+    {
+        return self::DESC === $this->direction;
     }
 }

@@ -26,8 +26,10 @@
         "symfony/expression-language": "^6.4|^7.0",
         "symfony/framework-bundle": "^6.4|^7.0",
         "symfony/phpunit-bridge": "^6.3|^7.0",
+        "symfony/security-bundle": "^6.4|^7.0",
         "symfony/var-dumper": "^6.4|^7.0",
-        "zenstruck/foundry": "^1.33"
+        "zenstruck/foundry": "^1.33",
+        "zenstruck/uri": "^2.3"
     },
     "suggest": {
         "doctrine/orm": "To use ORM implementation and batch utilities (>=2.10).",

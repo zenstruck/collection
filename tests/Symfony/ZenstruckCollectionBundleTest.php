@@ -12,10 +12,12 @@
 namespace Zenstruck\Collection\Tests\Symfony;
 
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Zenstruck\Collection\Tests\Symfony\Fixture\Entity\Category;
 use Zenstruck\Collection\Tests\Symfony\Fixture\Entity\Post;
 use Zenstruck\Collection\Tests\Symfony\Fixture\Service1;
 use Zenstruck\Collection\Tests\Symfony\Fixture\Service2;
+use Zenstruck\Collection\Tests\Symfony\Fixture\Service3;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
@@ -31,7 +33,7 @@ final class ZenstruckCollectionBundleTest extends KernelTestCase
     /**
      * @test
      */
-    public function autowiring(): void
+    public function doctrine_autowiring(): void
     {
         create(Post::class, ['id' => 1]);
         create(Category::class, ['id' => 2]);
@@ -48,7 +50,7 @@ final class ZenstruckCollectionBundleTest extends KernelTestCase
     /**
      * @test
      */
-    public function autowiring_for_object(): void
+    public function doctrine_autowiring_for_object(): void
     {
         create(Category::class, ['id' => 2]);
 
@@ -60,5 +62,24 @@ final class ZenstruckCollectionBundleTest extends KernelTestCase
 
         $this->assertInstanceOf(Category::class, $service2->categoryRepo->find(2));
         $this->assertSame($service2->categoryRepo, $service1->factory->create(Category::class));
+    }
+
+    /**
+     * @test
+     */
+    public function grid_autowiring(): void
+    {
+        create(Post::class, ['id' => 1]);
+        create(Post::class, ['id' => 2]);
+        create(Post::class, ['id' => 3]);
+
+        self::getContainer()->get('request_stack')->push(Request::create('/foo'));
+
+        /** @var Service3 $service3 */
+        $service3 = self::getContainer()->get(Service3::class);
+
+        $this->assertCount(3, $service3->grid1->page());
+        $this->assertCount(2, $service3->grid2->page());
+        $this->assertCount(1, $service3->grid3->page());
     }
 }

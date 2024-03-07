@@ -11,7 +11,6 @@
 
 namespace Zenstruck\Collection\Tests\Symfony\Fixture;
 
-use Composer\InstalledVersions;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Psr\Log\NullLogger;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
@@ -21,6 +20,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 use Zenstruck\Collection\Symfony\ZenstruckCollectionBundle;
+use Zenstruck\Collection\Tests\Symfony\Fixture\Grid\Grid1Definition;
+use Zenstruck\Collection\Tests\Symfony\Fixture\Grid\Grid2Definition;
+use Zenstruck\Collection\Tests\Symfony\Fixture\Grid\Grid3Definition;
 use Zenstruck\Collection\Tests\Symfony\Fixture\Repository\PostRepository;
 use Zenstruck\Foundry\ZenstruckFoundryBundle;
 
@@ -79,14 +81,28 @@ final class TestKernel extends Kernel
             ->setAutowired(true)
             ->setAutoconfigured(true)
         ;
-
-        if (\version_compare(InstalledVersions::getVersion('symfony/dependency-injection'), '6.3.0', '>=')) {
-            $c->register(Service2::class)
-                ->setPublic(true)
-                ->setAutowired(true)
-                ->setAutoconfigured(true)
-            ;
-        }
+        $c->register(Service2::class)
+            ->setPublic(true)
+            ->setAutowired(true)
+            ->setAutoconfigured(true)
+        ;
+        $c->register(Grid1Definition::class)
+            ->setAutowired(true)
+            ->setAutoconfigured(true)
+        ;
+        $c->register(Grid2Definition::class)
+            ->setAutowired(true)
+            ->setAutoconfigured(true)
+        ;
+        $c->register(Grid3Definition::class)
+            ->setAutowired(true)
+            ->setAutoconfigured(true)
+        ;
+        $c->register(Service3::class)
+            ->setPublic(true)
+            ->setAutowired(true)
+            ->setAutoconfigured(true)
+        ;
     }
 
     protected function configureRoutes(RoutingConfigurator $routes): void

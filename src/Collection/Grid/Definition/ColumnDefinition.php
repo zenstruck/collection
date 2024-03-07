@@ -9,20 +9,17 @@
  * file that was distributed with this source code.
  */
 
-namespace Zenstruck\Collection\Tests\Symfony\Fixture;
-
-use Zenstruck\Collection\Doctrine\ObjectRepository;
-use Zenstruck\Collection\Symfony\Attributes\ForObject;
-use Zenstruck\Collection\Tests\Symfony\Fixture\Entity\Category;
+namespace Zenstruck\Collection\Grid\Definition;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class Service2
+final class ColumnDefinition
 {
     public function __construct(
-        #[ForObject(Category::class)]
-        public ObjectRepository $categoryRepo,
+        public string $name,
+        public bool $searchable = false,
+        public bool $sortable = false,
     ) {
     }
 }
