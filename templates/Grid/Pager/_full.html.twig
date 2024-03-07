@@ -1,0 +1,44 @@
+{% apply spaceless %}
+    {% set pager = grid.page %}
+    {% set input = grid.input %}
+    {% set window = window|default(4) %}
+    <ul class="ui-grid-pager-full">
+        {% if pager.currentPage == 1 %}
+            <li class="disabled"><span>&lt;</span></li>
+        {% else %}
+            <li><a href="{{ input.applyPage(pager.currentPage - 1) }}">&lt;</a></li>
+        {% endif %}
+
+        {% for i in 1..pager.pageCount %}
+            {% if loop.index == 1 and pager.currentPage != loop.index %}
+                <li>
+                    <a href="{{ input.applyPage(loop.index) }}">{{ loop.index }}</a>
+                </li>
+            {% elseif loop.index == pager.pageCount and pager.currentPage != loop.index %}
+                <li>
+                    <a href="{{ input.applyPage(loop.index) }}">{{ loop.index }}</a>
+                </li>
+            {% elseif 0 == (pager.currentPage - window) - loop.index %} {# dots before #}
+                <li class="disabled"><span>...</span></li>
+            {% elseif 0 == (pager.currentPage + window) - loop.index %} {# dots after #}
+                <li class="disabled"><span>...</span></li>
+            {% elseif 0 < (pager.currentPage - window) - loop.index %} {# hide all before #}
+            {% elseif 0 > (pager.currentPage + window) - loop.index %} {# hide all after #}
+            {% elseif pager.currentPage == loop.index %}
+                <li class="active">
+                    <span>{{ loop.index }}</span>
+                </li>
+            {% else %}
+                <li>
+                    <a href="{{ input.applyPage(loop.index) }}">{{ loop.index }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+
+        {% if pager.currentPage < pager.pageCount %}
+            <li><a href="{{ input.applyPage(pager.currentPage + 1) }}">&gt;</a></li>
+        {% else %}
+            <li class="disabled"><span>&gt;</span></li>
+        {% endif %}
+    </ul>
+{% endapply %}

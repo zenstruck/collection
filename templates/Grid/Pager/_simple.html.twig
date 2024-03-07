@@ -1,0 +1,6 @@
+<ul class="ui-grid-pager-simple">
+    <li{{ 1 == grid.page.currentPage ? ' class="disabled"' }}><a href="{{ grid.input.applyPage(1) }}">First</a></li>
+    <li{{ not grid.page.previousPage ? ' class="disabled"' }}><a href="{{ grid.input.applyPage(grid.page.previousPage|default(1)) }}">Previous</a></li>
+    <li{{ not grid.page.nextPage ? ' class="disabled"' }}><a href="{{ grid.input.applyPage(grid.page.nextPage|default(grid.page.lastPage)) }}">Next</a></li>
+    <li{{ grid.page.lastPage == grid.page.currentPage ? ' class="disabled"' }}><a href="{{ grid.input.applyPage(grid.page.lastPage) }}">Last</a></li>
+</ul>
