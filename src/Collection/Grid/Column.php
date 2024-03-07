@@ -25,6 +25,7 @@ final class Column
     public function __construct(
         private ColumnDefinition $definition,
         private Input $input,
+        private ?OrderBy $defaultSort,
     ) {
     }
 
@@ -45,7 +46,7 @@ final class Column
 
     public function sort(): ?OrderBy
     {
-        if (!($sort = $this->input->sort()) || $this->name() !== $sort->field) {
+        if (!($sort = $this->input->sort() ?? $this->defaultSort) || $this->name() !== $sort->field) {
             return null;
         }
 

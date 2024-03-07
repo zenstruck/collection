@@ -47,6 +47,7 @@ final class GridBuilder
             ->map(fn(ColumnDefinition $column) => new Column(
                 definition: $column,
                 input: $input,
+                defaultSort: $this->defaultSort,
             ))
         ;
 
