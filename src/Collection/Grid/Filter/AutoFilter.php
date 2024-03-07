@@ -36,6 +36,10 @@ final class AutoFilter implements Filter
 
     public function apply(mixed $value): ?object
     {
+        if (\is_array($value) && \array_is_list($value)) {
+            return new In($this->field, $value);
+        }
+
         if (!\is_string($value) || !$value) {
             return null;
         }

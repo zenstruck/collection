@@ -63,8 +63,9 @@ final class AutoFilterTest extends TestCase
         yield ['[bar...baz)', new Between('foo', 'bar', 'baz', Between::EXCLUSIVE_END)];
         yield ['~', new IsNull('foo')];
         yield ['!~', new Not(new IsNull('foo'))];
+        yield [[1, 2], new In('foo', [1, 2])];
         yield ['', null];
         yield [null, null];
-        yield [['array'], null];
+        yield [['assoc' => 'array'], null];
     }
 }
