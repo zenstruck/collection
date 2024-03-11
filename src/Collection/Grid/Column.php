@@ -12,6 +12,7 @@
 namespace Zenstruck\Collection\Grid;
 
 use Zenstruck\Collection\Grid\Definition\ColumnDefinition;
+use Zenstruck\Collection\Specification\Filter\Contains;
 use Zenstruck\Collection\Specification\OrderBy;
 
 /**
@@ -36,12 +37,25 @@ final class Column
 
     public function isSearchable(): bool
     {
-        return $this->definition->searchable;
+        return (bool) $this->definition->searchable;
     }
 
     public function isSortable(): bool
     {
         return $this->definition->sortable;
+    }
+
+    public function searchSpecification(string $query): ?object
+    {
+        if (false === $this->definition->searchable) {
+            return null;
+        }
+
+        if (true === $this->definition->searchable) {
+            return new Contains($this->name(), $query);
+        }
+
+        return ($this->definition->searchable)($query);
     }
 
     public function sort(): ?OrderBy

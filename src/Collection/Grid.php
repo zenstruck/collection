@@ -18,7 +18,6 @@ use Zenstruck\Collection\Grid\Filters;
 use Zenstruck\Collection\Grid\Input;
 use Zenstruck\Collection\Grid\PerPage;
 use Zenstruck\Collection\Grid\PerPage\FixedPerPage;
-use Zenstruck\Collection\Specification\Filter\Contains;
 use Zenstruck\Collection\Specification\Logic\AndX;
 use Zenstruck\Collection\Specification\Logic\OrX;
 
@@ -87,7 +86,8 @@ final class Grid implements \IteratorAggregate
         return new OrX(...$this->columns
             ->searchable()
             ->all()
-            ->map(fn(Column $column) => new Contains($column->name(), $query))
+            ->map(fn(Column $column) => $column->searchSpecification($query))
+            ->filter()
             ->values()
             ->all()
         );

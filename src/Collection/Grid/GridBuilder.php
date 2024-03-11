@@ -62,20 +62,21 @@ final class GridBuilder
     }
 
     /**
-     * @param OrderBy::*|null $defaultSort
+     * @param bool|(object&callable(string):(object|null)) $searchable
+     * @param OrderBy::*|null                              $defaultSort
      *
      * @return $this
      */
     public function addColumn(
         string $name,
-        bool $searchable = false,
+        callable|bool $searchable = false,
         bool $sortable = false,
         bool $autofilter = false,
         ?string $defaultSort = null,
     ): self {
         $this->columns[$name] = new ColumnDefinition(
             name: $name,
-            searchable: $searchable,
+            searchable: \is_bool($searchable) ? $searchable : $searchable(...),
             sortable: $sortable,
         );
 

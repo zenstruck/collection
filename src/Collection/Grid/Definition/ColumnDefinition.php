@@ -16,9 +16,12 @@ namespace Zenstruck\Collection\Grid\Definition;
  */
 final class ColumnDefinition
 {
+    /**
+     * @param bool|\Closure(string):(object|null) $searchable
+     */
     public function __construct(
         public string $name,
-        public bool $searchable = false,
+        public bool|\Closure $searchable = false,
         public bool $sortable = false,
     ) {
     }
