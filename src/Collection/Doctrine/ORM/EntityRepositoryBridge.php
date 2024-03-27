@@ -12,6 +12,7 @@
 namespace Zenstruck\Collection\Doctrine\ORM;
 
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\QueryBuilder;
 
 /**
@@ -26,6 +27,8 @@ trait EntityRepositoryBridge
 
     /**
      * @param mixed|Criteria|array<string,mixed>|(object&callable(QueryBuilder,string):void)|object $specification
+     * @param LockMode|int|null                                                                     $lockMode
+     * @param int|null                                                                              $lockVersion
      */
     public function find($specification, $lockMode = null, $lockVersion = null): ?object
     {
@@ -68,11 +71,19 @@ trait EntityRepositoryBridge
     }
 
     /**
+     * @param string      $alias
+     * @param string|null $indexBy
+     *
      * @return EntityResultQueryBuilder<V>
      */
     public function createQueryBuilder($alias, $indexBy = null): EntityResultQueryBuilder
     {
-        return EntityResultQueryBuilder::forEntity($this->_em, $this->getClassName(), $alias, $indexBy);
+        return EntityResultQueryBuilder::forEntity(
+            parent::createQueryBuilder($alias, $indexBy)->getEntityManager(),
+            $this->getClassName(),
+            $alias,
+            $indexBy
+        );
     }
 
     /**

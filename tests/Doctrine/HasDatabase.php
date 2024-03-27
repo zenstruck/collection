@@ -11,10 +11,13 @@
 
 namespace Zenstruck\Collection\Tests\Doctrine;
 
-use Doctrine\DBAL\Logging\DebugStack;
+use Doctrine\Bundle\DoctrineBundle\Middleware\DebugMiddleware;
+use Doctrine\DBAL\Configuration;
+use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Tools\SchemaTool;
-use Doctrine\ORM\Tools\Setup;
+use Symfony\Bridge\Doctrine\Middleware\Debug\DebugDataHolder;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Relation;
 
@@ -23,16 +26,20 @@ use Zenstruck\Collection\Tests\Doctrine\Fixture\Relation;
  */
 trait HasDatabase
 {
-    protected ?EntityManager $em = null;
+    protected EntityManager $em;
+    private DebugDataHolder $debugDataHolder;
 
     /**
      * @before
      */
     protected function setupEntityManager(): void
     {
-        $this->em = EntityManager::create(
-            ['driver' => 'pdo_sqlite', 'memory' => true],
-            Setup::createAttributeMetadataConfiguration([], true),
+        $configuration = new Configuration();
+        $configuration->setMiddlewares([new DebugMiddleware($this->debugDataHolder = new DebugDataHolder(), null)]);
+
+        $this->em = new EntityManager(
+            DriverManager::getConnection(['driver' => 'pdo_sqlite', 'memory' => true], $configuration),
+            ORMSetup::createAttributeMetadataConfiguration([], true),
         );
 
         $schemaTool = new SchemaTool($this->em);
@@ -47,23 +54,18 @@ trait HasDatabase
      */
     protected function teardownEntityManager(): void
     {
-        $this->em = null;
+        unset($this->em, $this->debugDataHolder);
     }
 
     protected function assertQueryCount(int $expected, callable $callback): void
     {
-        $logger = new DebugStack();
-        $this->em->getConnection()->getConfiguration()->setSQLLogger($logger);
+        $this->debugDataHolder->reset();
 
         $callback();
 
-        if ($expected === \count($logger->queries)) {
-            $this->assertTrue(true);
+        $queries = $this->debugDataHolder->getData()['default'] ?? [];
 
-            return;
-        }
-
-        $this->fail(\sprintf('Expected %d queries but got %d.', $expected, \count($logger->queries)));
+        $this->assertCount($expected, $queries, \sprintf('Expected %d queries but got %d.', $expected, $queries));
     }
 
     protected function persistEntities(int $count): void

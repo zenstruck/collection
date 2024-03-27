@@ -11,6 +11,7 @@
 
 namespace Zenstruck\Collection\Tests\Doctrine\ORM\Bridge;
 
+use Zenstruck\Collection\Doctrine\ObjectRepository;
 use Zenstruck\Collection\Doctrine\ORM\Bridge\ORMEntityRepository;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
 use Zenstruck\Collection\Tests\Doctrine\ORM\EntityRepositoryTest;
@@ -18,7 +19,7 @@ use Zenstruck\Collection\Tests\Doctrine\ORM\EntityRepositoryTest;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class ORMEntityRepositoryTest extends EntityRepositoryTest
+class ORMEntityRepositoryTest extends EntityRepositoryTest
 {
     /**
      * @test
@@ -38,7 +39,15 @@ final class ORMEntityRepositoryTest extends EntityRepositoryTest
         $this->assertSame([], $this->createWithItems(0)->findAll());
     }
 
-    protected function repo(): ORMEntityRepository
+    /**
+     * @test
+     */
+    public function can_create_query_builder(): void
+    {
+        $this->assertEmpty($this->repo()->createQueryBuilder('e')->getQuery()->execute());
+    }
+
+    protected function repo(): ObjectRepository
     {
         return new ORMEntityRepository($this->em, $this->em->getClassMetadata(Entity::class));
     }

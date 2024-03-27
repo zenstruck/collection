@@ -41,7 +41,7 @@ final class LazyCollection implements Collection
             $source = $source(...); // @phpstan-ignore-line
         }
 
-        $this->source = \is_array($source) ? new \ArrayIterator($source) : $source;
+        $this->source = \is_array($source) ? new \ArrayIterator($source) : $source; // @phpstan-ignore-line
     }
 
     /**
