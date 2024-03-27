@@ -20,7 +20,7 @@
         "doctrine/dbal": "^3.0|^4.0",
         "doctrine/doctrine-bundle": "^2.7",
         "doctrine/orm": "^2.15|^3.0",
-        "pagerfanta/pagerfanta": "^1.0|^2.0|^3.0",
+        "pagerfanta/pagerfanta": "^1.0|^2.0|^3.0|^4.0",
         "phpstan/phpstan": "^1.4",
         "phpunit/phpunit": "^9.5.0",
         "symfony/expression-language": "^6.4|^7.0",
