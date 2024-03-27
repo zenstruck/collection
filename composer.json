@@ -17,10 +17,10 @@
     "require-dev": {
         "composer-runtime-api": "^2.0",
         "doctrine/collections": "^2.1",
-        "doctrine/dbal": "^2.12|^3.0",
-        "doctrine/doctrine-bundle": "^2.4",
-        "doctrine/orm": "^2.15",
-        "pagerfanta/pagerfanta": "^1.0|^2.0|^3.0",
+        "doctrine/dbal": "^3.0|^4.0",
+        "doctrine/doctrine-bundle": "^2.7",
+        "doctrine/orm": "^2.15|^3.0",
+        "pagerfanta/pagerfanta": "^1.0|^2.0|^3.0|^4.0",
         "phpstan/phpstan": "^1.4",
         "phpunit/phpunit": "^9.5.0",
         "symfony/expression-language": "^6.4|^7.0",
@@ -31,8 +31,8 @@
         "zenstruck/uri": "^2.3"
     },
     "suggest": {
-        "doctrine/orm": "To use ORM implementation and batch utilities (>=2.10).",
-        "doctrine/dbal": "To use DBAL implementation.",
+        "doctrine/orm": "To use ORM implementation and batch utilities (>=2.15).",
+        "doctrine/dbal": "To use DBAL implementation (>=3.0).",
         "doctrine/collections": "To use CollectionDecorator.",
         "pagerfanta/pagerfanta": "To use CollectionAdapter."
     },
