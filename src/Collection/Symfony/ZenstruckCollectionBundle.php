@@ -15,11 +15,14 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Exception\LogicException;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 use Zenstruck\Collection\Doctrine\Grid\ObjectGridDefinition;
+use Zenstruck\Collection\Doctrine\ORM\EntityRepository;
+use Zenstruck\Collection\Grid\GridDefinition;
 use Zenstruck\Collection\Symfony\Attributes\AsGrid;
 use Zenstruck\Collection\Symfony\Attributes\ForObject;
 
@@ -58,8 +61,22 @@ final class ZenstruckCollectionBundle extends AbstractBundle implements Compiler
         if (isset($builder->getParameter('kernel.bundles')['DoctrineBundle'])) {
             $loader->load('doctrine.php');
 
-            $builder->registerAttributeForAutoconfiguration(ForObject::class, function(ChildDefinition $definition, ForObject $attribute) {
-                $definition->addTag('zenstruck_collection.grid_definition', ['key' => $attribute->class, 'as_object' => true]);
+            $builder->registerAttributeForAutoconfiguration(ForObject::class, function(ChildDefinition $definition, ForObject $attribute, \ReflectionClass $class) { // @phpstan-ignore-line
+                if ($class->implementsInterface(GridDefinition::class)) {
+                    $definition->addTag('zenstruck_collection.grid_definition', ['key' => $attribute->class, 'as_object' => true]);
+
+                    return;
+                }
+
+                if (!$class->isSubclassOf(EntityRepository::class)) {
+                    throw new LogicException(\sprintf('Can only use "%s" on classes that implement "%s" or extend "%s".', ForObject::class, GridDefinition::class, EntityRepository::class));
+                }
+
+                if (EntityRepository::class !== $class->getConstructor()?->getDeclaringClass()->name) {
+                    throw new LogicException(\sprintf('Cannot use "%s" on "%s" as it overrides the constructor.', ForObject::class, $class->name));
+                }
+
+                $definition->setArgument('$class', $attribute->class);
             });
         }
     }

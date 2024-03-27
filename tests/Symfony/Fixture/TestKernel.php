@@ -23,6 +23,7 @@ use Zenstruck\Collection\Symfony\ZenstruckCollectionBundle;
 use Zenstruck\Collection\Tests\Symfony\Fixture\Grid\Grid1Definition;
 use Zenstruck\Collection\Tests\Symfony\Fixture\Grid\Grid2Definition;
 use Zenstruck\Collection\Tests\Symfony\Fixture\Grid\Grid3Definition;
+use Zenstruck\Collection\Tests\Symfony\Fixture\Repository\CategoryRepository;
 use Zenstruck\Collection\Tests\Symfony\Fixture\Repository\PostRepository;
 use Zenstruck\Foundry\ZenstruckFoundryBundle;
 
@@ -78,6 +79,10 @@ final class TestKernel extends Kernel
             ->setAutoconfigured(true)
         ;
         $c->register(PostRepository::class)
+            ->setAutowired(true)
+            ->setAutoconfigured(true)
+        ;
+        $c->register(CategoryRepository::class)
             ->setAutowired(true)
             ->setAutoconfigured(true)
         ;

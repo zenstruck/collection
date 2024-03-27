@@ -12,6 +12,7 @@
 namespace Zenstruck\Collection\Tests\Symfony\Fixture;
 
 use Zenstruck\Collection\Doctrine\ObjectRepositoryFactory;
+use Zenstruck\Collection\Tests\Symfony\Fixture\Repository\CategoryRepository;
 use Zenstruck\Collection\Tests\Symfony\Fixture\Repository\PostRepository;
 
 /**
@@ -19,7 +20,10 @@ use Zenstruck\Collection\Tests\Symfony\Fixture\Repository\PostRepository;
  */
 final class Service1
 {
-    public function __construct(public ObjectRepositoryFactory $factory, public PostRepository $postRepo)
-    {
+    public function __construct(
+        public ObjectRepositoryFactory $factory,
+        public PostRepository $postRepo,
+        public CategoryRepository $categoryRepo,
+    ) {
     }
 }
