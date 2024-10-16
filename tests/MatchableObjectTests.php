@@ -306,7 +306,7 @@ trait MatchableObjectTests
      */
     public function can_use_nested_specification(): void
     {
-        $object = $this->createWithItems(3)->find(new class() implements Nested {
+        $object = $this->createWithItems(3)->find(new class implements Nested {
             public function specification(): mixed
             {
                 return Spec::eq('value', 'value 2');
