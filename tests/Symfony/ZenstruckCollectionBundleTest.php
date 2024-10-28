@@ -20,6 +20,7 @@ use Zenstruck\Collection\Tests\Symfony\Fixture\Service2;
 use Zenstruck\Collection\Tests\Symfony\Fixture\Service3;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
+
 use function Zenstruck\Foundry\Persistence\persist;
 
 /**
