@@ -58,7 +58,7 @@ final class ZenstruckCollectionBundle extends AbstractBundle implements Compiler
             $definition->addTag('zenstruck_collection.grid_definition', ['key' => $attribute->name]);
         });
 
-        if (isset($builder->getParameter('kernel.bundles')['DoctrineBundle'])) {
+        if (isset($builder->getParameter('kernel.bundles')['DoctrineBundle'])) { // @phpstan-ignore-line
             $loader->load('doctrine.php');
 
             $builder->registerAttributeForAutoconfiguration(ForObject::class, function(ChildDefinition $definition, ForObject $attribute, \ReflectionClass $class) { // @phpstan-ignore-line
@@ -83,7 +83,7 @@ final class ZenstruckCollectionBundle extends AbstractBundle implements Compiler
 
     public function process(ContainerBuilder $container): void
     {
-        if (!isset($container->getParameter('kernel.bundles')['DoctrineBundle'])) {
+        if (!isset($container->getParameter('kernel.bundles')['DoctrineBundle'])) { // @phpstan-ignore-line
             return;
         }
 
