@@ -52,7 +52,7 @@ final class TestKernel extends Kernel
         ]);
 
         $c->loadFromExtension('zenstruck_foundry', [
-            'auto_refresh_proxies' => false,
+            'auto_refresh_proxies' => true,
         ]);
 
         $c->loadFromExtension('doctrine', [

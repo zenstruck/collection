@@ -20,8 +20,7 @@ use Zenstruck\Collection\Tests\Symfony\Fixture\Service2;
 use Zenstruck\Collection\Tests\Symfony\Fixture\Service3;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
-
-use function Zenstruck\Foundry\create;
+use function Zenstruck\Foundry\Persistence\persist;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -35,8 +34,8 @@ final class ZenstruckCollectionBundleTest extends KernelTestCase
      */
     public function doctrine_autowiring(): void
     {
-        create(Post::class, ['id' => 1]);
-        create(Category::class, ['id' => 2]);
+        persist(Post::class, ['id' => 1]);
+        persist(Category::class, ['id' => 2]);
 
         /** @var Service1 $service */
         $service = self::getContainer()->get(Service1::class);
@@ -52,7 +51,7 @@ final class ZenstruckCollectionBundleTest extends KernelTestCase
      */
     public function doctrine_autowiring_for_object(): void
     {
-        create(Category::class, ['id' => 2]);
+        persist(Category::class, ['id' => 2]);
 
         /** @var Service1 $service1 */
         $service1 = self::getContainer()->get(Service1::class);
@@ -69,9 +68,9 @@ final class ZenstruckCollectionBundleTest extends KernelTestCase
      */
     public function grid_autowiring(): void
     {
-        create(Post::class, ['id' => 1]);
-        create(Post::class, ['id' => 2]);
-        create(Post::class, ['id' => 3]);
+        persist(Post::class, ['id' => 1]);
+        persist(Post::class, ['id' => 2]);
+        persist(Post::class, ['id' => 3]);
 
         self::getContainer()->get('request_stack')->push(Request::create('/foo'));
 
