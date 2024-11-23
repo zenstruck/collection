@@ -27,6 +27,8 @@ use Zenstruck\Collection\FactoryCollection;
 use Zenstruck\Collection\IterableCollection;
 use Zenstruck\Collection\LazyCollection;
 
+use function Zenstruck\collect;
+
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
@@ -254,7 +256,13 @@ final class EntityResult implements Result
         }
 
         try {
-            yield from $this->query()->toIterable(hydrationMode: $this->hydrationMode ?? Query::HYDRATE_OBJECT);
+            $iterator = $this->query()->toIterable(hydrationMode: $this->hydrationMode ?? Query::HYDRATE_OBJECT);
+
+            if ($this->resultModifier) {
+                $iterator = collect(fn() => yield from $iterator)->map($this->resultModifier);
+            }
+
+            yield from $iterator;
         } catch (QueryException $e) {
             if ($e->getMessage() === QueryException::iterateWithMixedResultNotAllowed()->getMessage()) {
                 throw new \LogicException(\sprintf('Results contain aggregate fields, call %s::withAggregates().', self::class), 0, $e);
@@ -320,7 +328,7 @@ final class EntityResult implements Result
     {
         $paginator = new Paginator($query ?? $this->query(), $this->fetchJoins);
 
-        if ($this->hydrationMode) {
+        if ($this->resultModifier || $this->hydrationMode) {
             $paginator->setUseOutputWalkers(false);
         }
 
