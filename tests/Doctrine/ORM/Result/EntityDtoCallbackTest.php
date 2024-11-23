@@ -13,43 +13,25 @@ namespace Zenstruck\Collection\Tests\Doctrine\ORM\Result;
 
 use Zenstruck\Collection\Doctrine\ORM\EntityResult;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
+use Zenstruck\Collection\Tests\Doctrine\Fixture\EntityDto;
 use Zenstruck\Collection\Tests\Doctrine\ORM\EntityResultTest;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class IntResultTest extends EntityResultTest
+final class EntityDtoCallbackTest extends EntityResultTest
 {
-    /**
-     * @test
-     */
-    public function can_select_single_scalar(): void
-    {
-        $this->persistEntities(3);
-        $result = (new EntityResult($this->em->createQueryBuilder()->select('SUM(e.id)')->from(Entity::class, 'e')))->asInt();
-
-        $this->assertSame(6, $result->first());
-    }
-
-    /**
-     * @test
-     */
-    public function iterator_exact_match(): void
-    {
-        $results = $this->createWithItems(3);
-
-        $this->assertSame([1, 2, 3], \iterator_to_array($results));
-    }
-
     protected function expectedValueAt(int $position)
     {
-        return $position;
+        return new EntityDto((string) $position);
     }
 
     protected function createWithItems(int $count): EntityResult
     {
         $this->persistEntities($count);
 
-        return (new EntityResult($this->em->createQueryBuilder()->select('e.id')->from(Entity::class, 'e')))->asInt();
+        return (new EntityResult($this->em->createQueryBuilder()->select('e.id')->from(Entity::class, 'e')))
+            ->as(fn(array $v) => new EntityDto((string) $v['id']))
+        ;
     }
 }
