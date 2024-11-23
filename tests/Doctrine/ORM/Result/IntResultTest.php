@@ -31,6 +31,16 @@ final class IntResultTest extends EntityResultTest
         $this->assertSame(6, $result->first());
     }
 
+    /**
+     * @test
+     */
+    public function iterator_exact_match(): void
+    {
+        $results = $this->createWithItems(3);
+
+        $this->assertSame([1, 2, 3], \iterator_to_array($results));
+    }
+
     protected function expectedValueAt(int $position)
     {
         return $position;

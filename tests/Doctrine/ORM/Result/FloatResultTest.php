@@ -32,6 +32,16 @@ final class FloatResultTest extends EntityResultTest
         $this->assertSame([], \array_filter($result->eager()->all()));
     }
 
+    /**
+     * @test
+     */
+    public function iterator_exact_match(): void
+    {
+        $results = $this->createWithItems(3);
+
+        $this->assertSame([1.0, 2.0, 3.0], \iterator_to_array($results));
+    }
+
     protected function expectedValueAt(int $position)
     {
         return (float) $position;
