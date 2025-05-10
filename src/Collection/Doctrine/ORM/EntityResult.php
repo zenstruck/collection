@@ -54,6 +54,7 @@ final class EntityResult implements Result
 
     private bool $readonly = false;
     private int $count;
+    private ?bool $useOutputWalkers = null;
 
     public function __construct(private QueryBuilder $qb)
     {
@@ -235,6 +236,28 @@ final class EntityResult implements Result
         return $clone;
     }
 
+    /**
+     * @return self<V>
+     */
+    public function enableOutputWalkers(): self
+    {
+        $clone = clone $this;
+        $clone->useOutputWalkers = true;
+
+        return $clone;
+    }
+
+    /**
+     * @return self<V>
+     */
+    public function disableOutputWalkers(): self
+    {
+        $clone = clone $this;
+        $clone->useOutputWalkers = false;
+
+        return $clone;
+    }
+
     public function take(int $limit, int $offset = 0): Collection
     {
         return new FactoryCollection(
@@ -327,10 +350,13 @@ final class EntityResult implements Result
     private function paginator(?Query $query = null): Paginator
     {
         $paginator = new Paginator($query ?? $this->query(), $this->fetchJoins);
+        $useOutputWalkers = $this->useOutputWalkers;
 
         if ($this->resultModifier || $this->hydrationMode) {
-            $paginator->setUseOutputWalkers(false);
+            $useOutputWalkers = false;
         }
+
+        $paginator->setUseOutputWalkers($useOutputWalkers);
 
         return $paginator;
     }
