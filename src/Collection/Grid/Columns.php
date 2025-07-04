@@ -27,7 +27,7 @@ final class Columns implements \IteratorAggregate, \Countable
     /**
      * @internal
      *
-     * @param ArrayCollection<string,Column> $columns
+     * @param ArrayCollection<Column,string> $columns
      */
     public function __construct(private ArrayCollection $columns, private Input $input, private ?OrderBy $defaultSort)
     {
@@ -63,7 +63,7 @@ final class Columns implements \IteratorAggregate, \Countable
     }
 
     /**
-     * @return ArrayCollection<string,Column>
+     * @return ArrayCollection<Column,string>
      */
     public function all(): ArrayCollection
     {

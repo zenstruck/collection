@@ -56,7 +56,7 @@ interface Input
     public function reset(): static;
 
     /**
-     * @return ArrayCollection<string,mixed>
+     * @return ArrayCollection<mixed,string>
      */
     public function values(): ArrayCollection;
 }

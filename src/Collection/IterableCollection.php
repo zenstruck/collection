@@ -20,13 +20,13 @@ use Zenstruck\Collection\Exception\InvalidSpecification;
  *
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template K
  * @template V
+ * @template K = array-key
  */
 trait IterableCollection
 {
     /**
-     * @return LazyCollection<K,V>
+     * @return LazyCollection<V,K>
      */
     public function take(int $limit, int $offset = 0): Collection
     {
@@ -66,7 +66,7 @@ trait IterableCollection
     }
 
     /**
-     * @return LazyCollection<K,V>
+     * @return LazyCollection<V,K>
      */
     public function filter(mixed $specification): Collection
     {
@@ -84,7 +84,7 @@ trait IterableCollection
     }
 
     /**
-     * @return LazyCollection<K,V>
+     * @return LazyCollection<V,K>
      */
     public function keyBy(callable $function): Collection
     {
@@ -100,7 +100,7 @@ trait IterableCollection
      *
      * @param callable(V,K):T $function
      *
-     * @return LazyCollection<K,T>
+     * @return LazyCollection<T,K>
      */
     public function map(callable $function): Collection
     {
@@ -112,7 +112,7 @@ trait IterableCollection
     }
 
     /**
-     * @return Page<K,V>
+     * @return Page<V,K>
      */
     public function paginate(int $page = 1, int $limit = Page::DEFAULT_LIMIT): Page
     {
@@ -120,7 +120,7 @@ trait IterableCollection
     }
 
     /**
-     * @return Pages<K,V>
+     * @return Pages<V,K>
      */
     public function pages(int $limit = Page::DEFAULT_LIMIT): Pages
     {

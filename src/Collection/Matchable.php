@@ -17,8 +17,8 @@ use Zenstruck\Collection\Exception\InvalidSpecification;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template K
  * @template V
+ * @template K = array-key
  */
 interface Matchable
 {
@@ -30,7 +30,7 @@ interface Matchable
     public function find(object $specification): mixed;
 
     /**
-     * @return Collection<K,V>
+     * @return Collection<V,K>
      */
     public function filter(mixed $specification): Collection;
 }

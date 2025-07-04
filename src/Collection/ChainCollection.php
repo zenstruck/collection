@@ -16,20 +16,20 @@ use Zenstruck\Collection;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template K
  * @template V
- * @implements Collection<K,V>
+ * @template K = array-key
+ * @implements Collection<V,K>
  */
 final class ChainCollection implements Collection
 {
-    /** @use IterableCollection<K,V> */
+    /** @use IterableCollection<V,K> */
     use IterableCollection;
 
-    /** @var Collection<int,Collection<K,V>> */
+    /** @var Collection<Collection<V,K>,int> */
     private Collection $collections;
 
     /**
-     * @param iterable<Collection<K,V>> $collections
+     * @param iterable<Collection<V,K>> $collections
      * @param bool                      $preserveKeys Whether to preserve the keys of the inner collections
      *                                                when iterating.
      *                                                !NOTE! data may be lost when converting to array

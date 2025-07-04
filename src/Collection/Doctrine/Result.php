@@ -22,8 +22,8 @@ use Zenstruck\Collection\Matchable;
  *
  * @immutable
  * @template V
- * @extends Collection<int,V>
- * @extends Matchable<int,V>
+ * @extends Collection<V,int>
+ * @extends Matchable<V,int>
  */
 interface Result extends Collection, Matchable
 {

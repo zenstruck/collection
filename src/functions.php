@@ -17,13 +17,13 @@ use Zenstruck\Collection\Doctrine\DoctrineBridgeCollection;
 use Zenstruck\Collection\LazyCollection;
 
 /**
- * @template K
  * @template V
+ * @template K
  *
  * @param null|iterable<K,V>|callable():iterable<K,V> $source
  *
- * @return Collection<K,V>
- * @phpstan-return ($source is null ? Collection<never,never> : ($source is array ? ArrayCollection<K&array-key,V> : ($source is DoctrineCollection<K&array-key,V> ? DoctrineBridgeCollection<K&array-key,V> : Collection<K,V>)))
+ * @return Collection<V,K>
+ * @phpstan-return ($source is null ? Collection<never,never> : ($source is array ? ArrayCollection<V> : ($source is DoctrineCollection<K&array-key,V> ? DoctrineBridgeCollection<V> : Collection<V,K>)))
  */
 function collect(iterable|callable|null $source = null): Collection
 {

@@ -16,8 +16,8 @@ use Zenstruck\Collection;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template K
  * @template V
+ * @template K = array-key
  * @implements \IteratorAggregate<K,V>
  */
 final class Page implements \IteratorAggregate, \Countable
@@ -31,11 +31,11 @@ final class Page implements \IteratorAggregate, \Countable
     private int $limit;
     private bool $strict = false;
 
-    /** @var Collection<K,V> */
+    /** @var Collection<V,K> */
     private Collection $cachedPage;
 
     /**
-     * @param Collection<K,V> $collection
+     * @param Collection<V,K> $collection
      * @param positive-int    $page
      * @param positive-int    $limit
      */
@@ -160,7 +160,7 @@ final class Page implements \IteratorAggregate, \Countable
     }
 
     /**
-     * @return Collection<K,V>
+     * @return Collection<V,K>
      */
     private function getPage(): Collection
     {

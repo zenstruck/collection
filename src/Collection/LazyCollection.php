@@ -16,13 +16,13 @@ use Zenstruck\Collection;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template K
  * @template V
- * @implements Collection<K,V>
+ * @template K = array-key
+ * @implements Collection<V,K>
  */
 final class LazyCollection implements Collection
 {
-    /** @use IterableCollection<K,V> */
+    /** @use IterableCollection<V,K> */
     use IterableCollection;
 
     /** @var \Traversable<K,V>|\Closure():iterable<K,V> */

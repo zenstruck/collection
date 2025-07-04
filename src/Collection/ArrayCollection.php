@@ -19,13 +19,13 @@ use Zenstruck\Collection\Exception\InvalidSpecification;
  *
  * @immutable
  *
- * @template K of array-key
  * @template V
- * @implements Collection<K,V>
+ * @template K of array-key = array-key
+ * @implements Collection<V,K>
  */
 final class ArrayCollection implements Collection
 {
-    /** @use IterableCollection<K,V> */
+    /** @use IterableCollection<V,K> */
     use IterableCollection;
 
     /** @var array<K,V> */
@@ -50,7 +50,7 @@ final class ArrayCollection implements Collection
     /**
      * @param null|iterable<K,V>|callable():iterable<K,V> $source
      *
-     * @return self<K,V>
+     * @return self<V,K>
      */
     public static function for(iterable|callable|null $source = null): self
     {
@@ -58,7 +58,7 @@ final class ArrayCollection implements Collection
     }
 
     /**
-     * @return self<array-key,mixed>
+     * @return self<mixed>
      */
     public static function wrap(mixed $value): self
     {
@@ -76,7 +76,7 @@ final class ArrayCollection implements Collection
      *
      * @param non-empty-string $separator
      *
-     * @return self<int,string>
+     * @return self<string,int>
      */
     public static function explode(string $separator, string $string, ?int $limit = null): self
     {
@@ -93,7 +93,7 @@ final class ArrayCollection implements Collection
      * @param T $start
      * @param T $end
      *
-     * @return self<int,T>
+     * @return self<T,int>
      */
     public static function range(int|string|float $start, int|string|float $end, int|float $step = 1): self
     {
@@ -107,7 +107,7 @@ final class ArrayCollection implements Collection
      *
      * @param T $value
      *
-     * @return self<int,T>
+     * @return self<T,int>
      */
     public static function fill(int $start, int $count, mixed $value): self
     {
@@ -120,7 +120,7 @@ final class ArrayCollection implements Collection
     }
 
     /**
-     * @return self<K,V>
+     * @return self<V,K>
      */
     public function take(int $limit, int $offset = 0): self
     {
@@ -136,7 +136,7 @@ final class ArrayCollection implements Collection
     }
 
     /**
-     * @return self<int,K>
+     * @return self<K,int>
      */
     public function keys(): self
     {
@@ -144,7 +144,7 @@ final class ArrayCollection implements Collection
     }
 
     /**
-     * @return self<int,V>
+     * @return self<V,int>
      */
     public function values(): self
     {
@@ -152,7 +152,7 @@ final class ArrayCollection implements Collection
     }
 
     /**
-     * @return self<K,V>
+     * @return self<V,K>
      */
     public function reverse(): self
     {
@@ -160,7 +160,7 @@ final class ArrayCollection implements Collection
     }
 
     /**
-     * @return self<K,V>
+     * @return self<V,K>
      */
     public function slice(int $offset, ?int $length = null): self
     {
@@ -170,7 +170,7 @@ final class ArrayCollection implements Collection
     /**
      * @param iterable<K,V> ...$with
      *
-     * @return self<K,V>
+     * @return self<V,K>
      */
     public function merge(iterable ...$with): self
     {
@@ -182,7 +182,7 @@ final class ArrayCollection implements Collection
     /**
      * @param null|callable(V,K):bool $specification
      *
-     * @return self<K,V>
+     * @return self<V,K>
      */
     public function filter(mixed $specification = null): self
     {
@@ -198,7 +198,7 @@ final class ArrayCollection implements Collection
      *
      * @param callable(V,K):T $function
      *
-     * @return self<array-key,V>
+     * @return self<V>
      */
     public function keyBy(callable $function): self
     {
@@ -218,7 +218,7 @@ final class ArrayCollection implements Collection
      *
      * @param callable(V,K):T $function
      *
-     * @return self<K,T>
+     * @return self<T,K>
      */
     public function map(callable $function): self
     {
@@ -228,7 +228,7 @@ final class ArrayCollection implements Collection
     }
 
     /**
-     * @return self<K,V>
+     * @return self<V,K>
      */
     public function sort(int|callable $flags = \SORT_REGULAR): self
     {
@@ -239,7 +239,7 @@ final class ArrayCollection implements Collection
     }
 
     /**
-     * @return self<K,V>
+     * @return self<V,K>
      */
     public function sortDesc(int|callable $flags = \SORT_REGULAR): self
     {
@@ -249,7 +249,7 @@ final class ArrayCollection implements Collection
     /**
      * @param callable(V,K):mixed $function
      *
-     * @return self<K,V>
+     * @return self<V,K>
      */
     public function sortBy(callable $function, int $flags = \SORT_REGULAR): self
     {
@@ -272,7 +272,7 @@ final class ArrayCollection implements Collection
     /**
      * @param callable(V,K):mixed $function
      *
-     * @return self<K,V>
+     * @return self<V,K>
      */
     public function sortByDesc(callable $function, int $flags = \SORT_REGULAR): self
     {
@@ -280,7 +280,7 @@ final class ArrayCollection implements Collection
     }
 
     /**
-     * @return self<K,V>
+     * @return self<V,K>
      */
     public function sortKeys(int $flags = \SORT_REGULAR): self
     {
@@ -292,7 +292,7 @@ final class ArrayCollection implements Collection
     }
 
     /**
-     * @return self<K,V>
+     * @return self<V,K>
      */
     public function sortKeysDesc(int $flags = \SORT_REGULAR): self
     {
@@ -308,7 +308,7 @@ final class ArrayCollection implements Collection
      *
      * @param iterable<array-key,T> $values
      *
-     * @return self<V&array-key,T>
+     * @return self<T,V&array-key>
      */
     public function combine(iterable $values): self
     {
@@ -316,7 +316,7 @@ final class ArrayCollection implements Collection
     }
 
     /**
-     * @return self<V&array-key,V>
+     * @return self<V,V&array-key>
      */
     public function combineWithSelf(): self
     {
@@ -328,7 +328,7 @@ final class ArrayCollection implements Collection
      *
      * @param callable(V,K):T $function
      *
-     * @return self<array-key,non-empty-list<V>>
+     * @return self<non-empty-list<V>>
      */
     public function groupBy(callable $function): self
     {
@@ -360,7 +360,7 @@ final class ArrayCollection implements Collection
      * @param K $key
      * @param V $value
      *
-     * @return self<K,V>
+     * @return self<V,K>
      */
     public function set(int|string $key, mixed $value): self
     {
@@ -373,7 +373,7 @@ final class ArrayCollection implements Collection
     /**
      * @param K ...$keys
      *
-     * @return self<K,V>
+     * @return self<V,K>
      */
     public function unset(int|string ...$keys): self
     {
@@ -389,7 +389,7 @@ final class ArrayCollection implements Collection
     /**
      * @param K ...$keys
      *
-     * @return self<K,V>
+     * @return self<V,K>
      */
     public function only(int|string ...$keys): self
     {
@@ -399,7 +399,7 @@ final class ArrayCollection implements Collection
     /**
      * @param V ...$values
      *
-     * @return self<K,V>
+     * @return self<V,K>
      */
     public function push(mixed ...$values): self
     {

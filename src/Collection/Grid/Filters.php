@@ -20,7 +20,7 @@ use Zenstruck\Collection\ArrayCollection;
  */
 final class Filters implements \IteratorAggregate, \Countable
 {
-    /** @var ArrayCollection<string,Filter> */
+    /** @var ArrayCollection<Filter,string> */
     private ArrayCollection $filters;
 
     /**
@@ -42,7 +42,7 @@ final class Filters implements \IteratorAggregate, \Countable
     }
 
     /**
-     * @return ArrayCollection<string,Filter>
+     * @return ArrayCollection<Filter,string>
      */
     public function all(): ArrayCollection
     {

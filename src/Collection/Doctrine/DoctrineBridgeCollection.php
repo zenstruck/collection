@@ -25,15 +25,15 @@ use Zenstruck\Collection\Matchable;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template K of array-key
  * @template V
- * @implements Collection<K,V>
+ * @template K of array-key = array-key
+ * @implements Collection<V,K>
  * @implements DoctrineCollection<K,V>
- * @implements Matchable<K,V>
+ * @implements Matchable<V,K>
  */
 final class DoctrineBridgeCollection implements Collection, DoctrineCollection, Matchable
 {
-    /** @use IterableCollection<K,V> */
+    /** @use IterableCollection<V,K> */
     use IterableCollection {
         map as private innerMap;
         reduce as private innerReduce;
@@ -96,7 +96,7 @@ final class DoctrineBridgeCollection implements Collection, DoctrineCollection, 
     /**
      * @param Criteria|callable(V,K):bool $specification
      *
-     * @return self<K,V>
+     * @return self<V,K>
      */
     public function filter(mixed $specification): self
     {
@@ -121,7 +121,7 @@ final class DoctrineBridgeCollection implements Collection, DoctrineCollection, 
     }
 
     /**
-     * @return self<K,V>
+     * @return self<V,K>
      */
     public function map(\Closure|callable $function): self
     {
@@ -129,7 +129,7 @@ final class DoctrineBridgeCollection implements Collection, DoctrineCollection, 
     }
 
     /**
-     * @return self<K,V>
+     * @return self<V,K>
      */
     public function take(int $limit, int $offset = 0): self
     {

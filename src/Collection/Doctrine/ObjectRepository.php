@@ -19,7 +19,7 @@ use Zenstruck\Collection\Matchable;
  * @author Kevin Bond <kevinbond@gmail.com>
  *
  * @template V of object
- * @extends Matchable<int,V>
+ * @extends Matchable<V,int>
  * @extends \IteratorAggregate<int,V>
  */
 interface ObjectRepository extends Matchable, \Countable, \IteratorAggregate

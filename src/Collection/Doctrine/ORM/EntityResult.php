@@ -37,7 +37,7 @@ use function Zenstruck\collect;
  */
 final class EntityResult implements Result
 {
-    /** @use IterableCollection<int,V> */
+    /** @use IterableCollection<V,int> */
     use IterableCollection {
         find as private innerFind;
         filter as private innerFilter;
