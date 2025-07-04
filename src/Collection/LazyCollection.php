@@ -16,13 +16,13 @@ use Zenstruck\Collection;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template K
  * @template V
- * @implements Collection<K,V>
+ * @template K = array-key
+ * @implements Collection<V,K>
  */
 final class LazyCollection implements Collection
 {
-    /** @use IterableCollection<K,V> */
+    /** @use IterableCollection<V,K> */
     use IterableCollection;
 
     /** @var \Traversable<K,V>|\Closure():iterable<K,V> */
@@ -38,10 +38,10 @@ final class LazyCollection implements Collection
         }
 
         if (\is_callable($source) && (!\is_iterable($source) || \is_array($source))) {
-            $source = $source(...); // @phpstan-ignore-line
+            $source = $source(...); // @phpstan-ignore callable.nonCallable
         }
 
-        $this->source = \is_array($source) ? new \ArrayIterator($source) : $source; // @phpstan-ignore-line
+        $this->source = \is_array($source) ? new \ArrayIterator($source) : $source; // @phpstan-ignore assign.propertyType
     }
 
     /**

@@ -19,8 +19,8 @@ use Zenstruck\Collection\Pages;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template K
  * @template V
+ * @template K = array-key
  * @extends \IteratorAggregate<K,V>
  *
  * @method static dump()
@@ -31,7 +31,7 @@ interface Collection extends \IteratorAggregate, \Countable
     /**
      * @param mixed|callable(V,K):bool $specification
      *
-     * @return self<K,V>
+     * @return self<V,K>
      *
      * @throws InvalidSpecification if $specification is not valid
      */
@@ -42,7 +42,7 @@ interface Collection extends \IteratorAggregate, \Countable
      *
      * @param callable(V,K):T $function
      *
-     * @return self<K,T>
+     * @return self<T,K>
      */
     public function map(callable $function): self;
 
@@ -51,12 +51,12 @@ interface Collection extends \IteratorAggregate, \Countable
      *
      * @param callable(V,K):T $function
      *
-     * @return self<T,V>
+     * @return self<V,T>
      */
     public function keyBy(callable $function): self;
 
     /**
-     * @return self<K,V>
+     * @return self<V,K>
      */
     public function take(int $limit, int $offset = 0): self;
 
@@ -94,17 +94,22 @@ interface Collection extends \IteratorAggregate, \Countable
     public function isEmpty(): bool;
 
     /**
-     * @return ArrayCollection<K&array-key,V>
+     * @return ArrayCollection<V,K&array-key>
      */
     public function eager(): ArrayCollection;
 
     /**
-     * @return Page<K,V>
+     * @param positive-int $page
+     * @param positive-int $limit
+     *
+     * @return Page<V,K>
      */
     public function paginate(int $page = 1, int $limit = Page::DEFAULT_LIMIT): Page;
 
     /**
-     * @return Pages<K,V>
+     * @param positive-int $limit
+     *
+     * @return Pages<V,K>
      */
     public function pages(int $limit = Page::DEFAULT_LIMIT): Pages;
 }

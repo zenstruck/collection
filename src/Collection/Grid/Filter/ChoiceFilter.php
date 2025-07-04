@@ -21,7 +21,7 @@ use Zenstruck\Collection\Grid\Filter;
  */
 final class ChoiceFilter implements Filter, \IteratorAggregate, \Countable
 {
-    /** @var ArrayCollection<string,Choice> */
+    /** @var ArrayCollection<Choice,string> */
     private ArrayCollection $choices;
 
     public function __construct(Choice ...$choices)

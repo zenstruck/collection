@@ -37,7 +37,7 @@ use function Zenstruck\collect;
  */
 final class EntityResult implements Result
 {
-    /** @use IterableCollection<int,V> */
+    /** @use IterableCollection<V,int> */
     use IterableCollection {
         find as private innerFind;
         filter as private innerFilter;
@@ -49,10 +49,12 @@ final class EntityResult implements Result
     private $resultModifier;
 
     /** @var Query::HYDRATE_*|null */
-    private ?int $hydrationMode = null;
+    private ?int $hydrationMode = null; // @phpstan-ignore property.unusedType, property.unusedType, property.unusedType, property.unusedType
     private bool $fetchJoins = true;
 
     private bool $readonly = false;
+
+    /** @var non-negative-int */
     private int $count;
     private ?bool $useOutputWalkers = null;
 
@@ -222,7 +224,7 @@ final class EntityResult implements Result
      */
     public function withAggregates(): self
     {
-        return $this->as(self::ENTITY_WITH_AGGREGATES); // @phpstan-ignore-line
+        return $this->as(self::ENTITY_WITH_AGGREGATES); // @phpstan-ignore return.type
     }
 
     /**

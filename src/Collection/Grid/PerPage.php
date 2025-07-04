@@ -16,5 +16,10 @@ namespace Zenstruck\Collection\Grid;
  */
 interface PerPage
 {
+    /**
+     * @param positive-int|null $input
+     *
+     * @return positive-int
+     */
     public function value(?int $input): int;
 }

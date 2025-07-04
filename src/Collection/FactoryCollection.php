@@ -16,23 +16,23 @@ use Zenstruck\Collection;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template K
  * @template V
- * @implements Collection<K,V>
+ * @template K = array-key
+ * @implements Collection<V,K>
  */
 final class FactoryCollection implements Collection
 {
-    /** @use IterableCollection<K,V> */
+    /** @use IterableCollection<V,K> */
     use IterableCollection;
 
-    /** @var Collection<K,mixed> */
+    /** @var Collection<mixed,K> */
     private Collection $inner;
     private \Closure $factory;
 
     /**
      * @template T
      *
-     * @param Collection<K,T> $collection
+     * @param Collection<T,K> $collection
      * @param callable(T):V   $factory
      */
     public function __construct(Collection $collection, callable $factory)

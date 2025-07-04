@@ -26,7 +26,7 @@ use function Zenstruck\collect;
  */
 final class GridBuilder
 {
-    /** @var Matchable<mixed,T>|null */
+    /** @var Matchable<T>|null */
     public ?Matchable $source = null;
     public ?OrderBy $defaultSort = null;
     public ?PerPage $perPage = null;

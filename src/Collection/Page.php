@@ -16,23 +16,28 @@ use Zenstruck\Collection;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @template K
  * @template V
+ * @template K = array-key
  * @implements \IteratorAggregate<K,V>
  */
 final class Page implements \IteratorAggregate, \Countable
 {
     public const DEFAULT_LIMIT = 20;
 
+    /** @var positive-int */
     private int $page;
+
+    /** @var positive-int */
     private int $limit;
     private bool $strict = false;
 
-    /** @var Collection<K,V> */
+    /** @var Collection<V,K> */
     private Collection $cachedPage;
 
     /**
-     * @param Collection<K,V> $collection
+     * @param Collection<V,K> $collection
+     * @param positive-int    $page
+     * @param positive-int    $limit
      */
     public function __construct(private Collection $collection, int $page = 1, int $limit = self::DEFAULT_LIMIT)
     {
@@ -74,6 +79,9 @@ final class Page implements \IteratorAggregate, \Countable
         return $this->page;
     }
 
+    /**
+     * @return positive-int
+     */
     public function limit(): int
     {
         return $this->limit;
@@ -124,6 +132,9 @@ final class Page implements \IteratorAggregate, \Countable
         return 1;
     }
 
+    /**
+     * @return positive-int
+     */
     public function lastPage(): int
     {
         $totalCount = $this->totalCount();
@@ -132,9 +143,12 @@ final class Page implements \IteratorAggregate, \Countable
             return 1;
         }
 
-        return (int) \ceil($totalCount / $this->limit());
+        return (int) \ceil($totalCount / $this->limit()); // @phpstan-ignore return.type
     }
 
+    /**
+     * @return positive-int
+     */
     public function pageCount(): int
     {
         return $this->lastPage();
@@ -146,7 +160,7 @@ final class Page implements \IteratorAggregate, \Countable
     }
 
     /**
-     * @return Collection<K,V>
+     * @return Collection<V,K>
      */
     private function getPage(): Collection
     {

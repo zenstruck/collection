@@ -32,13 +32,13 @@ final class Grid implements \IteratorAggregate
 {
     public readonly PerPage $perPage;
 
-    /** @var Page<int,T> */
+    /** @var Page<T> */
     private Page $page;
 
     /**
      * @internal
      *
-     * @param Matchable<mixed,T> $source
+     * @param Matchable<T> $source
      */
     public function __construct(
         public readonly Input $input,
@@ -57,7 +57,7 @@ final class Grid implements \IteratorAggregate
     }
 
     /**
-     * @return Page<int,T>
+     * @return Page<T,int>
      */
     public function page(): Page
     {
@@ -94,7 +94,7 @@ final class Grid implements \IteratorAggregate
     }
 
     /**
-     * @return list<object|null>
+     * @return array<int,object|null>
      */
     private function filterSpecification(): array
     {

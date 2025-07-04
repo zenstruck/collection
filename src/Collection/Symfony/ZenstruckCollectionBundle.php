@@ -58,10 +58,10 @@ final class ZenstruckCollectionBundle extends AbstractBundle implements Compiler
             $definition->addTag('zenstruck_collection.grid_definition', ['key' => $attribute->name]);
         });
 
-        if (isset($builder->getParameter('kernel.bundles')['DoctrineBundle'])) { // @phpstan-ignore-line
+        if (isset($builder->getParameter('kernel.bundles')['DoctrineBundle'])) { // @phpstan-ignore offsetAccess.nonOffsetAccessible
             $loader->load('doctrine.php');
 
-            $builder->registerAttributeForAutoconfiguration(ForObject::class, function(ChildDefinition $definition, ForObject $attribute, \ReflectionClass $class) { // @phpstan-ignore-line
+            $builder->registerAttributeForAutoconfiguration(ForObject::class, function(ChildDefinition $definition, ForObject $attribute, \ReflectionClass $class) { // @phpstan-ignore argument.type
                 if ($class->implementsInterface(GridDefinition::class)) {
                     $definition->addTag('zenstruck_collection.grid_definition', ['key' => $attribute->class, 'as_object' => true]);
 
@@ -83,7 +83,7 @@ final class ZenstruckCollectionBundle extends AbstractBundle implements Compiler
 
     public function process(ContainerBuilder $container): void
     {
-        if (!isset($container->getParameter('kernel.bundles')['DoctrineBundle'])) { // @phpstan-ignore-line
+        if (!isset($container->getParameter('kernel.bundles')['DoctrineBundle'])) { // @phpstan-ignore offsetAccess.nonOffsetAccessible
             return;
         }
 

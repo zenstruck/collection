@@ -46,7 +46,7 @@ class EntityRepository implements ObjectRepository
             }
 
             if (\is_array($specification) && !\array_is_list($specification)) {
-                return $this->em()->getUnitOfWork()->getEntityPersister($this->class)->load($specification, limit: 1); // @phpstan-ignore-line
+                return $this->em()->getUnitOfWork()->getEntityPersister($this->class)->load($specification, limit: 1); // @phpstan-ignore return.type
             }
 
             if (\is_callable($specification) && \is_object($specification)) {
@@ -57,7 +57,7 @@ class EntityRepository implements ObjectRepository
 
             if (\is_object($specification)) {
                 try {
-                    return QueryBuilderInterpreter::interpret($specification, static::class, __FUNCTION__, $this->qb(), 'e') // @phpstan-ignore-line
+                    return QueryBuilderInterpreter::interpret($specification, static::class, __FUNCTION__, $this->qb(), 'e') // @phpstan-ignore return.type
                         ->result()
                         ->first()
                     ;
@@ -136,7 +136,7 @@ class EntityRepository implements ObjectRepository
         }
 
         if (\is_object($specification)) {
-            return QueryBuilderInterpreter::interpret($specification, static::class, $method, $qb, 'e') // @phpstan-ignore-line
+            return QueryBuilderInterpreter::interpret($specification, static::class, $method, $qb, 'e') // @phpstan-ignore return.type
                 ->result()
             ;
         }
