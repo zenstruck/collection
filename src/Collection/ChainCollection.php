@@ -50,13 +50,13 @@ final class ChainCollection implements Collection
             }
 
             foreach ($collection as $item) {
-                yield $item; // @phpstan-ignore-line
+                yield $item; // @phpstan-ignore generator.keyType
             }
         }
     }
 
     public function count(): int
     {
-        return $this->collections->reduce(fn(int $r, Collection $c) => $r + $c->count(), 0);
+        return $this->collections->reduce(fn(int $r, Collection $c) => $r + $c->count(), 0); // @phpstan-ignore return.type
     }
 }

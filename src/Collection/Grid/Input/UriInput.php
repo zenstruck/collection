@@ -58,8 +58,10 @@ final class UriInput implements Input, \Stringable
 
     public function page(): int
     {
-        if (\is_numeric($page = $this->query[self::PAGE] ?? 1)) {
-            return (int) $page;
+        $page = $this->query[self::PAGE] ?? 1;
+
+        if (\is_numeric($page) && $page > 0) {
+            return (int) $page; // @phpstan-ignore return.type
         }
 
         return 1;
@@ -90,8 +92,10 @@ final class UriInput implements Input, \Stringable
 
     public function perPage(): ?int
     {
-        if (\is_numeric($page = $this->query[self::PER_PAGE] ?? null)) {
-            return (int) $page;
+        $page = $this->query[self::PER_PAGE] ?? null;
+
+        if (\is_numeric($page) && $page > 0) {
+            return (int) $page; // @phpstan-ignore return.type
         }
 
         return null;

@@ -312,7 +312,7 @@ final class ArrayCollection implements Collection
      */
     public function combine(iterable $values): self
     {
-        return new self(\array_combine($this->source, self::for($values)->source)); // @phpstan-ignore-line
+        return new self(\array_combine($this->source, self::for($values)->source)); // @phpstan-ignore return.type, argument.type
     }
 
     /**
@@ -328,7 +328,7 @@ final class ArrayCollection implements Collection
      *
      * @param callable(V,K):T $function
      *
-     * @return self<array-key,non-empty-array<int,V>>
+     * @return self<array-key,non-empty-list<V>>
      */
     public function groupBy(callable $function): self
     {
@@ -365,7 +365,7 @@ final class ArrayCollection implements Collection
     public function set(int|string $key, mixed $value): self
     {
         $clone = clone $this;
-        $clone->source[$key] = $value;
+        $clone->source[$key] = $value; // @phpstan-ignore property.readOnlyByPhpDocAssignNotInConstructor
 
         return $clone;
     }
@@ -380,7 +380,7 @@ final class ArrayCollection implements Collection
         $clone = clone $this;
 
         foreach ($keys as $key) {
-            unset($clone->source[$key]);
+            unset($clone->source[$key]); // @phpstan-ignore property.readOnlyByPhpDocAssignNotInConstructor
         }
 
         return $clone;
@@ -406,7 +406,7 @@ final class ArrayCollection implements Collection
         $clone = clone $this;
 
         foreach ($values as $value) {
-            $clone->source[] = $value;
+            $clone->source[] = $value; // @phpstan-ignore property.readOnlyByPhpDocAssignNotInConstructor
         }
 
         return $clone;

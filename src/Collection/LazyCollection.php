@@ -38,10 +38,10 @@ final class LazyCollection implements Collection
         }
 
         if (\is_callable($source) && (!\is_iterable($source) || \is_array($source))) {
-            $source = $source(...); // @phpstan-ignore-line
+            $source = $source(...); // @phpstan-ignore callable.nonCallable
         }
 
-        $this->source = \is_array($source) ? new \ArrayIterator($source) : $source; // @phpstan-ignore-line
+        $this->source = \is_array($source) ? new \ArrayIterator($source) : $source; // @phpstan-ignore assign.propertyType
     }
 
     /**

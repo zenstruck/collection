@@ -65,7 +65,7 @@ final class DoctrineBridgeCollection implements Collection, DoctrineCollection, 
             return $this->slice(0, 1)[0] ?? $default;
         }
 
-        return $this->inner->first() ?? $default; // @phpstan-ignore-line
+        return $this->inner->first() ?? $default; // @phpstan-ignore return.type
     }
 
     public function findFirst(\Closure $p): mixed
@@ -125,7 +125,7 @@ final class DoctrineBridgeCollection implements Collection, DoctrineCollection, 
      */
     public function map(\Closure|callable $function): self
     {
-        return new self($this->innerMap($function)); // @phpstan-ignore-line
+        return new self($this->innerMap($function)); // @phpstan-ignore return.type
     }
 
     /**

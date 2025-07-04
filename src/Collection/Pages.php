@@ -27,12 +27,15 @@ final class Pages implements \IteratorAggregate, \Countable
 
     /**
      * @param Collection<K,V> $collection
+     * @param positive-int    $limit
      */
     public function __construct(private Collection $collection, private int $limit = Page::DEFAULT_LIMIT)
     {
     }
 
     /**
+     * @param positive-int $page
+     *
      * @return Page<K,V>
      */
     public function get(int $page): Page

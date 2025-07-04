@@ -21,6 +21,9 @@ use Zenstruck\Collection\Specification\OrderBy;
  */
 interface Input
 {
+    /**
+     * @return positive-int
+     */
     public function page(): int;
 
     /**
@@ -32,6 +35,9 @@ interface Input
 
     public function applyQuery(?string $value): static;
 
+    /**
+     * @return positive-int|null
+     */
     public function perPage(): ?int;
 
     /**

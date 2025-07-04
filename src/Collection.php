@@ -99,11 +99,16 @@ interface Collection extends \IteratorAggregate, \Countable
     public function eager(): ArrayCollection;
 
     /**
+     * @param positive-int $page
+     * @param positive-int $limit
+     *
      * @return Page<K,V>
      */
     public function paginate(int $page = 1, int $limit = Page::DEFAULT_LIMIT): Page;
 
     /**
+     * @param positive-int $limit
+     *
      * @return Pages<K,V>
      */
     public function pages(int $limit = Page::DEFAULT_LIMIT): Pages;

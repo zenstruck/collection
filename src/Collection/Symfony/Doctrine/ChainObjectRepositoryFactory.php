@@ -31,7 +31,7 @@ final class ChainObjectRepositoryFactory implements ObjectRepositoryFactory, Res
 
     public function create(string $class): ObjectRepository
     {
-        return $this->cache[$class] ??= $this->inner->create($class); // @phpstan-ignore-line
+        return $this->cache[$class] ??= $this->inner->create($class); // @phpstan-ignore return.type
     }
 
     public function reset(): void

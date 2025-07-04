@@ -94,7 +94,7 @@ final class Grid implements \IteratorAggregate
     }
 
     /**
-     * @return list<object|null>
+     * @return array<int,object|null>
      */
     private function filterSpecification(): array
     {
