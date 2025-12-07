@@ -116,7 +116,7 @@ final class ArrayCollection implements Collection
 
     public function first(mixed $default = null): mixed
     {
-        return $this->source[\array_key_first($this->source)] ?? $default;
+        return $this->source[\array_key_first($this->source) ?? ''] ?? $default;
     }
 
     /**

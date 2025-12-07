@@ -51,15 +51,9 @@ final class TestKernel extends Kernel
             'test' => true,
         ]);
 
-        $c->loadFromExtension('zenstruck_foundry', [
-            'auto_refresh_proxies' => true,
-        ]);
-
         $c->loadFromExtension('doctrine', [
             'dbal' => ['url' => 'sqlite:///%kernel.project_dir%/var/data.db'],
             'orm' => [
-                'auto_generate_proxy_classes' => true,
-                'auto_mapping' => true,
                 'mappings' => [
                     'Test' => [
                         'is_bundle' => false,

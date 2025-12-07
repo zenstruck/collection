@@ -155,7 +155,7 @@ final class AggregateEntityResultTest extends ObjectResultTest
     /**
      * @test
      */
-    public function exception_when_iterating_if_result_has_aggregate_fields(): void
+    public function can_iterate_over_result_with_aggregate_fields(): void
     {
         $this->persistEntities(3);
 
@@ -163,10 +163,11 @@ final class AggregateEntityResultTest extends ObjectResultTest
             ->addSelect('UPPER(e.value) AS extra'),
         );
 
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage(\sprintf('Results contain aggregate fields, call %s::withAggregates().', EntityResult::class));
-
-        \iterator_to_array($result);
+        $this->assertEquals([
+            [0 => new Entity('value 1', 1), 'extra' => 'VALUE 1'],
+            [0 => new Entity('value 2', 2), 'extra' => 'VALUE 2'],
+            [0 => new Entity('value 3', 3), 'extra' => 'VALUE 3'],
+        ], \iterator_to_array($result));
     }
 
     /**
