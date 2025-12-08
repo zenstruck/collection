@@ -168,7 +168,7 @@ final class PageTest extends TestCase
 
     protected function createWithItems(int $count): Page
     {
-        return $this->createPage($count ? \range(1, $count) : [], 1, (int) \INF);
+        return $this->createPage($count ? \range(1, $count) : [], 1, 9999999999);
     }
 
     private function createPage(array $results, int $page, int $limit = Page::DEFAULT_LIMIT): Page

@@ -34,12 +34,18 @@ trait HasDatabase
      */
     protected function setupEntityManager(): void
     {
-        $configuration = new Configuration();
-        $configuration->setMiddlewares([new DebugMiddleware($this->debugDataHolder = new DebugDataHolder(), null)]);
+        $connectionConfig = new Configuration();
+        $connectionConfig->setMiddlewares([new DebugMiddleware($this->debugDataHolder = new DebugDataHolder(), null)]);
+
+        $ormConfig = ORMSetup::createAttributeMetadataConfiguration([], true);
+
+        if (\PHP_VERSION_ID > 80400) {
+            $ormConfig->enableNativeLazyObjects(true);
+        }
 
         $this->em = new EntityManager(
-            DriverManager::getConnection(['driver' => 'pdo_sqlite', 'memory' => true], $configuration),
-            ORMSetup::createAttributeMetadataConfiguration([], true),
+            DriverManager::getConnection(['driver' => 'pdo_sqlite', 'memory' => true], $connectionConfig),
+            $ormConfig,
         );
 
         $schemaTool = new SchemaTool($this->em);

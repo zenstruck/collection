@@ -41,7 +41,7 @@ final class LazyCollection implements Collection
             $source = $source(...); // @phpstan-ignore callable.nonCallable
         }
 
-        $this->source = \is_array($source) ? new \ArrayIterator($source) : $source; // @phpstan-ignore assign.propertyType
+        $this->source = \is_array($source) ? new \ArrayIterator($source) : $source;
     }
 
     /**

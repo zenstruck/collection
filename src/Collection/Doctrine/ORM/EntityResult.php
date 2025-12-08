@@ -49,7 +49,7 @@ final class EntityResult implements Result
     private $resultModifier;
 
     /** @var Query::HYDRATE_*|null */
-    private ?int $hydrationMode = null; // @phpstan-ignore property.unusedType, property.unusedType, property.unusedType, property.unusedType
+    private ?int $hydrationMode = null;
     private bool $fetchJoins = true;
 
     private bool $readonly = false;
