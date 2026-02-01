@@ -188,7 +188,7 @@ final class EntityResult implements Result
         if ($fields) {
             $root = $this->qb->getRootAliases()[0];
             $clone->qb = clone $this->qb;
-            $clone->qb->select(\array_map(fn($f) => \sprintf('%s.%s', $root, $f), $fields));
+            $clone->qb->select(\array_map(static fn($f) => \sprintf('%s.%s', $root, $f), $fields));
         }
 
         return $clone;
@@ -284,7 +284,7 @@ final class EntityResult implements Result
             $iterator = $this->query()->toIterable(hydrationMode: $this->hydrationMode ?? Query::HYDRATE_OBJECT);
 
             if ($this->resultModifier) {
-                $iterator = collect(fn() => yield from $iterator)->map($this->resultModifier);
+                $iterator = collect(static fn() => yield from $iterator)->map($this->resultModifier);
             }
 
             yield from $iterator;

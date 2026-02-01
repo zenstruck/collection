@@ -45,12 +45,12 @@ final class Columns implements \IteratorAggregate, \Countable
 
     public function searchable(): self
     {
-        return $this->searchable ??= new self($this->columns->filter(fn(Column $c) => $c->isSearchable()), $this->input, $this->defaultSort);
+        return $this->searchable ??= new self($this->columns->filter(static fn(Column $c) => $c->isSearchable()), $this->input, $this->defaultSort);
     }
 
     public function sortable(): self
     {
-        return $this->sortable ??= new self($this->columns->filter(fn(Column $c) => $c->isSortable()), $this->input, $this->defaultSort);
+        return $this->sortable ??= new self($this->columns->filter(static fn(Column $c) => $c->isSortable()), $this->input, $this->defaultSort);
     }
 
     public function sort(): ?OrderBy

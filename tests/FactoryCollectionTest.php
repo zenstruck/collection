@@ -25,7 +25,7 @@ final class FactoryCollectionTest extends TestCase
 
     protected function createWithItems(int $count): Collection
     {
-        return new FactoryCollection(new LazyCollection($count ? \range(1, $count) : []), fn($position) => "value {$position}");
+        return new FactoryCollection(new LazyCollection($count ? \range(1, $count) : []), static fn($position) => "value {$position}");
     }
 
     protected function expectedValueAt(int $position): string

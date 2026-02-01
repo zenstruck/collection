@@ -28,11 +28,11 @@ final class ClosureIteratorTest extends LazyCollectionTest
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('$source callback must return iterable.');
 
-        (new LazyCollection(fn() => 'not iterable'))->count();
+        (new LazyCollection(static fn() => 'not iterable'))->count();
     }
 
     protected function createWithItems(int $count): LazyCollection
     {
-        return new LazyCollection(fn() => new Iterator($count));
+        return new LazyCollection(static fn() => new Iterator($count));
     }
 }

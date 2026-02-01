@@ -71,7 +71,7 @@ class EntityRepositoryTest extends TestCase
     {
         $repo = $this->createWithItems(3);
 
-        $this->assertEquals($this->expectedValueAt(2), $repo->find(function(QueryBuilder $qb, string $root) {
+        $this->assertEquals($this->expectedValueAt(2), $repo->find(static function(QueryBuilder $qb, string $root) {
             $qb->andWhere($root.'.id = :id')->setParameter('id', 2);
         }));
     }
@@ -86,7 +86,7 @@ class EntityRepositoryTest extends TestCase
         $this->assertNull($repo->find(99));
         $this->assertNull($repo->find(['id' => 99]));
         $this->assertNull($repo->find(Criteria::create()->where(Criteria::expr()->eq('id', 99))));
-        $this->assertNull($repo->find(function(QueryBuilder $qb, string $root) {
+        $this->assertNull($repo->find(static function(QueryBuilder $qb, string $root) {
             $qb->andWhere($root.'.id = :id')->setParameter('id', 99);
         }));
     }
@@ -152,7 +152,7 @@ class EntityRepositoryTest extends TestCase
      */
     public function can_filter_with_callable(): void
     {
-        $objects = $this->createWithItems(3)->query(function(QueryBuilder $qb, string $root) {
+        $objects = $this->createWithItems(3)->query(static function(QueryBuilder $qb, string $root) {
             $qb->andWhere($root.'.id = :id')->setParameter('id', 2);
         });
 
@@ -193,7 +193,7 @@ class EntityRepositoryTest extends TestCase
 
         $this->assertEmpty($repo->query(['id' => 99]));
         $this->assertEmpty($repo->query(Criteria::create()->where(Criteria::expr()->eq('id', 99))));
-        $this->assertEmpty($repo->query(function(QueryBuilder $qb, string $root) {
+        $this->assertEmpty($repo->query(static function(QueryBuilder $qb, string $root) {
             $qb->andWhere($root.'.id = :id')->setParameter('id', 99);
         }));
     }

@@ -96,7 +96,7 @@ trait CollectionTests
         $items = $this->createWithItems(3);
         $arr = \iterator_to_array($items);
 
-        $this->assertEquals([1 => $arr[1], 2 => $arr[2]], \iterator_to_array($items->filter(fn($value, $key) => $key > 0)));
+        $this->assertEquals([1 => $arr[1], 2 => $arr[2]], \iterator_to_array($items->filter(static fn($value, $key) => $key > 0)));
     }
 
     /**
@@ -106,7 +106,7 @@ trait CollectionTests
     {
         $items = $this->createWithItems(3);
 
-        $this->assertSame(['k0', 'k1', 'k2'], \array_keys(\iterator_to_array($items->keyBy(fn($value, $key) => 'k'.$key))));
+        $this->assertSame(['k0', 'k1', 'k2'], \array_keys(\iterator_to_array($items->keyBy(static fn($value, $key) => 'k'.$key))));
     }
 
     /**
@@ -116,7 +116,7 @@ trait CollectionTests
     {
         $items = $this->createWithItems(3);
 
-        $this->assertSame(['v0', 'v1', 'v2'], \iterator_to_array($items->map(fn($value, $key) => 'v'.$key)));
+        $this->assertSame(['v0', 'v1', 'v2'], \iterator_to_array($items->map(static fn($value, $key) => 'v'.$key)));
     }
 
     /**
@@ -139,10 +139,10 @@ trait CollectionTests
     {
         $items = $this->createWithItems(2);
 
-        $this->assertEquals(\iterator_to_array($items)[1], $items->find(fn($value, $key) => $key > 0));
-        $this->assertEquals(\iterator_to_array($items)[1], $items->find(fn($value, $key) => $key > 0), 'foo');
-        $this->assertNull($items->find(fn($value, $key) => $key > 10));
-        $this->assertEquals('foo', $items->find(fn($value, $key) => $key > 10, 'foo'));
+        $this->assertEquals(\iterator_to_array($items)[1], $items->find(static fn($value, $key) => $key > 0));
+        $this->assertEquals(\iterator_to_array($items)[1], $items->find(static fn($value, $key) => $key > 0), 'foo');
+        $this->assertNull($items->find(static fn($value, $key) => $key > 10));
+        $this->assertEquals('foo', $items->find(static fn($value, $key) => $key > 10, 'foo'));
     }
 
     /**
@@ -173,7 +173,7 @@ trait CollectionTests
      */
     public function reduce(): void
     {
-        $function = fn($carry, $value, $key) => $carry + $key;
+        $function = static fn($carry, $value, $key) => $carry + $key;
 
         $this->assertNull($this->createWithItems(0)->reduce($function));
         $this->assertSame(10, $this->createWithItems(5)->reduce($function));

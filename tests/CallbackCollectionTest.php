@@ -27,7 +27,7 @@ final class CallbackCollectionTest extends TestCase
      */
     public function uses_count_callable_to_determine_count(): void
     {
-        $collection = new CallbackCollection(fn() => [1, 2, 3, 4], fn() => 10);
+        $collection = new CallbackCollection(static fn() => [1, 2, 3, 4], static fn() => 10);
 
         $this->assertCount(4, \iterator_to_array($collection));
         $this->assertCount(10, $collection);
@@ -35,6 +35,6 @@ final class CallbackCollectionTest extends TestCase
 
     protected function createWithItems(int $count): Collection
     {
-        return new CallbackCollection(fn() => $count ? \range(1, $count) : [], fn() => $count);
+        return new CallbackCollection(static fn() => $count ? \range(1, $count) : [], static fn() => $count);
     }
 }

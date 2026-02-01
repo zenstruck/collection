@@ -83,7 +83,7 @@ final class EntityResultQueryBuilder extends QueryBuilder
     {
         $this->readonly = true;
 
-        return $this->modifyQuery(function(Query $query) {
+        return $this->modifyQuery(static function(Query $query) {
             $query->setHint(Query::HINT_READ_ONLY, true);
         });
     }
@@ -93,7 +93,7 @@ final class EntityResultQueryBuilder extends QueryBuilder
      */
     public function cacheResult(?int $lifetime = null, ?string $key = null): self
     {
-        return $this->modifyQuery(function(Query $query) use ($lifetime, $key) {
+        return $this->modifyQuery(static function(Query $query) use ($lifetime, $key) {
             $query->enableResultCache($lifetime, $key);
         });
     }

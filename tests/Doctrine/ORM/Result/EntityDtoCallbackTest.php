@@ -31,7 +31,7 @@ final class EntityDtoCallbackTest extends EntityResultTest
         $this->persistEntities($count);
 
         return (new EntityResult($this->em->createQueryBuilder()->select('e.id')->from(Entity::class, 'e')))
-            ->as(fn(array $v) => new EntityDto((string) $v['id']))
+            ->as(static fn(array $v) => new EntityDto((string) $v['id']))
         ;
     }
 }

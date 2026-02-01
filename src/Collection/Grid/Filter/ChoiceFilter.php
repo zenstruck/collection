@@ -26,7 +26,7 @@ final class ChoiceFilter implements Filter, \IteratorAggregate, \Countable
 
     public function __construct(Choice ...$choices)
     {
-        $this->choices = ArrayCollection::for($choices)->keyBy(fn(Choice $choice) => (string) $choice->value);
+        $this->choices = ArrayCollection::for($choices)->keyBy(static fn(Choice $choice) => (string) $choice->value);
     }
 
     public function apply(mixed $value): ?object

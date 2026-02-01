@@ -68,7 +68,7 @@ final class PluckValuesTest extends TestCase
      */
     public function can_use_a_custom_modifier(): void
     {
-        $result = $this->createWithItems(1)->asArray('id', 'value')->as(fn(array $row) => (object) $row)->first();
+        $result = $this->createWithItems(1)->asArray('id', 'value')->as(static fn(array $row) => (object) $row)->first();
 
         $this->assertEquals((object) ['id' => 1, 'value' => 'value 1'], $result);
     }

@@ -54,7 +54,7 @@ final class ArrayCollectionTest extends TestCase
         $items = $this->createWithItems(3);
 
         $this->assertSame(['k0', 'k1', 'k2'], \array_keys(\iterator_to_array($items->keyBy(
-            fn($value, $key) => new Stringable('k'.$key),
+            static fn($value, $key) => new Stringable('k'.$key),
         ))));
     }
 
@@ -137,8 +137,8 @@ final class ArrayCollectionTest extends TestCase
      */
     public function sort_by(): void
     {
-        $this->assertSame([0, 1, 2], Arr::for([2, 1, 0])->sortBy(fn($v) => $v)->values()->all());
-        $this->assertEquals([new \DateTime('2022-01-01'), new \DateTime('2022-01-02'), new \DateTime('2022-01-03')], Arr::for([new \DateTime('2022-01-03'), new \DateTime('2022-01-01'), new \DateTime('2022-01-02')])->sortBy(fn($v) => $v)->values()->all());
+        $this->assertSame([0, 1, 2], Arr::for([2, 1, 0])->sortBy(static fn($v) => $v)->values()->all());
+        $this->assertEquals([new \DateTime('2022-01-01'), new \DateTime('2022-01-02'), new \DateTime('2022-01-03')], Arr::for([new \DateTime('2022-01-03'), new \DateTime('2022-01-01'), new \DateTime('2022-01-02')])->sortBy(static fn($v) => $v)->values()->all());
     }
 
     /**
@@ -146,8 +146,8 @@ final class ArrayCollectionTest extends TestCase
      */
     public function sort_by_desc(): void
     {
-        $this->assertSame([2, 1, 0], Arr::for([2, 1, 0])->sortByDesc(fn($v) => $v)->values()->all());
-        $this->assertEquals([new \DateTime('2022-01-03'), new \DateTime('2022-01-02'), new \DateTime('2022-01-01')], Arr::for([new \DateTime('2022-01-03'), new \DateTime('2022-01-01'), new \DateTime('2022-01-02')])->sortByDesc(fn($v) => $v)->values()->all());
+        $this->assertSame([2, 1, 0], Arr::for([2, 1, 0])->sortByDesc(static fn($v) => $v)->values()->all());
+        $this->assertEquals([new \DateTime('2022-01-03'), new \DateTime('2022-01-02'), new \DateTime('2022-01-01')], Arr::for([new \DateTime('2022-01-03'), new \DateTime('2022-01-01'), new \DateTime('2022-01-02')])->sortByDesc(static fn($v) => $v)->values()->all());
     }
 
     /**
@@ -215,7 +215,7 @@ final class ArrayCollectionTest extends TestCase
                 $second,
                 $third,
             ],
-        ], $arr->groupBy(fn($v) => $v['country'])->all());
+        ], $arr->groupBy(static fn($v) => $v['country'])->all());
     }
 
     /**
@@ -345,13 +345,13 @@ final class ArrayCollectionTest extends TestCase
      */
     public function construct_with_callable(): void
     {
-        $generator = function() {
+        $generator = static function() {
             yield 1;
             yield 2;
         };
 
         $this->assertSame([1, 2], Arr::for($generator)->all());
-        $this->assertSame([1, 2], Arr::for(fn() => [1, 2])->all());
+        $this->assertSame([1, 2], Arr::for(static fn() => [1, 2])->all());
     }
 
     /**
@@ -359,7 +359,7 @@ final class ArrayCollectionTest extends TestCase
      */
     public function construct_with_generator(): void
     {
-        $generator = function() {
+        $generator = static function() {
             yield 1;
             yield 2;
         };

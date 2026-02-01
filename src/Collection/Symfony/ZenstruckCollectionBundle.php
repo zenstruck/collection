@@ -54,14 +54,14 @@ final class ZenstruckCollectionBundle extends AbstractBundle implements Compiler
 
         $loader->load('grid.php');
 
-        $builder->registerAttributeForAutoconfiguration(AsGrid::class, function(ChildDefinition $definition, AsGrid $attribute) {
+        $builder->registerAttributeForAutoconfiguration(AsGrid::class, static function(ChildDefinition $definition, AsGrid $attribute) {
             $definition->addTag('zenstruck_collection.grid_definition', ['key' => $attribute->name]);
         });
 
         if (isset($builder->getParameter('kernel.bundles')['DoctrineBundle'])) { // @phpstan-ignore offsetAccess.nonOffsetAccessible
             $loader->load('doctrine.php');
 
-            $builder->registerAttributeForAutoconfiguration(ForObject::class, function(ChildDefinition $definition, ForObject $attribute, \ReflectionClass $class) { // @phpstan-ignore argument.type
+            $builder->registerAttributeForAutoconfiguration(ForObject::class, static function(ChildDefinition $definition, ForObject $attribute, \ReflectionClass $class) { // @phpstan-ignore argument.type
                 if ($class->implementsInterface(GridDefinition::class)) {
                     $definition->addTag('zenstruck_collection.grid_definition', ['key' => $attribute->class, 'as_object' => true]);
 
@@ -102,7 +102,7 @@ final class ZenstruckCollectionBundle extends AbstractBundle implements Compiler
                     ])
                 ;
 
-                if ($gridTag = collect($tags)->find(fn(array $t) => false === ($t['as_object'] ?? false))) {
+                if ($gridTag = collect($tags)->find(static fn(array $t) => false === ($t['as_object'] ?? false))) {
                     // service was also tagged using AsGrid - use it as the "alias"
                     $container->getDefinition($id)
                         ->clearTag('zenstruck_collection.grid_definition')

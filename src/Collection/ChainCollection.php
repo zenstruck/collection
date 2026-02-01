@@ -57,6 +57,6 @@ final class ChainCollection implements Collection
 
     public function count(): int
     {
-        return $this->collections->reduce(fn(int $r, Collection $c) => $r + $c->count(), 0); // @phpstan-ignore return.type
+        return $this->collections->reduce(static fn(int $r, Collection $c) => $r + $c->count(), 0); // @phpstan-ignore return.type
     }
 }

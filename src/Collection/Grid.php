@@ -86,7 +86,7 @@ final class Grid implements \IteratorAggregate
         return new OrX(...$this->columns
             ->searchable()
             ->all()
-            ->map(fn(Column $column) => $column->searchSpecification($query))
+            ->map(static fn(Column $column) => $column->searchSpecification($query))
             ->filter()
             ->values()
             ->all()

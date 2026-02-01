@@ -21,6 +21,6 @@ final class ClosureArrayTest extends LazyCollectionTest
 {
     protected function createWithItems(int $count): LazyCollection
     {
-        return new LazyCollection(fn() => $count ? \range(1, $count) : []);
+        return new LazyCollection(static fn() => $count ? \range(1, $count) : []);
     }
 }

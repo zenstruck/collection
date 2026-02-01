@@ -28,7 +28,7 @@ final class ArrayResultTest extends EntityResultTest
         $this->persistEntities(3);
         $result = (new EntityResult($this->em->createQueryBuilder()->select('SUM(e.id), SUM(e.id)')->from(Entity::class, 'e')))->asArray();
 
-        $this->assertSame([6, 6], \array_map(fn($v) => (int) $v, \array_values($result->first())));
+        $this->assertSame([6, 6], \array_map(static fn($v) => (int) $v, \array_values($result->first())));
     }
 
     protected function expectedValueAt(int $position): array
