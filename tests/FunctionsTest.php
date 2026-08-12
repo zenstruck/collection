@@ -78,8 +78,8 @@ final class FunctionsTest extends TestCase
             }
         };
 
-        $this->assertInstanceOf(LazyCollection::class, collect(fn() => ['foo' => 'bar']));
-        $this->assertSame(['foo' => 'bar'], collect(fn() => ['foo' => 'bar'])->eager()->all());
+        $this->assertInstanceOf(LazyCollection::class, collect(static fn() => ['foo' => 'bar']));
+        $this->assertSame(['foo' => 'bar'], collect(static fn() => ['foo' => 'bar'])->eager()->all());
 
         $this->assertInstanceOf(LazyCollection::class, collect($invokable));
         $this->assertSame(['foo' => 'bar'], collect($invokable)->eager()->all());
