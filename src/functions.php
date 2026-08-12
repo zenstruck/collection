@@ -23,7 +23,7 @@ use Zenstruck\Collection\LazyCollection;
  * @param null|iterable<K,V>|callable():iterable<K,V> $source
  *
  * @return Collection<V,K>
- * @phpstan-return ($source is null ? Collection<never,never> : ($source is array ? ArrayCollection<V> : ($source is DoctrineCollection<K&array-key,V> ? DoctrineBridgeCollection<V> : Collection<V,K>)))
+ * @phpstan-return ($source is null ? Collection<never,never> : ($source is callable ? Collection<V,K> : ($source is array ? ArrayCollection<V> : ($source is DoctrineCollection<K&array-key,V> ? DoctrineBridgeCollection<V> : Collection<V,K>))))
  */
 function collect(iterable|callable|null $source = null): Collection
 {
@@ -33,6 +33,10 @@ function collect(iterable|callable|null $source = null): Collection
 
     if ($source instanceof DoctrineCollection) {
         return new DoctrineBridgeCollection($source);
+    }
+
+    if (\is_callable($source)) {
+        return new LazyCollection($source(...));
     }
 
     if (\is_array($source)) {

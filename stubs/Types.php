@@ -36,6 +36,9 @@ class User
 
 assertType('Zenstruck\Collection<never, never>', collect());
 assertType('Zenstruck\Collection<never, never>', collect());
+assertType('Zenstruck\Collection\ArrayCollection<User, (int|string)>', collect([new User()]));
+assertType('Zenstruck\Collection<User, int>', collect(fn() => [new User()]));
+assertType('Zenstruck\Collection<User, int>', collect(new \ArrayIterator([new User()])));
 
 /**
  * @param User[]|null $users
