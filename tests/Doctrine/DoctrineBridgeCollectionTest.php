@@ -11,6 +11,7 @@
 
 namespace Zenstruck\Collection\Tests\Doctrine;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\PersistentCollection;
 use PHPUnit\Framework\TestCase;
@@ -35,6 +36,19 @@ final class DoctrineBridgeCollectionTest extends TestCase
     protected function setUp(): void
     {
         $this->collection = new DoctrineBridgeCollection();
+    }
+
+    /**
+     * @test
+     */
+    public function criteria_specification_requires_a_selectable_inner_collection(): void
+    {
+        $collection = new DoctrineBridgeCollection($this->createMock(Collection::class));
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessageMatches('#is not an instance of ".+Selectable"#');
+
+        $collection->filter(Criteria::create());
     }
 
     /**
