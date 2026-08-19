@@ -97,7 +97,8 @@ final class CriteriaInterpreter
             StartsWith::class => Criteria::expr()->startsWith($specification->field, $specification->value),
             Between::class => $this->transform($specification->asAnd()),
 
-            Callback::class => ($specification->value)($this->criteria),
+            // the callback can modify the criteria directly - only use its return value if it's an expression
+            Callback::class => ($value = ($specification->value)($this->criteria)) instanceof Expression ? $value : null,
 
             default => throw InvalidSpecification::build($specification, $this->class, $this->method),
         };

@@ -253,6 +253,20 @@ class EntityRepositoryTest extends TestCase
     /**
      * @test
      */
+    public function callback_specification_receives_the_query_builder(): void
+    {
+        $repo = $this->createWithItems(3);
+
+        $results = $repo->filter(Spec::callback(
+            static fn(QueryBuilder $qb, string $alias) => $qb->andWhere("{$alias}.id < 3"),
+        ));
+
+        $this->assertCount(2, $results);
+    }
+
+    /**
+     * @test
+     */
     public function sql_wildcards_in_value_are_literal(): void
     {
         $this->setupEntityManager();

@@ -17,6 +17,7 @@ use Doctrine\ORM\PersistentCollection;
 use PHPUnit\Framework\TestCase;
 use Zenstruck\Collection\Doctrine\DoctrineBridgeCollection;
 use Zenstruck\Collection\LazyCollection;
+use Zenstruck\Collection\Spec;
 use Zenstruck\Collection\Tests\CollectionTests;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Relation;
@@ -36,6 +37,30 @@ final class DoctrineBridgeCollectionTest extends TestCase
     protected function setUp(): void
     {
         $this->collection = new DoctrineBridgeCollection();
+    }
+
+    /**
+     * @test
+     */
+    public function callback_specification_can_return_an_expression(): void
+    {
+        $collection = $this->createWithItems(3)->filter(
+            Spec::callback(static fn(Criteria $criteria) => Criteria::expr()->lt('id', 3)),
+        );
+
+        $this->assertCount(2, $collection);
+    }
+
+    /**
+     * @test
+     */
+    public function callback_specification_can_modify_the_criteria(): void
+    {
+        $collection = $this->createWithItems(3)->filter(
+            Spec::callback(static fn(Criteria $criteria) => $criteria->andWhere(Criteria::expr()->lt('id', 3))),
+        );
+
+        $this->assertCount(2, $collection);
     }
 
     /**
