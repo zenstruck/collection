@@ -253,6 +253,37 @@ class EntityRepositoryTest extends TestCase
     /**
      * @test
      */
+    public function sql_wildcards_in_value_are_literal(): void
+    {
+        $this->setupEntityManager();
+
+        foreach (['50% off', 'value_1', 'value 1', 'wild!card'] as $value) {
+            $this->em->persist(new Entity($value));
+        }
+
+        $this->flushAndClear();
+
+        $repo = $this->repo();
+
+        $results = $repo->filter(Spec::contains('value', '50%'));
+        $this->assertCount(1, $results);
+        $this->assertSame('50% off', $results->first()->value);
+
+        $results = $repo->filter(Spec::contains('value', 'value_1'));
+        $this->assertCount(1, $results);
+        $this->assertSame('value_1', $results->first()->value);
+
+        $results = $repo->filter(Spec::contains('value', 'wild!card'));
+        $this->assertCount(1, $results);
+        $this->assertSame('wild!card', $results->first()->value);
+
+        $this->assertCount(0, $repo->filter(Spec::startsWith('value', '%')));
+        $this->assertCount(0, $repo->filter(Spec::endsWith('value', '_')));
+    }
+
+    /**
+     * @test
+     */
     public function readonly_specification(): void
     {
         $results = $this->createWithItems(3)->filter(DoctrineSpec::readonly());
