@@ -319,6 +319,22 @@ class EntityRepositoryTest extends TestCase
     /**
      * @test
      */
+    public function cache_specification(): void
+    {
+        $this->em->getConfiguration()->setResultCache(new ArrayAdapter());
+
+        $repo = $this->createWithItems(3);
+
+        $this->assertCount(3, $repo->filter(DoctrineSpec::cache(60, 'my-key'))->eager());
+
+        $this->assertQueryCount(0, function() use ($repo) {
+            $this->assertCount(3, $repo->filter(DoctrineSpec::cache(60, 'my-key'))->eager());
+        });
+    }
+
+    /**
+     * @test
+     */
     public function readonly_specification(): void
     {
         $results = $this->createWithItems(3)->filter(DoctrineSpec::readonly());

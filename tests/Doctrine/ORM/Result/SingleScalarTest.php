@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Doctrine\ORM\Result;
+namespace Zenstruck\Collection\Tests\Doctrine\ORM\Result;
 
 use PHPUnit\Framework\TestCase;
 use Zenstruck\Collection\Doctrine\ORM\EntityResultQueryBuilder;

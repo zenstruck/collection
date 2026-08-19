@@ -9,9 +9,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Doctrine\ORM;
+namespace Zenstruck\Collection\Tests\Doctrine\ORM;
 
+use Doctrine\ORM\Query;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Zenstruck\Collection\Doctrine\ORM\EntityResultQueryBuilder;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
 use Zenstruck\Collection\Tests\Doctrine\HasDatabase;
@@ -22,6 +24,41 @@ use Zenstruck\Collection\Tests\Doctrine\HasDatabase;
 final class EntityResultQueryBuilderTest extends TestCase
 {
     use HasDatabase;
+
+    /**
+     * @test
+     */
+    public function can_modify_the_query(): void
+    {
+        $this->persistEntities(3);
+
+        $result = EntityResultQueryBuilder::forEntity($this->em, Entity::class, 'e')
+            ->modifyQuery(static fn(Query $query) => $query->setMaxResults(2))
+            ->result()
+        ;
+
+        $this->assertCount(2, $result->eager());
+    }
+
+    /**
+     * @test
+     */
+    public function can_cache_the_result(): void
+    {
+        $this->em->getConfiguration()->setResultCache(new ArrayAdapter());
+        $this->persistEntities(3);
+
+        $result = EntityResultQueryBuilder::forEntity($this->em, Entity::class, 'e')
+            ->cacheResult(60, 'my-key')
+            ->result()
+        ;
+
+        $this->assertCount(3, $result->eager());
+
+        $this->assertQueryCount(0, function() use ($result) {
+            $this->assertCount(3, $result->eager());
+        });
+    }
 
     /**
      * @test
