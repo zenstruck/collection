@@ -283,8 +283,8 @@ final class EntityResult implements Result
         try {
             $iterator = $this->query()->toIterable(hydrationMode: $this->hydrationMode ?? Query::HYDRATE_OBJECT);
 
-            if ($this->resultModifier) {
-                $iterator = collect(static fn() => yield from $iterator)->map($this->resultModifier);
+            if ($this->resultModifier || $this->readonly) {
+                $iterator = collect(static fn() => yield from $iterator)->map($this->normalizeResult(...));
             }
 
             yield from $iterator;

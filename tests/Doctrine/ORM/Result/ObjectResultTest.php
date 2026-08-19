@@ -117,6 +117,34 @@ class ObjectResultTest extends EntityResultTest
     /**
      * @test
      */
+    public function can_set_as_readonly_when_iterating(): void
+    {
+        $entities = \iterator_to_array($this->createWithItems(2)->readonly());
+
+        $this->assertCount(2, $entities);
+
+        foreach ($entities as $entity) {
+            $this->assertFalse($this->em->contains($entity));
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function can_set_as_readonly_when_paginating(): void
+    {
+        $entities = \iterator_to_array($this->createWithItems(2)->readonly()->paginate());
+
+        $this->assertCount(2, $entities);
+
+        foreach ($entities as $entity) {
+            $this->assertFalse($this->em->contains($entity));
+        }
+    }
+
+    /**
+     * @test
+     */
     public function can_use_criteria_as_filter_specification(): void
     {
         $collection = $this->createWithItems(10);
