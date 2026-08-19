@@ -15,6 +15,7 @@ use Doctrine\Common\Collections\Criteria;
 use Zenstruck\Collection\Doctrine\Batch\CountableBatchIterator;
 use Zenstruck\Collection\Doctrine\Batch\CountableBatchProcessor;
 use Zenstruck\Collection\Doctrine\ORM\EntityResult;
+use Zenstruck\Collection\Spec;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
 use Zenstruck\Collection\Tests\Doctrine\ORM\EntityResultTest;
 use Zenstruck\Collection\Tests\MatchableObjectTests;
@@ -112,6 +113,18 @@ class ObjectResultTest extends EntityResultTest
         $entity = $this->createWithItems(1)->readonly()->first();
 
         $this->assertFalse($this->em->contains($entity));
+    }
+
+    /**
+     * @test
+     */
+    public function count_is_not_cached_across_derived_results(): void
+    {
+        $result = $this->createWithItems(5);
+
+        $this->assertCount(5, $result);
+        $this->assertCount(2, $result->filter(Spec::lt('id', 3)));
+        $this->assertCount(5, $result);
     }
 
     /**

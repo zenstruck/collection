@@ -65,6 +65,8 @@ final class EntityResult implements Result
     public function __clone(): void
     {
         $this->qb = clone $this->qb;
+
+        unset($this->count); // the clone may not have the same number of results
     }
 
     public function batchIterate(int $chunkSize = 100): \Traversable
