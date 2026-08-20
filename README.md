@@ -183,8 +183,10 @@ foreach ($titles as $title) {
 | Method                                    | Runs the source?                       | How much it reads                     |
 |-------------------------------------------|----------------------------------------|---------------------------------------|
 | `filter()`, `map()`, `keyBy()`, `take()`  | No - returns a new lazy collection     | Nothing                               |
+| `paginate()`, `pages()`                   | No - returns a `Page`/`Pages`          | Nothing                               |
 | `first()`                                 | Yes                                    | Stops at the first item               |
 | `find()`                                  | Yes                                    | Stops at the first match              |
+| `Page::hasMorePages()`                    | Yes                                    | One item past the end of the page     |
 | `count()`, `isEmpty()`                    | Only if the source isn't `Countable`   | Counts, keeping nothing               |
 | `reduce()`                                | Yes                                    | All of it, keeping nothing            |
 | `eager()`                                 | Yes                                    | All of it, kept in memory             |
@@ -325,38 +327,102 @@ foreach ($page as $post) {
 }
 ```
 
+What it costs depends on how much of that metadata you use:
+
+| Mode              | Renders                              | Counts the collection? |
+|-------------------|--------------------------------------|------------------------|
+| [Simple](#simple) | Previous / Next                      | no                     |
+| [Full](#full)     | "Page 2 of 7", numbered links, Last  | yes, once              |
+
+There's only one `Page` - you don't choose a mode up front, you get one by what your template asks for.
+
+> [!NOTE]
+> "Counts the collection" means calling `count()` on the source, and what that costs is up to the source: it's
+> free for an array, a `SELECT COUNT(...)` for [Doctrine](#doctrine), and a full iteration for a generator or
+> an API-backed [`LazyCollection`](#lazycollection) - see [Lazy vs Eager](#lazy-vs-eager).
+
+### Simple
+
+Everything a previous/next pager needs comes from the page itself, without counting anything:
+
+```php
+$page = $posts->paginate(page: 2, limit: 20); // takes 21 items, starting at 20
+
+$page->currentPage();    // 2
+\count($page);           // 20
+$page->hasMorePages();   // true
+$page->nextPage();       // 3
+$page->previousPage();   // 1
+$page->haveToPaginate(); // true
+
+foreach ($page as $post) {
+    // ...
+}
+```
+
+Note the 21 items for a page of 20. Knowing whether another page exists doesn't require counting the
+collection - the page reads one item more than fits on it, and the presence of that extra item _is_ the
+answer. It's dropped before you see the items, which is why `count($page)` is still 20.
+
+That one item is often the difference between a bounded amount of work and an unbounded one. Paging an
+[API-backed collection](#lazycollection) this way reads a single page's worth of results; asking it for a
+total would walk every page the API has.
+
 The items are fetched once and cached, so iterating the same `Page` more than once won't re-run the source.
 
-| Method                          | Description                                                        |
-|---------------------------------|--------------------------------------------------------------------|
-| `currentPage()`                 | The current page number                                            |
-| `limit()`                       | Items per page                                                     |
-| `count()`                       | Number of items on _this_ page                                     |
-| `totalCount()`                  | Number of items in the entire collection                           |
-| `firstPage()`                   | Always `1`                                                         |
-| `lastPage()` / `pageCount()`    | The last page number (`1` when empty)                              |
-| `nextPage()` / `previousPage()` | The adjacent page number, or `null` at the boundary                |
-| `haveToPaginate()`              | Whether there is more than one page                                |
+> [!NOTE]
+> Ask for a page past the end and you get an empty one: `hasMorePages()` and `nextPage()` report nothing
+> follows, `previousPage()` still works. See [Strict Mode](#strict-mode) to fall back to the last page
+> instead.
+
+### Full
+
+Rendering "Page 2 of 7", numbered links or a "Last" link needs the total, so these count the collection -
+the first time you ask, and once:
+
+```php
+$page->totalCount(); // 138
+$page->lastPage();   // 7
+$page->pageCount();  // 7
+$page->firstPage();  // 1
+```
+
+| Method                          | Description                                                        | Counts? |
+|---------------------------------|--------------------------------------------------------------------|---------|
+| `currentPage()`                 | The current page number                                            | no      |
+| `limit()`                       | Items per page                                                     | no      |
+| `count()`                       | Number of items on _this_ page                                     | no      |
+| `firstPage()`                   | Always `1`                                                         | no      |
+| `hasMorePages()`                | Whether another page follows this one                              | no      |
+| `nextPage()` / `previousPage()` | The adjacent page number, or `null` at the boundary                | no      |
+| `haveToPaginate()`              | Whether there is more than one page                                | no      |
+| `totalCount()`                  | Number of items in the entire collection                           | **yes** |
+| `lastPage()` / `pageCount()`    | The last page number (`1` when empty)                              | **yes** |
 
 > [!NOTE]
 > Out of range arguments are normalized rather than rejected: a page less than `1` becomes `1` and a limit
 > less than `1` becomes the default (`20`).
 
-### Strict Mode
+#### Strict Mode
 
-By default, `currentPage()` returns whatever page you asked for, even if it's past the end. Enable strict mode
-to clamp it to the last page instead:
+A page number from a bookmark or a hand-edited URL can point past the end of the collection - and a filter
+that shrank the result set can do the same to a page number that used to be valid. Strict mode falls back to
+the last page when that happens:
 
 ```php
-$page = $posts->paginate(page: 999)->strict();
+$page = $posts->paginate(page: 999, limit: 20)->strict();
 
-$page->currentPage(); // 4 (the last page) instead of 999
+$page->currentPage(); // 7 - the last page, not 999
+\count($page);        // 18 - and these are the last page's items
 ```
 
-> [!IMPORTANT]
-> Strict mode is worth it when the page number comes from user input and you don't want an empty page for
-> `?page=999`. The tradeoff is that determining the last page requires counting the collection - an extra
-> query for Doctrine sources.
+This is free here: the total is already known, so clamping costs nothing extra. The fallback only re-fetches
+when the requested page really was out of range.
+
+> [!TIP]
+> `strict()` works on a [Simple](#simple) page too, but it gives up the no-counting guarantee: clamping needs
+> the total. An in-range page still counts nothing, but an out of range one reads the empty page, counts, then
+> reads the last page. Keep `strict()` to Full pagers if that matters.
 
 ### Iterating Pages
 
@@ -448,6 +514,19 @@ $result->isEmpty();
 foreach ($result as $post) {
     // ...
 }
+```
+
+This is where [pagination's counting](#pagination) shows up as real queries. A previous/next pager is a single
+query; adding a total makes it two:
+
+```php
+$page = $result->paginate(page: 2, limit: 20);
+
+$page->hasMorePages(); // SELECT ... LIMIT 21 OFFSET 20
+$page->nextPage();     // (already fetched)
+
+$page->totalCount();   // SELECT COUNT(...)
+$page->lastPage();     // (already counted)
 ```
 
 Because it's immutable, deriving is free and the original stays usable:
