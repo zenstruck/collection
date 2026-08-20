@@ -333,6 +333,10 @@ trait MatchableObjectTests
         $this->assertSame(2, $r->first()->id);
         $this->assertCount(1, $r = $repo->filter(Between::exclusive('id', 2, 4)));
         $this->assertSame(3, $r->first()->id);
+        $this->assertCount(3, $r = $repo->filter(Spec::between('id', 2, 4)));
+        $this->assertSame(2, $r->first()->id);
+        $this->assertCount(1, $r = $repo->filter(Spec::between('id', 2, 4, Between::EXCLUSIVE)));
+        $this->assertSame(3, $r->first()->id);
     }
 
     abstract protected function createWithItems(int $count): Matchable;
