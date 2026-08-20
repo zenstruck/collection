@@ -362,6 +362,29 @@ class EntityRepositoryTest extends TestCase
     /**
      * @test
      */
+    public function strict_mode_only_counts_when_the_page_is_out_of_range(): void
+    {
+        $result = $this->createWithItems(10)->filter(null)->disableFetchJoins();
+
+        $this->assertQueryCount(1, function() use ($result) {
+            $page = $result->paginate(page: 2, limit: 3)->strict();
+
+            $this->assertSame(2, $page->currentPage());
+            $this->assertCount(3, $page);
+        });
+
+        // the empty fetch, the count to find the last page, then re-fetching it
+        $this->assertQueryCount(3, function() use ($result) {
+            $page = $result->paginate(page: 99, limit: 3)->strict();
+
+            $this->assertSame(4, $page->currentPage());
+            $this->assertCount(1, $page);
+        });
+    }
+
+    /**
+     * @test
+     */
     public function readonly_specification(): void
     {
         $results = $this->createWithItems(3)->filter(DoctrineSpec::readonly());

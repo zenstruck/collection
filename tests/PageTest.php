@@ -57,6 +57,36 @@ final class PageTest extends TestCase
     /**
      * @test
      */
+    public function strict_mode_only_counts_when_the_page_is_out_of_range(): void
+    {
+        $counts = 0;
+        $collection = static function() use (&$counts) {
+            return new CallbackCollection(
+                static fn() => yield from \range(1, 10),
+                static function() use (&$counts) {
+                    ++$counts;
+
+                    return 10;
+                },
+            );
+        };
+
+        $page = (new Page($collection(), 2, 3))->strict();
+
+        $this->assertSame(2, $page->currentPage());
+        $this->assertSame([4, 5, 6], \array_values(\iterator_to_array($page)));
+        $this->assertSame(0, $counts, 'an in-range page never counts');
+
+        $page = (new Page($collection(), 99, 3))->strict();
+
+        $this->assertSame(4, $page->currentPage(), 'clamped to the last page');
+        $this->assertSame([10], \array_values(\iterator_to_array($page)));
+        $this->assertSame(1, $counts, 'counted once to find the last page');
+    }
+
+    /**
+     * @test
+     */
     public function knows_when_there_are_no_more_pages(): void
     {
         $page = $this->createPage(\range(1, 10), 4, 3);
