@@ -45,18 +45,14 @@ final class Pages implements \IteratorAggregate, \Countable
 
     public function getIterator(): \Traversable
     {
-        if (0 === $this->count()) {
-            return;
-        }
-
-        for ($page = 1; $page <= $this->count(); ++$page) {
+        for ($page = 1, $count = $this->count(); $page <= $count; ++$page) {
             yield $this->get($page);
         }
     }
 
     public function count(): int
     {
-        if (0 === $this->page1()->count()) {
+        if (0 === $this->page1()->totalCount()) {
             return 0;
         }
 

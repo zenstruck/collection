@@ -93,13 +93,9 @@ final class EntityResult implements Result
     public function first(mixed $default = null): mixed
     {
         $query = $this->query();
-        $sql = $query->getSQL();
 
-        if (\is_array($sql)) {
-            $sql = \implode(' ', $sql);
-        }
-
-        if (\str_starts_with(\mb_strtolower($sql), 'delete')) {
+        // check the DQL, not the SQL - the latter compiles the query, which setMaxResults() below invalidates
+        if (\str_starts_with(\mb_strtoupper($query->getDQL() ?? ''), 'DELETE')) {
             return $this->normalizeResult($query->execute());
         }
 

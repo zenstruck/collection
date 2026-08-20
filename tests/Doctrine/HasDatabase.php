@@ -20,6 +20,7 @@ use Doctrine\ORM\Tools\SchemaTool;
 use Symfony\Bridge\Doctrine\Middleware\Debug\DebugDataHolder;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Relation;
+use Zenstruck\Collection\Tests\Doctrine\Fixture\Shape;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -52,6 +53,7 @@ trait HasDatabase
         $schemaTool->createSchema([
             $this->em->getClassMetadata(Entity::class),
             $this->em->getClassMetadata(Relation::class),
+            $this->em->getClassMetadata(Shape::class),
         ]);
     }
 

@@ -110,7 +110,8 @@ final class QueryBuilderInterpreter
 
             OrderBy::class => $this->qb->addOrderBy($this->prefix($specification->field), $specification->direction),
 
-            Instance::class => $this->qb->expr()->isInstanceOf($this->alias, $this->param($specification->of())),
+            // the class name must be inlined - as a parameter it is used as the discriminator value verbatim
+            Instance::class => $this->qb->expr()->isInstanceOf($this->alias, $specification->of()),
             Delete::class => $this->qb->delete(),
             Unwritable::class => $this->qb->readonly(),
             Cache::class => $this->qb->cacheResult($specification->lifetime(), $specification->key()),

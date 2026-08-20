@@ -197,6 +197,15 @@ final class ArrayCollectionTest extends TestCase
     /**
      * @test
      */
+    public function first_null_value_is_not_the_default(): void
+    {
+        $this->assertNull(Arr::for([null, 'a'])->first('default'));
+        $this->assertSame('default', Arr::for([])->first('default'));
+    }
+
+    /**
+     * @test
+     */
     public function group_by(): void
     {
         $arr = Arr::for(

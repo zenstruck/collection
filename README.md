@@ -878,6 +878,11 @@ foreach (Batch::process($posts, $em) as $post) {
 > `Batch::iterate()` never flushes. Changes you make to an entity while iterating are silently discarded when
 > the chunk is cleared - use `Batch::process()` if you intend to write.
 
+> [!IMPORTANT]
+> `Batch::process()` opens _one_ transaction for the whole loop, not one per chunk. Nothing is left half-done
+> if it fails, but the transaction is held for the entire run - worth keeping in mind when processing very
+> large sets, where it means long-lived locks.
+
 Both take a chunk size, defaulting to `100`:
 
 ```php

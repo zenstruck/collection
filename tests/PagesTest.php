@@ -12,6 +12,7 @@
 namespace Zenstruck\Collection\Tests;
 
 use PHPUnit\Framework\TestCase;
+use Zenstruck\Collection\CallbackCollection;
 use Zenstruck\Collection\LazyCollection;
 use Zenstruck\Collection\Pages;
 
@@ -20,6 +21,46 @@ use Zenstruck\Collection\Pages;
  */
 final class PagesTest extends TestCase
 {
+    /**
+     * @test
+     */
+    public function counting_does_not_load_the_first_page(): void
+    {
+        $iterations = 0;
+        $collection = new CallbackCollection(
+            static function() use (&$iterations) {
+                ++$iterations;
+
+                yield from \range(1, 10);
+            },
+            static fn() => 10,
+        );
+
+        $this->assertCount(4, new Pages($collection, 3));
+        $this->assertSame(0, $iterations);
+    }
+
+    /**
+     * @test
+     */
+    public function iterating_only_counts_the_collection_once(): void
+    {
+        $counts = 0;
+        $collection = new CallbackCollection(
+            static fn() => yield from \range(1, 10),
+            static function() use (&$counts) {
+                ++$counts;
+
+                return 10;
+            },
+        );
+
+        $pages = new Pages($collection, 3);
+
+        $this->assertCount(4, \iterator_to_array($pages));
+        $this->assertSame(1, $counts);
+    }
+
     /**
      * @test
      */

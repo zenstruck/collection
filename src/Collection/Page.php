@@ -31,6 +31,9 @@ final class Page implements \IteratorAggregate, \Countable
     private int $limit;
     private bool $strict = false;
 
+    /** @var non-negative-int */
+    private int $totalCount;
+
     /** @var Collection<V,K> */
     private Collection $cachedPage;
 
@@ -97,7 +100,7 @@ final class Page implements \IteratorAggregate, \Countable
 
     public function totalCount(): int
     {
-        return $this->collection->count();
+        return $this->totalCount ??= $this->collection->count();
     }
 
     public function getIterator(): \Traversable
