@@ -1,10 +1,10 @@
 {
     "name": "zenstruck/collection",
-    "description": "Helpers for iterating/paginating/filtering collections (with Doctrine ORM/DBAL implementations and batch processing utilities).",
+    "description": "Iterate, filter and paginate anything - arrays, generators or Doctrine ORM queries - without loading it all into memory.",
     "homepage": "https://github.com/zenstruck/collection",
     "type": "library",
     "license": "MIT",
-    "keywords": ["collection", "iterate", "paginate", "pager", "doctrine", "orm", "dbal", "batch"],
+    "keywords": ["collection", "lazy", "iterate", "paginate", "pager", "doctrine", "orm", "batch"],
     "authors": [
         {
             "name": "Kevin Bond",
@@ -31,9 +31,12 @@
         "zenstruck/uri": "^2.3"
     },
     "suggest": {
-        "doctrine/orm": "To use ORM implementation and batch utilities (>=2.20.7).",
-        "doctrine/collections": "To use CollectionDecorator.",
-        "pagerfanta/pagerfanta": "To use CollectionAdapter."
+        "doctrine/orm": "To use the ORM repositories/results and batch utilities (>=2.20.7).",
+        "doctrine/doctrine-bundle": "To use the Symfony integration.",
+        "doctrine/collections": "To use DoctrineBridgeCollection.",
+        "symfony/expression-language": "To use the #[ForObject]/#[ForDefinition] autowiring attributes.",
+        "zenstruck/uri": "To use UriInput with grids.",
+        "pagerfanta/pagerfanta": "To use PagerfantaAdapter."
     },
     "config": {
         "preferred-install": "dist",
