@@ -12,6 +12,7 @@
 namespace Zenstruck\Collection\Tests;
 
 use PHPUnit\Framework\TestCase;
+use Zenstruck\Collection\CallbackCollection;
 use Zenstruck\Collection\LazyCollection;
 use Zenstruck\Collection\Page;
 
@@ -21,6 +22,93 @@ use Zenstruck\Collection\Page;
 final class PageTest extends TestCase
 {
     use CountableIteratorTests;
+
+    /**
+     * @test
+     */
+    public function paging_does_not_count_the_collection(): void
+    {
+        $counts = 0;
+        $collection = new CallbackCollection(
+            static fn() => yield from \range(1, 10),
+            static function() use (&$counts) {
+                ++$counts;
+
+                return 10;
+            },
+        );
+
+        $page = new Page($collection, 2, 3);
+
+        $this->assertSame(2, $page->currentPage());
+        $this->assertCount(3, $page);
+        $this->assertTrue($page->hasMorePages());
+        $this->assertSame(3, $page->nextPage());
+        $this->assertSame(1, $page->previousPage());
+        $this->assertTrue($page->haveToPaginate());
+        $this->assertSame([4, 5, 6], \array_values(\iterator_to_array($page)));
+
+        $this->assertSame(0, $counts);
+
+        $this->assertSame(10, $page->totalCount()); // only now is it counted
+        $this->assertSame(1, $counts);
+    }
+
+    /**
+     * @test
+     */
+    public function strict_mode_only_counts_when_the_page_is_out_of_range(): void
+    {
+        $counts = 0;
+        $collection = static function() use (&$counts) {
+            return new CallbackCollection(
+                static fn() => yield from \range(1, 10),
+                static function() use (&$counts) {
+                    ++$counts;
+
+                    return 10;
+                },
+            );
+        };
+
+        $page = (new Page($collection(), 2, 3))->strict();
+
+        $this->assertSame(2, $page->currentPage());
+        $this->assertSame([4, 5, 6], \array_values(\iterator_to_array($page)));
+        $this->assertSame(0, $counts, 'an in-range page never counts');
+
+        $page = (new Page($collection(), 99, 3))->strict();
+
+        $this->assertSame(4, $page->currentPage(), 'clamped to the last page');
+        $this->assertSame([10], \array_values(\iterator_to_array($page)));
+        $this->assertSame(1, $counts, 'counted once to find the last page');
+    }
+
+    /**
+     * @test
+     */
+    public function knows_when_there_are_no_more_pages(): void
+    {
+        $page = $this->createPage(\range(1, 10), 4, 3);
+
+        $this->assertFalse($page->hasMorePages());
+        $this->assertNull($page->nextPage());
+        $this->assertCount(1, $page);
+        $this->assertSame([10], \array_values(\iterator_to_array($page)));
+    }
+
+    /**
+     * @test
+     */
+    public function a_single_page_collection_does_not_have_to_paginate(): void
+    {
+        $page = $this->createPage(\range(1, 3), 1, 20);
+
+        $this->assertFalse($page->haveToPaginate());
+        $this->assertFalse($page->hasMorePages());
+        $this->assertNull($page->nextPage());
+        $this->assertNull($page->previousPage());
+    }
 
     /**
      * @test
@@ -136,7 +224,8 @@ final class PageTest extends TestCase
 
         $this->assertSame(30, $pager->currentPage());
         $this->assertSame(1, $pager->firstPage());
-        $this->assertSame(31, $pager->nextPage());
+        $this->assertFalse($pager->hasMorePages());
+        $this->assertNull($pager->nextPage());
         $this->assertSame(29, $pager->previousPage());
         $this->assertCount(0, $pager);
         $this->assertSame([], \array_values(\iterator_to_array($pager)));

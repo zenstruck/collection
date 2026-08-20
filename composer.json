@@ -26,6 +26,7 @@
         "symfony/expression-language": "^6.4|^7.0|^8.0",
         "symfony/framework-bundle": "^6.4|^7.0|^8.0",
         "symfony/phpunit-bridge": "^6.3|^7.0|^8.0",
+        "symfony/twig-bundle": "^6.4|^7.0|^8.0",
         "symfony/var-dumper": "^6.4|^7.0|^8.0",
         "zenstruck/foundry": "^2.0",
         "zenstruck/uri": "^2.3"

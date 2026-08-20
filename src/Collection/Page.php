@@ -30,6 +30,10 @@ final class Page implements \IteratorAggregate, \Countable
     /** @var positive-int */
     private int $limit;
     private bool $strict = false;
+    private bool $hasMorePages;
+
+    /** @var positive-int */
+    private int $resolvedPage;
 
     /** @var non-negative-int */
     private int $totalCount;
@@ -51,12 +55,12 @@ final class Page implements \IteratorAggregate, \Countable
     /**
      * Enable/Disable "strict mode".
      *
-     * When enabled, when calling {@see currentPage}, if provided page number
-     * greater than the calculated last page number, the last page number will
-     * be returned.
+     * When enabled, a page past the end of the collection falls back to the
+     * last page - {@see currentPage} reports it and the page's items are the
+     * last page's.
      *
-     * When enabled, extra work (ie count query) may be required to ensure the
-     * current page number is valid.
+     * The fallback is what requires counting the collection, so it's only
+     * paid for when the requested page really is out of range.
      *
      * @return $this
      */
@@ -73,13 +77,9 @@ final class Page implements \IteratorAggregate, \Countable
             return $this->page;
         }
 
-        $lastPage = $this->lastPage();
+        $this->resolve();
 
-        if ($this->page > $lastPage) {
-            return $lastPage;
-        }
-
-        return $this->page;
+        return $this->resolvedPage;
     }
 
     /**
@@ -108,15 +108,24 @@ final class Page implements \IteratorAggregate, \Countable
         return $this->getPage()->getIterator();
     }
 
+    /**
+     * Whether there is at least one more page after this one. Unlike
+     * {@see lastPage}, this doesn't require counting the collection.
+     */
+    public function hasMorePages(): bool
+    {
+        $this->getPage();
+
+        return $this->hasMorePages;
+    }
+
     public function nextPage(): ?int
     {
-        $currentPage = $this->currentPage();
-
-        if ($currentPage === $this->lastPage()) {
+        if (!$this->hasMorePages()) {
             return null;
         }
 
-        return ++$currentPage;
+        return $this->currentPage() + 1;
     }
 
     public function previousPage(): ?int
@@ -159,7 +168,7 @@ final class Page implements \IteratorAggregate, \Countable
 
     public function haveToPaginate(): bool
     {
-        return $this->pageCount() > 1;
+        return $this->currentPage() > 1 || $this->hasMorePages();
     }
 
     /**
@@ -167,12 +176,43 @@ final class Page implements \IteratorAggregate, \Countable
      */
     private function getPage(): Collection
     {
+        $this->resolve();
+
+        return $this->cachedPage;
+    }
+
+    /**
+     * Fetches the page, falling back to the last page in strict mode if the
+     * requested one turned out to be past the end. Only that fallback needs
+     * the collection counted.
+     */
+    private function resolve(): void
+    {
         if (isset($this->cachedPage)) {
-            return $this->cachedPage;
+            return;
         }
 
-        $offset = $this->currentPage() * $this->limit() - $this->limit();
+        $items = $this->fetch($page = $this->page);
 
-        return $this->cachedPage = $this->collection->take($this->limit(), $offset);
+        if ($this->strict && $page > 1 && !$items->count()) {
+            $items = $this->fetch($page = $this->lastPage());
+        }
+
+        $this->resolvedPage = $page;
+        $this->hasMorePages = $items->count() > $this->limit();
+        $this->cachedPage = $items->take($this->limit());
+    }
+
+    /**
+     * Fetches one more item than fits on the page - its presence is what
+     * {@see hasMorePages} reports, and it's dropped by {@see resolve}.
+     *
+     * @param positive-int $page
+     *
+     * @return ArrayCollection<V,K&array-key>
+     */
+    private function fetch(int $page): ArrayCollection
+    {
+        return $this->collection->take($this->limit() + 1, $page * $this->limit() - $this->limit())->eager();
     }
 }

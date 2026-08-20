@@ -335,6 +335,56 @@ class EntityRepositoryTest extends TestCase
     /**
      * @test
      */
+    public function paginating_does_not_execute_a_count_query(): void
+    {
+        $result = $this->createWithItems(10)->filter(null)->disableFetchJoins();
+
+        $this->assertQueryCount(1, function() use ($result) {
+            $page = $result->paginate(page: 2, limit: 3);
+
+            $this->assertCount(3, $page);
+            $this->assertTrue($page->hasMorePages());
+            $this->assertSame(3, $page->nextPage());
+            $this->assertSame(1, $page->previousPage());
+            $this->assertTrue($page->haveToPaginate());
+        });
+
+        // asking for a total is what costs the extra query
+        $this->assertQueryCount(2, function() use ($result) {
+            $page = $result->paginate(page: 2, limit: 3);
+
+            $this->assertCount(3, $page);
+            $this->assertSame(10, $page->totalCount());
+            $this->assertSame(4, $page->lastPage());
+        });
+    }
+
+    /**
+     * @test
+     */
+    public function strict_mode_only_counts_when_the_page_is_out_of_range(): void
+    {
+        $result = $this->createWithItems(10)->filter(null)->disableFetchJoins();
+
+        $this->assertQueryCount(1, function() use ($result) {
+            $page = $result->paginate(page: 2, limit: 3)->strict();
+
+            $this->assertSame(2, $page->currentPage());
+            $this->assertCount(3, $page);
+        });
+
+        // the empty fetch, the count to find the last page, then re-fetching it
+        $this->assertQueryCount(3, function() use ($result) {
+            $page = $result->paginate(page: 99, limit: 3)->strict();
+
+            $this->assertSame(4, $page->currentPage());
+            $this->assertCount(1, $page);
+        });
+    }
+
+    /**
+     * @test
+     */
     public function readonly_specification(): void
     {
         $results = $this->createWithItems(3)->filter(DoctrineSpec::readonly());
