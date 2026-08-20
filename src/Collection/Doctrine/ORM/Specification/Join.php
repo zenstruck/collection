@@ -21,18 +21,15 @@ final class Join extends Field
     private const TYPE_INNER = 'inner';
     private const TYPE_LEFT = 'left';
 
-    private string $alias;
     private bool $eager = false;
     private mixed $child = null;
 
     /**
      * @param self::TYPE_INNER|self::TYPE_LEFT $type
      */
-    private function __construct(private string $type, string $field, ?string $alias = null)
+    private function __construct(private string $type, string $field, private ?string $alias = null)
     {
         parent::__construct($field);
-
-        $this->alias = $alias ?? $field;
     }
 
     public function __toString(): string
@@ -71,7 +68,15 @@ final class Join extends Field
 
     public function alias(): string
     {
-        return $this->alias;
+        return $this->alias ?? $this->field;
+    }
+
+    /**
+     * @internal
+     */
+    public function hasExplicitAlias(): bool
+    {
+        return null !== $this->alias;
     }
 
     /**
