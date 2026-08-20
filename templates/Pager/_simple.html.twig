@@ -1,0 +1,27 @@
+{#
+    A previous/next pager for a Zenstruck\Collection\Page. Renders without counting the collection.
+
+    page:  the Page (required)
+    route: the route to link to (defaults to the current one)
+    params: the route/query parameters to keep (defaults to the current request's)
+    key:   the page query parameter (defaults to "page")
+#}
+{% set key = key|default('page') %}
+{% set route = route|default(app.request.attributes.get('_route')) %}
+{% set params = params|default(app.request.query.all|merge(app.request.attributes.get('_route_params')|default({}))) %}
+
+{% if page.haveToPaginate %}
+    <ul class="pager pager-simple">
+        {% if page.previousPage %}
+            <li><a href="{{ path(route, params|merge({(key): page.previousPage})) }}" rel="prev">Previous</a></li>
+        {% else %}
+            <li class="disabled"><span>Previous</span></li>
+        {% endif %}
+
+        {% if page.nextPage %}
+            <li><a href="{{ path(route, params|merge({(key): page.nextPage})) }}" rel="next">Next</a></li>
+        {% else %}
+            <li class="disabled"><span>Next</span></li>
+        {% endif %}
+    </ul>
+{% endif %}

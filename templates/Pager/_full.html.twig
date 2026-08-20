@@ -1,0 +1,41 @@
+{#
+    A numbered pager for a Zenstruck\Collection\Page. Counts the collection (once) for the page count.
+
+    page:   the Page (required)
+    route:  the route to link to (defaults to the current one)
+    params: the route/query parameters to keep (defaults to the current request's)
+    key:    the page query parameter (defaults to "page")
+    window: how many pages to show on each side of the current one (defaults to 4)
+#}
+{% set key = key|default('page') %}
+{% set window = window|default(4) %}
+{% set route = route|default(app.request.attributes.get('_route')) %}
+{% set params = params|default(app.request.query.all|merge(app.request.attributes.get('_route_params')|default({}))) %}
+
+{% if page.haveToPaginate %}
+    <ul class="pager pager-full">
+        {% if page.previousPage %}
+            <li><a href="{{ path(route, params|merge({(key): page.previousPage})) }}" rel="prev">&lt;</a></li>
+        {% else %}
+            <li class="disabled"><span>&lt;</span></li>
+        {% endif %}
+
+        {% for i in page.firstPage..page.lastPage %}
+            {% if i == page.currentPage %}
+                <li class="active"><span>{{ i }}</span></li>
+            {% elseif i == page.firstPage or i == page.lastPage %}
+                <li><a href="{{ path(route, params|merge({(key): i})) }}">{{ i }}</a></li>
+            {% elseif i == page.currentPage - window or i == page.currentPage + window %}
+                <li class="disabled"><span>&hellip;</span></li>
+            {% elseif i > page.currentPage - window and i < page.currentPage + window %}
+                <li><a href="{{ path(route, params|merge({(key): i})) }}">{{ i }}</a></li>
+            {% endif %}
+        {% endfor %}
+
+        {% if page.nextPage %}
+            <li><a href="{{ path(route, params|merge({(key): page.nextPage})) }}" rel="next">&gt;</a></li>
+        {% else %}
+            <li class="disabled"><span>&gt;</span></li>
+        {% endif %}
+    </ul>
+{% endif %}

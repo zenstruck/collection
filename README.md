@@ -424,6 +424,54 @@ when the requested page really was out of range.
 > the total. An in-range page still counts nothing, but an out of range one reads the empty page, counts, then
 > reads the last page. Keep `strict()` to Full pagers if that matters.
 
+### Templating
+
+Two pager templates are bundled, matching the two modes. Both take the `Page` and link to the current route,
+keeping whatever query parameters are already there:
+
+```twig
+{# previous/next - counts nothing #}
+{{ include('@ZenstruckCollection/Pager/_simple.html.twig', {page: page}) }}
+
+{# numbered - counts once #}
+{{ include('@ZenstruckCollection/Pager/_full.html.twig', {page: page}) }}
+```
+
+Neither renders anything at all when the collection fits on one page. The markup is unstyled and deliberately
+plain - copy it into your app and adjust rather than fighting it:
+
+```html
+<ul class="pager pager-simple">
+    <li><a href="/posts?page=2" rel="prev">Previous</a></li>
+    <li><a href="/posts?page=4" rel="next">Next</a></li>
+</ul>
+```
+
+Both accept the same options:
+
+| Variable | Description                                                                            |
+|----------|----------------------------------------------------------------------------------------|
+| `page`   | The `Page` to render (required)                                                         |
+| `route`  | The route to link to (defaults to the current one)                                      |
+| `params` | The route/query parameters to keep (defaults to the current request's)                 |
+| `key`    | The page query parameter (defaults to `page`)                                           |
+| `window` | `_full` only: how many pages to show either side of the current one (defaults to `4`)  |
+
+```twig
+{{ include('@ZenstruckCollection/Pager/_full.html.twig', {
+    page: page,
+    route: 'post_archive',
+    params: {year: 2026},
+    key: 'p',
+    window: 2,
+}) }}
+```
+
+> [!NOTE]
+> These require Twig and Symfony's routing (`path()`), and are registered by the
+> [bundle](#symfony-integration).
+
+
 ### Iterating Pages
 
 `pages()` returns a `Pages` object - a lazy, page-by-page view of the entire collection. Each page is a
@@ -1241,6 +1289,13 @@ return [
 
 There is nothing to configure. When DoctrineBundle is installed, the repository services below are registered
 automatically.
+
+The bundle also registers the `@ZenstruckCollection` Twig namespace, which is where the
+[pager templates](#templating) live:
+
+```twig
+{{ include('@ZenstruckCollection/Pager/_simple.html.twig', {page: page}) }}
+```
 
 ### A Repository For Any Entity
 

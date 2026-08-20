@@ -15,6 +15,7 @@ use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Psr\Log\NullLogger;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
+use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel;
@@ -39,6 +40,7 @@ final class TestKernel extends Kernel
         yield new FrameworkBundle();
         yield new DoctrineBundle();
         yield new ZenstruckFoundryBundle();
+        yield new TwigBundle();
         yield new ZenstruckCollectionBundle();
     }
 
@@ -65,6 +67,8 @@ final class TestKernel extends Kernel
                 ],
             ],
         ]);
+
+        $c->loadFromExtension('twig', ['strict_variables' => true]);
 
         $c->register('logger', NullLogger::class); // disable logging
         $c->register(Service1::class)
@@ -106,5 +110,6 @@ final class TestKernel extends Kernel
 
     protected function configureRoutes(RoutingConfigurator $routes): void
     {
+        $routes->add('posts', '/posts')->controller('kernel::index');
     }
 }
