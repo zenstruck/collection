@@ -115,7 +115,7 @@ final class QueryBuilderInterpreter
             Delete::class => $this->qb->delete(),
             Unwritable::class => $this->qb->readonly(),
             Cache::class => $this->qb->cacheResult($specification->lifetime(), $specification->key()),
-            AntiJoin::class => $this->qb->leftJoin($this->prefix($specification->field), $specification->field)->andWhere($this->qb->expr()->isNull($specification->field)),
+            AntiJoin::class => $this->interpretAntiJoin($specification),
             Join::class => $this->interpretJoin($specification),
 
             default => throw InvalidSpecification::build($specification, $this->callingClass, $this->callingMethod),
@@ -135,12 +135,21 @@ final class QueryBuilderInterpreter
         return $this->transform($between->asAnd());
     }
 
+    private function interpretAntiJoin(AntiJoin $join): mixed
+    {
+        $alias = $this->joinAlias($join->field);
+
+        $this->qb->leftJoin($this->prefix($join->field), $alias);
+
+        return $this->qb->expr()->isNull($alias);
+    }
+
     private function interpretJoin(Join $join): mixed
     {
-        $this->addJoinToQueryBuilder($join);
+        $alias = $this->addJoinToQueryBuilder($join);
 
         if ($join->isEager()) {
-            $this->qb->addSelect($join->alias());
+            $this->qb->addSelect($alias);
         }
 
         if (null === $join->child()) {
@@ -148,25 +157,42 @@ final class QueryBuilderInterpreter
         }
 
         $interpreter = clone $this;
-        $interpreter->alias = $join->alias();
+        $interpreter->alias = $alias;
 
         return $interpreter->transform($join->child());
     }
 
-    private function addJoinToQueryBuilder(Join $join): void
+    private function addJoinToQueryBuilder(Join $join): string
     {
         $field = $this->prefix($join->field);
 
         foreach ($this->qb->getDQLParts()['join'] as $entry) {
             foreach ($entry as $item) {
                 if ($field === $item->getJoin()) {
-                    // join already added
-                    return;
+                    // join already added - reuse its alias
+                    return $item->getAlias();
                 }
             }
         }
 
-        $this->qb->{$join->type().'Join'}($field, $join->alias());
+        $alias = $this->joinAlias($join->alias(), $join->hasExplicitAlias());
+
+        $this->qb->{$join->type().'Join'}($field, $alias);
+
+        return $alias;
+    }
+
+    /**
+     * Qualifies the alias of a nested join with its parent's so that relations
+     * with the same name on different parents don't collide.
+     */
+    private function joinAlias(string $alias, bool $explicit = false): string
+    {
+        if ($explicit || $this->alias === ($this->qb->getRootAliases()[0] ?? $this->alias)) {
+            return $alias;
+        }
+
+        return \sprintf('%s_%s', $this->alias, $alias);
     }
 
     private function composite(Composite $specification, string $method): DoctrineComposite|Func|null

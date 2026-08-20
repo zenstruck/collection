@@ -489,6 +489,53 @@ class EntityRepositoryTest extends TestCase
     /**
      * @test
      */
+    public function filter_with_anti_join_within_a_composite(): void
+    {
+        $this->persistEntitiesForJoinTest();
+
+        $results = $this->repo()->filter(Spec::orX(
+            Join::anti('relation'),
+            Spec::eq('value', 'e3'),
+        ));
+
+        $this->assertCount(3, $results);
+    }
+
+    /**
+     * @test
+     */
+    public function nested_joins_of_the_same_relation_do_not_collide(): void
+    {
+        $this->persistEntitiesForJoinTest();
+
+        $results = $this->repo()->filter(
+            Join::inner('relation')->scope(Join::inner('entities')->scope(Join::inner('relation'))),
+        );
+
+        $this->assertCount(3, $results);
+    }
+
+    /**
+     * @test
+     */
+    public function an_explicit_join_alias_is_never_qualified(): void
+    {
+        $this->persistEntitiesForJoinTest();
+
+        $results = $this->repo()->filter(
+            Join::inner('relation')->scope(
+                Join::inner('entities', 'e2')->scope(Spec::callback(
+                    static fn(QueryBuilder $qb) => $qb->andWhere('e2.value = :value')->setParameter('value', 'e3'),
+                )),
+            ),
+        );
+
+        $this->assertCount(1, $results);
+    }
+
+    /**
+     * @test
+     */
     public function filter_with_join_and_multiple_scope(): void
     {
         $this->persistEntitiesForJoinTest();

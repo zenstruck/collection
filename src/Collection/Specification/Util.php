@@ -21,7 +21,7 @@ final class Util
     public static function stringify(mixed $specification): string
     {
         if ($specification instanceof \Stringable) {
-            return $specification;
+            return (string) $specification;
         }
 
         if ($specification instanceof Nested) {

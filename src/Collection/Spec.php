@@ -12,6 +12,7 @@
 namespace Zenstruck\Collection;
 
 use Zenstruck\Collection\Specification\Callback;
+use Zenstruck\Collection\Specification\Filter\Between;
 use Zenstruck\Collection\Specification\Filter\Contains;
 use Zenstruck\Collection\Specification\Filter\EndsWith;
 use Zenstruck\Collection\Specification\Filter\EqualTo;
@@ -54,6 +55,14 @@ class Spec
     final public static function eq(string $field, mixed $value): EqualTo
     {
         return new EqualTo($field, $value);
+    }
+
+    /**
+     * @param Between::* $type
+     */
+    final public static function between(string $field, mixed $begin, mixed $end, string $type = Between::INCLUSIVE): Between
+    {
+        return new Between($field, $begin, $end, $type);
     }
 
     final public static function contains(string $field, string $value): Contains

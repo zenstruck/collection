@@ -1004,7 +1004,7 @@ $posts->filter(Spec::andX(
 | `Spec::contains($field, $value)`            | Matches when `$field` contains `$value`            |
 | `Spec::startsWith($field, $value)`          | Matches when `$field` starts with `$value`         |
 | `Spec::endsWith($field, $value)`            | Matches when `$field` ends with `$value`           |
-| `Between::inclusive($field, $begin, $end)`  | Matches when `$begin <= $field <= $end`            |
+| `Spec::between($field, $begin, $end)`       | Matches when `$begin <= $field <= $end`            |
 | `Spec::andX(...$specs)`                     | Matches when every `$spec` matches                 |
 | `Spec::orX(...$specs)`                      | Matches when at least one `$spec` matches          |
 | `Spec::not($spec)`                          | Matches when `$spec` does not match                |
@@ -1013,15 +1013,14 @@ $posts->filter(Spec::andX(
 | `Spec::callback($callable)`                 | Drops down to the underlying query object          |
 
 > [!NOTE]
-> `Between` is the one filter without a `Spec` factory method - construct it directly. Both bounds are
-> included unless you say otherwise:
+> Both `between()` bounds are included unless you say otherwise:
 > ```php
 > use Zenstruck\Collection\Specification\Filter\Between;
 >
-> Between::inclusive('publishedAt', $start, $end);                     // both included
-> Between::exclusive('publishedAt', $start, $end);                     // both excluded
-> new Between('publishedAt', $start, $end, Between::INCLUSIVE_BEGIN);  // begin included, end excluded
-> new Between('publishedAt', $start, $end, Between::EXCLUSIVE_BEGIN);  // begin excluded, end included
+> Spec::between('publishedAt', $start, $end);                           // both included
+> Spec::between('publishedAt', $start, $end, Between::EXCLUSIVE);       // both excluded
+> Spec::between('publishedAt', $start, $end, Between::INCLUSIVE_BEGIN); // begin included, end excluded
+> Spec::between('publishedAt', $start, $end, Between::EXCLUSIVE_BEGIN); // begin excluded, end included
 > ```
 
 #### String Wildcards
