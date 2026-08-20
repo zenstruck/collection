@@ -30,6 +30,7 @@ final class Page implements \IteratorAggregate, \Countable
     /** @var positive-int */
     private int $limit;
     private bool $strict = false;
+    private bool $hasMorePages;
 
     /** @var non-negative-int */
     private int $totalCount;
@@ -108,15 +109,24 @@ final class Page implements \IteratorAggregate, \Countable
         return $this->getPage()->getIterator();
     }
 
+    /**
+     * Whether there is at least one more page after this one. Unlike
+     * {@see lastPage}, this doesn't require counting the collection.
+     */
+    public function hasMorePages(): bool
+    {
+        $this->getPage();
+
+        return $this->hasMorePages;
+    }
+
     public function nextPage(): ?int
     {
-        $currentPage = $this->currentPage();
-
-        if ($currentPage === $this->lastPage()) {
+        if (!$this->hasMorePages()) {
             return null;
         }
 
-        return ++$currentPage;
+        return $this->currentPage() + 1;
     }
 
     public function previousPage(): ?int
@@ -159,10 +169,13 @@ final class Page implements \IteratorAggregate, \Countable
 
     public function haveToPaginate(): bool
     {
-        return $this->pageCount() > 1;
+        return $this->currentPage() > 1 || $this->hasMorePages();
     }
 
     /**
+     * Fetches one more item than fits on the page - its presence is what
+     * {@see hasMorePages} reports, and it's dropped before returning.
+     *
      * @return Collection<V,K>
      */
     private function getPage(): Collection
@@ -172,7 +185,9 @@ final class Page implements \IteratorAggregate, \Countable
         }
 
         $offset = $this->currentPage() * $this->limit() - $this->limit();
+        $items = $this->collection->take($this->limit() + 1, $offset)->eager();
+        $this->hasMorePages = $items->count() > $this->limit();
 
-        return $this->cachedPage = $this->collection->take($this->limit(), $offset);
+        return $this->cachedPage = $items->take($this->limit());
     }
 }

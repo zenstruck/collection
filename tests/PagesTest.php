@@ -125,7 +125,7 @@ final class PagesTest extends TestCase
         $this->assertNull($collection->get(1)->nextPage());
         $this->assertNull($collection->get(1)->previousPage());
         $this->assertNull($collection->get(99)->strict()->nextPage());
-        $this->assertSame(100, $collection->get(99)->nextPage());
+        $this->assertNull($collection->get(99)->nextPage());
         $this->assertNull($collection->get(99)->strict()->previousPage());
         $this->assertSame(98, $collection->get(99)->previousPage());
     }
