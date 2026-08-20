@@ -104,7 +104,7 @@ final class DoctrineBridgeCollection implements Collection, DoctrineCollection, 
             return new self($this->inner->matching($specification));
         }
 
-        if ($this->inner instanceof Criteria) {
+        if ($specification instanceof Criteria) {
             throw new \LogicException(\sprintf('"%s" is not an instance of "%s". Cannot use Criteria as a specification.', $this->inner::class, Selectable::class));
         }
 

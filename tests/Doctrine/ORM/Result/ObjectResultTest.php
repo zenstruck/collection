@@ -15,6 +15,7 @@ use Doctrine\Common\Collections\Criteria;
 use Zenstruck\Collection\Doctrine\Batch\CountableBatchIterator;
 use Zenstruck\Collection\Doctrine\Batch\CountableBatchProcessor;
 use Zenstruck\Collection\Doctrine\ORM\EntityResult;
+use Zenstruck\Collection\Spec;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
 use Zenstruck\Collection\Tests\Doctrine\ORM\EntityResultTest;
 use Zenstruck\Collection\Tests\MatchableObjectTests;
@@ -112,6 +113,46 @@ class ObjectResultTest extends EntityResultTest
         $entity = $this->createWithItems(1)->readonly()->first();
 
         $this->assertFalse($this->em->contains($entity));
+    }
+
+    /**
+     * @test
+     */
+    public function count_is_not_cached_across_derived_results(): void
+    {
+        $result = $this->createWithItems(5);
+
+        $this->assertCount(5, $result);
+        $this->assertCount(2, $result->filter(Spec::lt('id', 3)));
+        $this->assertCount(5, $result);
+    }
+
+    /**
+     * @test
+     */
+    public function can_set_as_readonly_when_iterating(): void
+    {
+        $entities = \iterator_to_array($this->createWithItems(2)->readonly());
+
+        $this->assertCount(2, $entities);
+
+        foreach ($entities as $entity) {
+            $this->assertFalse($this->em->contains($entity));
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function can_set_as_readonly_when_paginating(): void
+    {
+        $entities = \iterator_to_array($this->createWithItems(2)->readonly()->paginate());
+
+        $this->assertCount(2, $entities);
+
+        foreach ($entities as $entity) {
+            $this->assertFalse($this->em->contains($entity));
+        }
     }
 
     /**

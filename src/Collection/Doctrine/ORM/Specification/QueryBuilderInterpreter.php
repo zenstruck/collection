@@ -47,6 +47,8 @@ use Zenstruck\Collection\Specification\OrderBy;
  */
 final class QueryBuilderInterpreter
 {
+    private const LIKE_ESCAPE = '!';
+
     /**
      * @param EntityResultQueryBuilder<object> $qb
      * @param class-string                     $callingClass
@@ -99,9 +101,9 @@ final class QueryBuilderInterpreter
             GreaterThanOrEqualTo::class => $this->qb->expr()->gte($this->prefix($specification->field), $this->param($specification->value)),
             In::class => $this->qb->expr()->in($this->prefix($specification->field), $this->param($specification->value)),
             IsNull::class => $this->qb->expr()->isNull($this->prefix($specification->field)),
-            Contains::class => $this->qb->expr()->like($this->prefix($specification->field), $this->param('%'.self::normalizeLike($specification).'%')),
-            StartsWith::class => $this->qb->expr()->like($this->prefix($specification->field), $this->param(self::normalizeLike($specification).'%')),
-            EndsWith::class => $this->qb->expr()->like($this->prefix($specification->field), $this->param('%'.self::normalizeLike($specification))),
+            Contains::class => $this->like($specification, '%', '%'),
+            StartsWith::class => $this->like($specification, '', '%'),
+            EndsWith::class => $this->like($specification, '%', ''),
             Between::class => $this->interpretBetween($specification),
 
             Callback::class => ($specification->value)($this->qb, $this->alias),
@@ -191,9 +193,25 @@ final class QueryBuilderInterpreter
         );
     }
 
-    private static function normalizeLike(Comparison $comparison): string
+    /**
+     * Escapes the SQL wildcards in the value, then converts the user-facing
+     * wildcard (*) into a real one. Leading/trailing wildcards are trimmed
+     * as $prefix/$suffix already add them where required.
+     */
+    private function like(Comparison $comparison, string $prefix, string $suffix): string
     {
-        return \str_replace(['%', '*'], ['%%', '%'], \trim($comparison->value, '*')); // todo make wildcard char configurable?
+        $value = \str_replace(
+            [self::LIKE_ESCAPE, '%', '_', '*'], // todo make wildcard char configurable?
+            [self::LIKE_ESCAPE.self::LIKE_ESCAPE, self::LIKE_ESCAPE.'%', self::LIKE_ESCAPE.'_', '%'],
+            \trim($comparison->value, '*'),
+        );
+
+        return \sprintf(
+            '%s LIKE %s ESCAPE %s',
+            $this->prefix($comparison->field),
+            $this->param($prefix.$value.$suffix),
+            $this->qb->expr()->literal(self::LIKE_ESCAPE),
+        );
     }
 
     private function param(mixed $value): string

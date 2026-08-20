@@ -553,7 +553,7 @@ $updated = EntityResultQueryBuilder::forEntity($em, Post::class, 'p')
 going to read - nothing is tracked for changes, and nothing is flushed:
 
 ```php
-foreach ($result->readonly()->paginate() as $post) {
+foreach ($result->readonly() as $post) {
     // $post is not managed
 }
 ```
@@ -1035,10 +1035,18 @@ A leading or trailing `*` is stripped - the specification already adds one on th
 Spec::contains('title', '*symfony*'); // identical to Spec::contains('title', 'symfony')
 ```
 
+`*` is the _only_ wildcard. SQL's own wildcards are escaped, so they match literally and user input is safe to
+pass straight through:
+
+```php
+Spec::contains('title', '50%');     // titles containing "50%"
+Spec::startsWith('code', 'a_b');    // codes starting with "a_b" - the underscore isn't a wildcard
+```
+
 > [!WARNING]
-> Wildcards are only interpreted by [repositories](#repositories). An [`EntityResult`](#entityresult) or a
-> [bridged collection](#collection-bridge) passes the value straight through to the `Criteria`, where `*`
-> matches a literal asterisk.
+> All of this is repository-only. An [`EntityResult`](#entityresult) or a
+> [bridged collection](#collection-bridge) passes the value straight through to the `Criteria`, so `*` matches
+> a literal asterisk and `%`/`_` are left to the database as wildcards.
 
 #### What Understands What
 
@@ -1096,11 +1104,15 @@ $posts->filter(Spec::callback(
 ));
 ```
 
-An `EntityResult` or a bridged collection gives you the `Criteria` instead. Return an `Expression` and it gets
-added to it:
+An `EntityResult` or a bridged collection gives you the `Criteria` instead. Either modify it directly or
+return an `Expression` to have it added for you:
 
 ```php
 use Doctrine\Common\Collections\Criteria;
+
+$comments->filter(Spec::callback(
+    fn(Criteria $criteria) => $criteria->andWhere(Criteria::expr()->gt('score', 10)),
+));
 
 $comments->filter(Spec::callback(
     fn(Criteria $criteria) => Criteria::expr()->gt('score', 10),
