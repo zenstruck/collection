@@ -183,10 +183,9 @@ foreach ($titles as $title) {
 | Method                                    | Runs the source?                       | How much it reads                     |
 |-------------------------------------------|----------------------------------------|---------------------------------------|
 | `filter()`, `map()`, `keyBy()`, `take()`  | No - returns a new lazy collection     | Nothing                               |
-| `paginate()`, `pages()`                   | No - returns a `Page`/`Pages`          | Nothing                               |
+| `paginate()`, `pages()`                   | No - returns a `Page`/`Pages`          | Nothing until the page is used        |
 | `first()`                                 | Yes                                    | Stops at the first item               |
 | `find()`                                  | Yes                                    | Stops at the first match              |
-| `Page::hasMorePages()`                    | Yes                                    | One item past the end of the page     |
 | `count()`, `isEmpty()`                    | Only if the source isn't `Countable`   | Counts, keeping nothing               |
 | `reduce()`                                | Yes                                    | All of it, keeping nothing            |
 | `eager()`                                 | Yes                                    | All of it, kept in memory             |
