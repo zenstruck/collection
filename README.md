@@ -438,7 +438,8 @@ keeping whatever query parameters are already there:
 ```
 
 Neither renders anything at all when the collection fits on one page. The markup is unstyled and deliberately
-plain - copy it into your app and adjust rather than fighting it:
+plain - [style the classes it emits](#styling), or copy the template into your app if you want to change the
+markup itself:
 
 ```html
 <ul class="pager pager-simple">
@@ -471,6 +472,36 @@ Both accept the same options:
 > These require Twig and Symfony's routing (`path()`), and are registered by the
 > [bundle](#symfony-integration).
 
+#### Styling
+
+The class names are the styling hooks: `pager` on both, plus `pager-simple`/`pager-full`, and `active` and
+`disabled` on the individual items. With Tailwind that's a few `@apply` rules and no template to maintain:
+
+```css
+/* assets/styles/app.css */
+@import 'tailwindcss';
+
+.pager {
+    @apply flex items-center gap-1 text-sm;
+}
+
+.pager a,
+.pager span {
+    @apply block rounded-md px-3 py-2;
+}
+
+.pager a {
+    @apply text-gray-700 hover:bg-gray-100;
+}
+
+.pager .active span {
+    @apply bg-gray-900 font-medium text-white;
+}
+
+.pager .disabled span {
+    @apply text-gray-400;
+}
+```
 
 ### Iterating Pages
 
