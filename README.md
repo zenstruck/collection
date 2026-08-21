@@ -68,6 +68,7 @@ Features:
       queries.
 4. [**Symfony Integration**](#symfony-integration): Autowire a lazy-first repository for any entity.
 5. [**Static Analysis**](#static-analysis): Fully generic - PHPStan knows what your collections contain.
+6. [**Recipes**](#recipes): Worked examples for things that aren't a database.
 
 ## Installation
 
@@ -364,8 +365,8 @@ collection - the page reads one item more than fits on it, and the presence of t
 answer. It's dropped before you see the items, which is why `count($page)` is still 20.
 
 That one item is often the difference between a bounded amount of work and an unbounded one. Paging an
-[API-backed collection](#lazycollection) this way reads a single page's worth of results; asking it for a
-total would walk every page the API has.
+API-backed collection this way reads a single page's worth of results; asking it for a total would walk every
+page the API has - the [recipes](#recipes) work through exactly that, with request counts.
 
 The items are fetched once and cached, so iterating the same `Page` more than once won't re-run the source.
 
@@ -473,8 +474,8 @@ Both accept the same options:
 
 ### Iterating Pages
 
-`pages()` returns a `Pages` object - a lazy, page-by-page view of the entire collection. Each page is a
-separate query, so this is a memory-safe way to walk a large result set:
+`pages()` returns a `Pages` object - a lazy, page-by-page view of the entire collection. Each page is fetched
+on its own, so nothing ever holds more than one page in memory:
 
 ```php
 foreach ($posts->pages(100) as $page) {
@@ -492,6 +493,13 @@ $pages->get(3);  // the Page for page 3
 > [!NOTE]
 > `count()` on `Pages` is the number of _pages_, while `count()` on a `Page` is the number of _items_ on that
 > page. Use `Page::totalCount()` for the total number of items.
+
+> [!WARNING]
+> Fetching each page independently is only cheap if the source can jump straight to an offset. That's one
+> query per page for [Doctrine](#doctrine), but a source that reaches an offset by skipping - a generator, an
+> API - re-reads everything before each page: 2,000 items in pages of 100 costs 249 reads instead of 20. Just
+> iterate the collection for that, or teach it to window itself
+> ([recipe](#wrapping-it-in-your-own-collection)).
 
 ### Pagerfanta
 
@@ -1416,6 +1424,198 @@ $posts->query(null)->asInt('id');                   // EntityResult<int>
 $posts->query(null)->as(fn(Post $p) => $p->dto());  // EntityResult<PostDto>
 $posts->query(null)->withAggregates();              // EntityResult<EntityWithAggregates<Post>>
 ```
+
+## Recipes
+
+Three passes at the same problem - iterating GitHub's issue search, which hands out 100 results at a time and
+reports a `total_count` - each one fixing something the previous one couldn't do cheaply.
+
+### Iterating a Paginated API
+
+Wrapping the "keep requesting until there are none left" loop in a [`LazyCollection`](#lazycollection) turns
+it into something you can iterate, filter and map, and nothing is requested until you do:
+
+```php
+use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Zenstruck\Collection\LazyCollection;
+
+/** @var HttpClientInterface $client */
+
+$query = ['q' => 'repo:symfony/symfony is:issue'];
+
+$issues = new LazyCollection(function() use ($client, $query) {
+    $page = 1;
+
+    while ($items = $client->request('GET', 'https://api.github.com/search/issues', [
+        'query' => $query + ['per_page' => 100, 'page' => $page++],
+    ])->toArray()['items']) {
+        yield from $items;
+    }
+});
+```
+
+Pages are requested as you iterate, and stop being requested when you stop:
+
+```php
+foreach ($issues as $issue) {
+    // ...
+}
+
+$issues->first();   // one request
+$issues->take(150); // two
+
+$issues
+    ->filter(fn(array $issue) => \str_contains($issue['title'], 'pagination'))
+    ->map(fn(array $issue) => $issue['title'])
+    ->take(3)       // nothing requested yet
+;
+```
+
+Two things are expensive, though:
+
+```php
+\count($issues);          // 22202 - after requesting all 223 pages
+$issues->take(20, 980);   // 11 requests - it skipped 980 items to get there
+```
+
+`count()` has to walk every page to arrive at a number, and `take()` reaches an offset by skipping items from
+the front - so `paginate()` gets slower the deeper you go: page 1 costs one request, page 11 costs three, page
+50 costs eleven. The next two recipes deal with each in turn.
+
+### Counting It Without Walking It
+
+The API reports the total itself, so hand it over with
+[`CallbackCollection`](#composing-collections) - the second callback is only ever called by `count()`:
+
+```php
+use Zenstruck\Collection\CallbackCollection;
+
+$query = ['q' => 'repo:symfony/symfony is:issue'];
+
+$issues = new CallbackCollection(
+    function() use ($client, $query) {
+        $page = 1;
+
+        while ($items = $client->request('GET', 'https://api.github.com/search/issues', [
+            'query' => $query + ['per_page' => 100, 'page' => $page++],
+        ])->toArray()['items']) {
+            yield from $items;
+        }
+    },
+    fn() => $client->request('GET', 'https://api.github.com/search/issues', [
+        'query' => $query + ['per_page' => 1],
+    ])->toArray()['total_count'],
+);
+
+\count($issues);    // 22202 - one request
+$issues->isEmpty(); // ...the same request
+```
+
+That's the first problem gone. The second one remains: `take()` still skips from the front, so
+`$issues->take(20, 980)` is still eleven requests.
+
+### Wrapping It in Your Own Collection
+
+Implementing `Collection` yourself is mostly free - the `IterableCollection` trait supplies everything except
+`getIterator()` - and it lets you override `take()` as well, which is the one thing the previous two recipes
+can't do:
+
+```php
+namespace App\GitHub;
+
+use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Zenstruck\Collection;
+use Zenstruck\Collection\IterableCollection;
+use Zenstruck\Collection\LazyCollection;
+
+/**
+ * @implements Collection<array<string,mixed>,int>
+ */
+final class IssueSearch implements Collection
+{
+    /** @use IterableCollection<array<string,mixed>,int> */
+    use IterableCollection;
+
+    private const PER_PAGE = 100; // the API's maximum
+
+    public function __construct(private HttpClientInterface $client, private string $query)
+    {
+    }
+
+    public function getIterator(): \Traversable
+    {
+        foreach ($this->apiPages() as $items) {
+            yield from $items;
+        }
+    }
+
+    public function count(): int
+    {
+        return $this->request(['per_page' => 1])['total_count'];
+    }
+
+    public function take(int $limit, int $offset = 0): Collection
+    {
+        return new LazyCollection(function() use ($limit, $offset) {
+            $skip = $offset % self::PER_PAGE;
+
+            // start at the page the window begins in, instead of skipping from the front
+            foreach ($this->apiPages(\intdiv($offset, self::PER_PAGE) + 1) as $items) {
+                foreach (\array_slice($items, $skip) as $item) {
+                    yield $item;
+
+                    if (0 === --$limit) {
+                        return;
+                    }
+                }
+
+                $skip = 0;
+            }
+        });
+    }
+
+    /**
+     * @return \Traversable<int,list<array<string,mixed>>>
+     */
+    private function apiPages(int $from = 1): \Traversable
+    {
+        while ($items = $this->request(['per_page' => self::PER_PAGE, 'page' => $from++])['items']) {
+            yield $items;
+        }
+    }
+
+    /**
+     * @param array<string,mixed> $query
+     *
+     * @return array<string,mixed>
+     */
+    private function request(array $query): array
+    {
+        return $this->client->request('GET', 'https://api.github.com/search/issues', [
+            'query' => $query + ['q' => $this->query],
+        ])->toArray();
+    }
+}
+```
+
+Both of the expensive operations are now a single request, however deep you reach:
+
+```php
+$issues = new IssueSearch($client, 'repo:symfony/symfony is:issue');
+
+\count($issues);        // 22202 - one request
+$issues->take(20);      // one request
+$issues->take(20, 980); // still one - it asks for the page the window is in
+```
+
+> [!TIP]
+> `paginate()` is built on `take()`, so it inherits this: any page costs one request no matter how deep, and a
+> [Full](#full) pager gets its total from `count()` for one more.
+
+> [!NOTE]
+> `@implements Collection<array<string,mixed>,int>` is what keeps this type-safe - PHPStan knows what
+> `first()` returns and what the callbacks receive. Careful with helper names too: `pages()` is already part
+> of the interface, which is why the private one above is `apiPages()`.
 
 ## Security Policy
 
