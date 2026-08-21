@@ -1,11 +1,17 @@
-{#
-    A previous/next pager for a Zenstruck\Collection\Page. Renders without counting the collection.
+{## A previous/next pager for a `Zenstruck\Collection\Page`. Renders nothing when there is only one page. ##}
+{% types {
+    ## The page to render.
+    page: 'Zenstruck\\Collection\\Page',
 
-    page:  the Page (required)
-    route: the route to link to (defaults to the current one)
-    params: the route/query parameters to keep (defaults to the current request's)
-    key:   the page query parameter (defaults to "page")
-#}
+    ## The route to link to. Defaults to the current request's route.
+    route?: 'string',
+
+    ## The route/query parameters to keep. Defaults to the current request's.
+    params?: 'array',
+
+    ## The query parameter the page number is stored in.
+    key?: 'string',
+} %}
 {% set key = key|default('page') %}
 {% set route = route|default(app.request.attributes.get('_route')) %}
 {% set params = params|default(app.request.query.all|merge(app.request.attributes.get('_route_params')|default({}))) %}

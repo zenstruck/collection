@@ -1,12 +1,20 @@
-{#
-    A numbered pager for a Zenstruck\Collection\Page. Counts the collection (once) for the page count.
+{## A numbered pager for a `Zenstruck\Collection\Page`. Renders nothing when there is only one page. ##}
+{% types {
+    ## The page to render. Counting the collection is what makes the page numbers possible.
+    page: 'Zenstruck\\Collection\\Page',
 
-    page:   the Page (required)
-    route:  the route to link to (defaults to the current one)
-    params: the route/query parameters to keep (defaults to the current request's)
-    key:    the page query parameter (defaults to "page")
-    window: how many pages to show on each side of the current one (defaults to 4)
-#}
+    ## The route to link to. Defaults to the current request's route.
+    route?: 'string',
+
+    ## The route/query parameters to keep. Defaults to the current request's.
+    params?: 'array',
+
+    ## The query parameter the page number is stored in.
+    key?: 'string',
+
+    ## How many pages to show either side of the current one.
+    window?: 'int',
+} %}
 {% set key = key|default('page') %}
 {% set window = window|default(4) %}
 {% set route = route|default(app.request.attributes.get('_route')) %}
