@@ -13,6 +13,7 @@ namespace Zenstruck\Collection\Doctrine\Specification;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Expr\Expression;
+use Doctrine\Common\Collections\Order;
 use Zenstruck\Collection\Exception\InvalidSpecification;
 use Zenstruck\Collection\Specification\Callback;
 use Zenstruck\Collection\Specification\Filter\Between;
@@ -55,15 +56,13 @@ final class CriteriaInterpreter
      */
     public static function interpret(object $specification, string $class, string $method, ?Criteria $criteria = null): Criteria
     {
-        $self = new self($criteria ?? new Criteria(), $class, $method);
+        $self = new self($criteria ?? self::createCriteria(), $class, $method);
 
         if ($expression = $self->transform($specification)) {
             $self->criteria->andWhere($expression);
         }
 
-        if ($self->orderBy) {
-            $self->criteria->orderBy($self->orderBy);
-        }
+        $self->applyOrderings();
 
         return $self->criteria;
     }
@@ -102,6 +101,32 @@ final class CriteriaInterpreter
 
             default => throw InvalidSpecification::build($specification, $this->class, $this->method),
         };
+    }
+
+    private static function createCriteria(): Criteria
+    {
+        return \in_array('isRawFieldValueAccessEnabled', \get_class_methods(Criteria::class), true)
+            ? Criteria::create(true)
+            : Criteria::create();
+    }
+
+    private function applyOrderings(): void
+    {
+        if (!$this->orderBy) {
+            return;
+        }
+
+        // ORM can polyfill SortDirection even when Collections still expects Order.
+        if (\enum_exists(\SortDirection::class) && !\defined(Criteria::class.'::DESC')) {
+            $this->criteria->orderBy(\array_map(
+                static fn(string $direction) => OrderBy::ASC === $direction ? \SortDirection::Ascending : \SortDirection::Descending,
+                $this->orderBy,
+            ));
+
+            return;
+        }
+
+        $this->criteria->orderBy(\enum_exists(Order::class) ? \array_map(Order::from(...), $this->orderBy) : $this->orderBy);
     }
 
     private function composite(Composite $specification, string $method): ?Expression

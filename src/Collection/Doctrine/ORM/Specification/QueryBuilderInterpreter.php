@@ -108,7 +108,7 @@ final class QueryBuilderInterpreter
 
             Callback::class => ($specification->value)($this->qb, $this->alias),
 
-            OrderBy::class => $this->qb->addOrderBy($this->prefix($specification->field), $specification->direction),
+            OrderBy::class => $this->interpretOrderBy($specification),
 
             // the class name must be inlined - as a parameter it is used as the discriminator value verbatim
             Instance::class => $this->qb->expr()->isInstanceOf($this->alias, $specification->of()),
@@ -133,6 +133,18 @@ final class QueryBuilderInterpreter
         }
 
         return $this->transform($between->asAnd());
+    }
+
+    /** @return EntityResultQueryBuilder<object> */
+    private function interpretOrderBy(OrderBy $orderBy): EntityResultQueryBuilder
+    {
+        $field = $this->prefix($orderBy->field);
+        $expression = $this->qb->expr();
+        $ordering = $orderBy->isAsc()
+            ? $expression->asc($field)
+            : $expression->desc($field);
+
+        return $this->qb->addOrderBy($ordering);
     }
 
     private function interpretAntiJoin(AntiJoin $join): mixed

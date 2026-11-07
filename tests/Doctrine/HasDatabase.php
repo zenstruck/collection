@@ -12,12 +12,20 @@
 namespace Zenstruck\Collection\Tests\Doctrine;
 
 use Doctrine\Bundle\DoctrineBundle\Middleware\DebugMiddleware;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Expr\Expression;
+use Doctrine\Common\Collections\Order;
+use Doctrine\Common\Collections\ReadableCollection;
+use Doctrine\Common\Collections\Selectable;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Schema\DefaultSchemaManagerFactory;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Tools\SchemaTool;
 use Symfony\Bridge\Doctrine\Middleware\Debug\DebugDataHolder;
+use Symfony\Component\VarExporter\LazyGhostTrait;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Relation;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Shape;
@@ -38,10 +46,21 @@ trait HasDatabase
         $connectionConfig = new Configuration();
         $connectionConfig->setMiddlewares([new DebugMiddleware($this->debugDataHolder = new DebugDataHolder(), null)]);
 
-        $ormConfig = ORMSetup::createAttributeMetadataConfiguration([], true);
+        if (\class_exists(DefaultSchemaManagerFactory::class)) {
+            $connectionConfig->setSchemaManagerFactory(new DefaultSchemaManagerFactory());
+        }
 
-        if (\PHP_VERSION_ID > 80400) {
+        $ormConfig = \PHP_VERSION_ID >= 80400 && \method_exists(ORMSetup::class, 'createConfig')
+            ? ORMSetup::createConfig(true)
+            : ORMSetup::createConfiguration(true);
+        $ormConfig->setMetadataDriverImpl(new AttributeDriver([], true));
+
+        if (\PHP_VERSION_ID >= 80400 && \method_exists($ormConfig, 'enableNativeLazyObjects')) {
             $ormConfig->enableNativeLazyObjects(true);
+        }
+
+        if (\method_exists($ormConfig, 'setLazyGhostObjectEnabled') && \trait_exists(LazyGhostTrait::class)) {
+            $ormConfig->setLazyGhostObjectEnabled(true);
         }
 
         $this->em = new EntityManager(
@@ -63,6 +82,19 @@ trait HasDatabase
     protected function teardownEntityManager(): void
     {
         unset($this->em, $this->debugDataHolder);
+    }
+
+    protected function createCriteria(?Expression $expression = null, ?string $descendingBy = null): Criteria
+    {
+        if (\is_a(ReadableCollection::class, Selectable::class, true)) {
+            return new Criteria($expression, $descendingBy === null ? null : [$descendingBy => \SortDirection::Descending]);
+        }
+
+        $orderings = $descendingBy === null ? null : [$descendingBy => \enum_exists(Order::class) ? Order::Descending : 'DESC'];
+
+        return \method_exists(Criteria::class, 'isRawFieldValueAccessEnabled')
+            ? new Criteria($expression, $orderings, firstResult: 0, accessRawFieldValues: true)
+            : new Criteria($expression, $orderings);
     }
 
     protected function assertQueryCount(int $expected, callable $callback): void

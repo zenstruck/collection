@@ -4,3 +4,16 @@ parameters:
     paths:
         - src
         - stubs
+    ignoreErrors:
+        # Collections 2.x does not require the wrapped collection to implement Selectable.
+        -
+            identifier: instanceof.alwaysTrue
+            message: '#^Instanceof between Doctrine\\Common\\Collections\\Collection and Doctrine\\Common\\Collections\\Selectable #'
+            path: src/Collection/Doctrine/DoctrineBridgeCollection.php
+            reportUnmatched: false
+        # Each installed Collections version sees the other version's guarded orderBy() call.
+        -
+            identifier: argument.type
+            message: '#^Parameter \#1 \$orderings of method Doctrine\\Common\\Collections\\Criteria::orderBy\(\) expects #'
+            path: src/Collection/Doctrine/Specification/CriteriaInterpreter.php
+            reportUnmatched: false

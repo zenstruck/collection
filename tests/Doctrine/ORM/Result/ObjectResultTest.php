@@ -161,9 +161,7 @@ class ObjectResultTest extends EntityResultTest
     public function can_use_criteria_as_filter_specification(): void
     {
         $collection = $this->createWithItems(10);
-        $criteria = Criteria::create()->where(Criteria::expr()->lt('id', 5))
-            ->orderBy(['id' => Criteria::DESC])
-        ;
+        $criteria = $this->createCriteria(Criteria::expr()->lt('id', 5), descendingBy: 'id');
 
         $this->assertEquals($this->expectedValueAt(4), $collection->filter($criteria)->first());
     }
@@ -174,9 +172,7 @@ class ObjectResultTest extends EntityResultTest
     public function can_use_criteria_as_find_specification(): void
     {
         $collection = $this->createWithItems(10);
-        $criteria = Criteria::create()->where(Criteria::expr()->lt('id', 5))
-            ->orderBy(['id' => Criteria::DESC])
-        ;
+        $criteria = $this->createCriteria(Criteria::expr()->lt('id', 5), descendingBy: 'id');
 
         $this->assertEquals($this->expectedValueAt(4), $collection->find($criteria));
     }

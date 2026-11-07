@@ -13,6 +13,7 @@ namespace Zenstruck\Collection\Tests\Doctrine;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Selectable;
 use Doctrine\ORM\PersistentCollection;
 use PHPUnit\Framework\TestCase;
 use Zenstruck\Collection\Doctrine\DoctrineBridgeCollection;
@@ -68,12 +69,18 @@ final class DoctrineBridgeCollectionTest extends TestCase
      */
     public function criteria_specification_requires_a_selectable_inner_collection(): void
     {
-        $collection = new DoctrineBridgeCollection($this->createMock(Collection::class));
+        $inner = $this->createMock(Collection::class);
+
+        if ($inner instanceof Selectable) {
+            self::markTestSkipped('Doctrine Collections 3 requires all collections to be selectable.');
+        }
+
+        $collection = new DoctrineBridgeCollection($inner);
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessageMatches('#is not an instance of ".+Selectable"#');
 
-        $collection->filter(Criteria::create());
+        $collection->filter($this->createCriteria());
     }
 
     /**
@@ -129,9 +136,7 @@ final class DoctrineBridgeCollectionTest extends TestCase
     public function can_use_criteria_as_filter_specification(): void
     {
         $collection = $this->createWithItems(10);
-        $criteria = Criteria::create()->where(Criteria::expr()->lt('id', 5))
-            ->orderBy(['id' => Criteria::DESC])
-        ;
+        $criteria = $this->createCriteria(Criteria::expr()->lt('id', 5), descendingBy: 'id');
 
         $this->assertSame('value 4', $collection->filter($criteria)->first()->value);
     }
@@ -142,9 +147,7 @@ final class DoctrineBridgeCollectionTest extends TestCase
     public function can_use_criteria_as_find_specification(): void
     {
         $collection = $this->createWithItems(10);
-        $criteria = Criteria::create()->where(Criteria::expr()->lt('id', 5))
-            ->orderBy(['id' => Criteria::DESC])
-        ;
+        $criteria = $this->createCriteria(Criteria::expr()->lt('id', 5), descendingBy: 'id');
 
         $this->assertSame('value 4', $collection->find($criteria)->value);
     }
@@ -398,7 +401,7 @@ final class DoctrineBridgeCollectionTest extends TestCase
     {
         $this->persistEntities($count);
 
-        return new DoctrineBridgeCollection($this->em->getRepository(Entity::class)->matching(new Criteria()));
+        return new DoctrineBridgeCollection($this->em->getRepository(Entity::class)->matching($this->createCriteria()));
     }
 
     /**

@@ -100,12 +100,8 @@ final class DoctrineBridgeCollection implements Collection, DoctrineCollection, 
      */
     public function filter(mixed $specification): self
     {
-        if ($this->inner instanceof Selectable && $specification instanceof Criteria) {
-            return new self($this->inner->matching($specification));
-        }
-
         if ($specification instanceof Criteria) {
-            throw new \LogicException(\sprintf('"%s" is not an instance of "%s". Cannot use Criteria as a specification.', $this->inner::class, Selectable::class));
+            return $this->matching($specification);
         }
 
         if (!\is_callable($specification)) {
@@ -113,6 +109,16 @@ final class DoctrineBridgeCollection implements Collection, DoctrineCollection, 
         }
 
         return new self($this->inner->filter($specification(...)));
+    }
+
+    /** @return self<V,K> */
+    public function matching(Criteria $criteria): self
+    {
+        if (!$this->inner instanceof Selectable) {
+            throw new \LogicException(\sprintf('"%s" is not an instance of "%s". Cannot use Criteria as a specification.', $this->inner::class, Selectable::class));
+        }
+
+        return new self($this->inner->matching($criteria));
     }
 
     public function reduce(\Closure|callable $function, mixed $initial = null): mixed
@@ -236,7 +242,7 @@ final class DoctrineBridgeCollection implements Collection, DoctrineCollection, 
         return $this->inner->last();
     }
 
-    public function key(): mixed
+    public function key(): int|string|null
     {
         return $this->inner->key();
     }
@@ -266,7 +272,7 @@ final class DoctrineBridgeCollection implements Collection, DoctrineCollection, 
         return $this->inner->forAll($p);
     }
 
-    public function indexOf($element): mixed
+    public function indexOf($element): int|string|false
     {
         return $this->inner->indexOf($element);
     }
