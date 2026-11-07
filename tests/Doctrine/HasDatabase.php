@@ -14,10 +14,13 @@ namespace Zenstruck\Collection\Tests\Doctrine;
 use Doctrine\Bundle\DoctrineBundle\Middleware\DebugMiddleware;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Schema\DefaultSchemaManagerFactory;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Tools\SchemaTool;
 use Symfony\Bridge\Doctrine\Middleware\Debug\DebugDataHolder;
+use Symfony\Component\VarExporter\LazyGhostTrait;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Relation;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Shape;
@@ -38,10 +41,21 @@ trait HasDatabase
         $connectionConfig = new Configuration();
         $connectionConfig->setMiddlewares([new DebugMiddleware($this->debugDataHolder = new DebugDataHolder(), null)]);
 
-        $ormConfig = ORMSetup::createAttributeMetadataConfiguration([], true);
+        if (\class_exists(DefaultSchemaManagerFactory::class)) {
+            $connectionConfig->setSchemaManagerFactory(new DefaultSchemaManagerFactory());
+        }
 
-        if (\PHP_VERSION_ID > 80400) {
+        $ormConfig = \PHP_VERSION_ID >= 80400 && \method_exists(ORMSetup::class, 'createConfig')
+            ? ORMSetup::createConfig(true)
+            : ORMSetup::createConfiguration(true);
+        $ormConfig->setMetadataDriverImpl(new AttributeDriver([], true));
+
+        if (\PHP_VERSION_ID >= 80400 && \method_exists($ormConfig, 'enableNativeLazyObjects')) {
             $ormConfig->enableNativeLazyObjects(true);
+        }
+
+        if (\method_exists($ormConfig, 'setLazyGhostObjectEnabled') && \trait_exists(LazyGhostTrait::class)) {
+            $ormConfig->setLazyGhostObjectEnabled(true);
         }
 
         $this->em = new EntityManager(
