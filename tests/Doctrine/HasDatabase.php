@@ -87,10 +87,10 @@ trait HasDatabase
     protected function createCriteria(?Expression $expression = null, ?string $descendingBy = null): Criteria
     {
         if (\is_a(ReadableCollection::class, Selectable::class, true)) {
-            return new Criteria($expression, $descendingBy === null ? null : [$descendingBy => \SortDirection::Descending]);
+            return new Criteria($expression, null === $descendingBy ? null : [$descendingBy => \SortDirection::Descending]);
         }
 
-        $orderings = $descendingBy === null ? null : [$descendingBy => \enum_exists(Order::class) ? Order::Descending : 'DESC'];
+        $orderings = null === $descendingBy ? null : [$descendingBy => \enum_exists(Order::class) ? Order::Descending : 'DESC'];
 
         return \method_exists(Criteria::class, 'isRawFieldValueAccessEnabled')
             ? new Criteria($expression, $orderings, firstResult: 0, accessRawFieldValues: true)
