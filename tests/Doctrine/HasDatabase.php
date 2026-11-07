@@ -24,6 +24,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Tools\SchemaTool;
+use Doctrine\Persistence\Reflection\RuntimeReflectionProperty;
 use Symfony\Bridge\Doctrine\Middleware\Debug\DebugDataHolder;
 use Symfony\Component\VarExporter\LazyGhostTrait;
 use Zenstruck\Collection\Tests\Doctrine\Fixture\Entity;
@@ -59,7 +60,11 @@ trait HasDatabase
             $ormConfig->enableNativeLazyObjects(true);
         }
 
-        if (\method_exists($ormConfig, 'setLazyGhostObjectEnabled') && \trait_exists(LazyGhostTrait::class)) {
+        if (\PHP_VERSION_ID < 80400
+            && \method_exists($ormConfig, 'setLazyGhostObjectEnabled')
+            && \class_exists(RuntimeReflectionProperty::class)
+            && \trait_exists(LazyGhostTrait::class)
+        ) {
             $ormConfig->setLazyGhostObjectEnabled(true);
         }
 
