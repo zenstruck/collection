@@ -1135,6 +1135,9 @@ foreach ($comments as $comment) {
 
 > [!NOTE]
 > A `Criteria` can be passed directly if you prefer it to specifications - both end up in the same place.
+> On Doctrine Collections versions that support raw field access, specifications use stored property
+> values for in-memory matching. Use a callable if you need to filter on a computed getter.
+> Raw property reads can bypass initialization on legacy Doctrine proxies.
 
 > [!TIP]
 > This works for in-memory collections too, not just relations: Doctrine's own `ArrayCollection` is

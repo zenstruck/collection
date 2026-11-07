@@ -12,6 +12,9 @@
 namespace Zenstruck\Collection\Tests\Doctrine;
 
 use Doctrine\Bundle\DoctrineBundle\Middleware\DebugMiddleware;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Expr\Expression;
+use Doctrine\Common\Collections\Order;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Schema\DefaultSchemaManagerFactory;
@@ -77,6 +80,15 @@ trait HasDatabase
     protected function teardownEntityManager(): void
     {
         unset($this->em, $this->debugDataHolder);
+    }
+
+    protected function createCriteria(?Expression $expression = null, ?string $descendingBy = null): Criteria
+    {
+        $orderings = $descendingBy === null ? null : [$descendingBy => \enum_exists(Order::class) ? Order::Descending : 'DESC'];
+
+        return \method_exists(Criteria::class, 'isRawFieldValueAccessEnabled')
+            ? new Criteria($expression, $orderings, firstResult: 0, accessRawFieldValues: true)
+            : new Criteria($expression, $orderings);
     }
 
     protected function assertQueryCount(int $expected, callable $callback): void

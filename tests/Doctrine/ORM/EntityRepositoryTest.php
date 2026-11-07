@@ -65,7 +65,7 @@ class EntityRepositoryTest extends TestCase
     {
         $repo = $this->createWithItems(3);
 
-        $this->assertEquals($this->expectedValueAt(2), $repo->find(Criteria::create()->where(Criteria::expr()->eq('id', 2))));
+        $this->assertEquals($this->expectedValueAt(2), $repo->find($this->createCriteria(Criteria::expr()->eq('id', 2))));
     }
 
     /**
@@ -89,7 +89,7 @@ class EntityRepositoryTest extends TestCase
 
         $this->assertNull($repo->find(99));
         $this->assertNull($repo->find(['id' => 99]));
-        $this->assertNull($repo->find(Criteria::create()->where(Criteria::expr()->eq('id', 99))));
+        $this->assertNull($repo->find($this->createCriteria(Criteria::expr()->eq('id', 99))));
         $this->assertNull($repo->find(static function(QueryBuilder $qb, string $root) {
             $qb->andWhere($root.'.id = :id')->setParameter('id', 99);
         }));
@@ -145,7 +145,7 @@ class EntityRepositoryTest extends TestCase
      */
     public function can_filter_with_criteria(): void
     {
-        $objects = $this->createWithItems(3)->query(Criteria::create()->where(Criteria::expr()->eq('id', 2)));
+        $objects = $this->createWithItems(3)->query($this->createCriteria(Criteria::expr()->eq('id', 2)));
 
         $this->assertCount(1, $objects);
         $this->assertSame('value 2', \iterator_to_array($objects)[0]->value);
@@ -196,7 +196,7 @@ class EntityRepositoryTest extends TestCase
         $repo = $this->createWithItems(3);
 
         $this->assertEmpty($repo->query(['id' => 99]));
-        $this->assertEmpty($repo->query(Criteria::create()->where(Criteria::expr()->eq('id', 99))));
+        $this->assertEmpty($repo->query($this->createCriteria(Criteria::expr()->eq('id', 99))));
         $this->assertEmpty($repo->query(static function(QueryBuilder $qb, string $root) {
             $qb->andWhere($root.'.id = :id')->setParameter('id', 99);
         }));
