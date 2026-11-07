@@ -36,14 +36,13 @@ final class ArrayCollection implements Collection
      */
     public function __construct(iterable|callable|null $source = null)
     {
-        if (null === $source) {
-            $source = [];
-        }
+        $source ??= [];
 
-        if (\is_callable($source) && !\is_iterable($source)) {
+        if (!\is_iterable($source)) {
             $source = $source();
         }
 
+        /** @var iterable<K,V> $source Callable iterables follow the iterable contract. */
         $this->source = $source instanceof \Traversable ? \iterator_to_array($source) : $source;
     }
 
@@ -403,17 +402,17 @@ final class ArrayCollection implements Collection
     /**
      * @param V ...$values
      *
-     * @return self<V,K>
+     * @return self<V,K|int>
      */
     public function push(mixed ...$values): self
     {
-        $clone = clone $this;
+        $source = $this->source;
 
         foreach ($values as $value) {
-            $clone->source[] = $value; // @phpstan-ignore property.readOnlyByPhpDocAssignNotInConstructor
+            $source[] = $value;
         }
 
-        return $clone;
+        return new self($source);
     }
 
     /**
