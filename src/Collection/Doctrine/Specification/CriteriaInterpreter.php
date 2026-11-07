@@ -116,6 +116,16 @@ final class CriteriaInterpreter
             return;
         }
 
+        // ORM can polyfill SortDirection even when Collections still expects Order.
+        if (\enum_exists(\SortDirection::class) && !\defined(Criteria::class.'::DESC')) {
+            $this->criteria->orderBy(\array_map(
+                static fn(string $direction) => OrderBy::ASC === $direction ? \SortDirection::Ascending : \SortDirection::Descending,
+                $this->orderBy,
+            ));
+
+            return;
+        }
+
         $this->criteria->orderBy(\enum_exists(Order::class) ? \array_map(Order::from(...), $this->orderBy) : $this->orderBy);
     }
 

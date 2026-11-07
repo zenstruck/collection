@@ -15,6 +15,8 @@ use Doctrine\Bundle\DoctrineBundle\Middleware\DebugMiddleware;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Expr\Expression;
 use Doctrine\Common\Collections\Order;
+use Doctrine\Common\Collections\ReadableCollection;
+use Doctrine\Common\Collections\Selectable;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Schema\DefaultSchemaManagerFactory;
@@ -84,6 +86,10 @@ trait HasDatabase
 
     protected function createCriteria(?Expression $expression = null, ?string $descendingBy = null): Criteria
     {
+        if (\is_a(ReadableCollection::class, Selectable::class, true)) {
+            return new Criteria($expression, $descendingBy === null ? null : [$descendingBy => \SortDirection::Descending]);
+        }
+
         $orderings = $descendingBy === null ? null : [$descendingBy => \enum_exists(Order::class) ? Order::Descending : 'DESC'];
 
         return \method_exists(Criteria::class, 'isRawFieldValueAccessEnabled')
