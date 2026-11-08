@@ -17,15 +17,18 @@ use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\QueryException;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Tools\Pagination\CursorPaginator;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Zenstruck\Collection;
 use Zenstruck\Collection\ArrayCollection;
+use Zenstruck\Collection\CursorPage;
 use Zenstruck\Collection\Doctrine\Batch;
 use Zenstruck\Collection\Doctrine\Result;
 use Zenstruck\Collection\Doctrine\Specification\CriteriaInterpreter;
 use Zenstruck\Collection\FactoryCollection;
 use Zenstruck\Collection\IterableCollection;
 use Zenstruck\Collection\LazyCollection;
+use Zenstruck\Collection\Page;
 
 use function Zenstruck\collect;
 
@@ -266,6 +269,40 @@ final class EntityResult implements Result
             ),
             fn(mixed $result): mixed => $this->normalizeResult($result),
         );
+    }
+
+    public function cursorPaginate(?string $cursor = null, int $limit = Page::DEFAULT_LIMIT): CursorPage
+    {
+        if (!\class_exists(CursorPaginator::class)) {
+            throw new \LogicException('Cursor pagination requires doctrine/orm 3.7 or later.');
+        }
+
+        if ($limit < 1 || \PHP_INT_MAX === $limit) {
+            throw new \InvalidArgumentException('The cursor pagination limit must be between 1 and PHP_INT_MAX - 1.');
+        }
+
+        $query = $this->query();
+
+        if (Query::HYDRATE_OBJECT !== $query->getHydrationMode() || self::ENTITY_WITH_AGGREGATES === $this->resultModifier) {
+            throw new \LogicException('Cursor pagination requires a query that returns root entities.');
+        }
+
+        $paginator = new CursorPaginator($limit, $this->fetchJoins, $this->useOutputWalkers);
+        $page = $paginator->paginate($query, $cursor);
+        $items = $page->getItems();
+        $entityClass = $this->qb->getRootEntities()[0];
+
+        if (\array_filter($items, static fn(mixed $item): bool => !$item instanceof $entityClass)) {
+            throw new \LogicException('Cursor pagination requires a query that returns root entities.');
+        }
+
+        $next = $items && $page->hasNextPage() ? $page->getNextCursorAsString() : null;
+        $previous = $items && $page->hasPreviousPage() ? $page->getPreviousCursorAsString() : null;
+
+        /** @var list<V> $normalizedItems */
+        $normalizedItems = \array_map($this->normalizeResult(...), $items);
+
+        return new CursorPage(new ArrayCollection($normalizedItems), $next, $previous);
     }
 
     public function getIterator(): \Traversable
