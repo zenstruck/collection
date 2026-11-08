@@ -13,6 +13,7 @@ namespace Zenstruck\Collection\Doctrine;
 
 use Doctrine\Common\Collections\Criteria;
 use Zenstruck\Collection;
+use Zenstruck\Collection\CursorPaginatable;
 use Zenstruck\Collection\Matchable;
 
 /**
@@ -23,9 +24,10 @@ use Zenstruck\Collection\Matchable;
  * @immutable
  * @template V
  * @extends Collection<V,int>
+ * @extends CursorPaginatable<V,int>
  * @extends Matchable<V,int>
  */
-interface Result extends Collection, Matchable
+interface Result extends Collection, CursorPaginatable, Matchable
 {
     /**
      * "Batch iterate" the result set, clearing the

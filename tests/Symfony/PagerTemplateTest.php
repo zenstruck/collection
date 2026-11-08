@@ -13,6 +13,7 @@ namespace Zenstruck\Collection\Tests\Symfony;
 
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Zenstruck\Collection\CursorPage;
 use Zenstruck\Collection\Page;
 
 use function Zenstruck\collect;
@@ -56,6 +57,44 @@ final class PagerTemplateTest extends KernelTestCase
     {
         $this->assertSame('', \trim($this->render('_simple', new Page(collect(\range(1, 5)), 1, 10))));
         $this->assertSame('', \trim($this->render('_full', new Page(collect(\range(1, 5)), 1, 10))));
+        $this->assertSame('', \trim($this->render('_cursor', new CursorPage(collect([1])))));
+    }
+
+    /**
+     * @test
+     */
+    public function cursor_pager_preserves_filters_and_replaces_the_cursor(): void
+    {
+        $page = new CursorPage(collect([1]), nextCursor: 'next-_', previousCursor: 'previous-_');
+        $html = $this->render('_cursor', $page, [], '/posts?q=symfony&limit=20&cursor=old');
+
+        $this->assertStringContainsString('<a href="/posts?q=symfony&amp;limit=20&amp;cursor=previous-_" rel="prev">Previous</a>', $html);
+        $this->assertStringContainsString('<a href="/posts?q=symfony&amp;limit=20&amp;cursor=next-_" rel="next">Next</a>', $html);
+    }
+
+    /**
+     * @test
+     */
+    public function cursor_pager_disables_the_boundaries(): void
+    {
+        $first = $this->render('_cursor', new CursorPage(collect([1]), nextCursor: 'next'));
+        $this->assertStringContainsString('<li class="disabled"><span>Previous</span></li>', $first);
+        $this->assertStringContainsString('rel="next"', $first);
+
+        $last = $this->render('_cursor', new CursorPage(collect([2]), previousCursor: 'previous'));
+        $this->assertStringContainsString('rel="prev"', $last);
+        $this->assertStringContainsString('<li class="disabled"><span>Next</span></li>', $last);
+    }
+
+    /**
+     * @test
+     */
+    public function cursor_pager_allows_a_custom_key_and_parameters(): void
+    {
+        $page = new CursorPage(collect([1]), nextCursor: 'next');
+        $html = $this->render('_cursor', $page, ['key' => 'after', 'params' => []], '/posts?q=symfony');
+
+        $this->assertStringContainsString('<a href="/posts?after=next" rel="next">Next</a>', $html);
     }
 
     /**
@@ -115,7 +154,7 @@ final class PagerTemplateTest extends KernelTestCase
     /**
      * @param array<string,mixed> $context
      */
-    private function render(string $template, Page $page, array $context = [], string $uri = '/posts'): string
+    private function render(string $template, Page|CursorPage $page, array $context = [], string $uri = '/posts'): string
     {
         $container = self::getContainer();
         $request = Request::create($uri);

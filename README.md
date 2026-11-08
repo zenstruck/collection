@@ -426,8 +426,7 @@ when the requested page really was out of range.
 
 ### Templating
 
-Two pager templates are bundled, matching the two modes. Both take the `Page` and link to the current route,
-keeping whatever query parameters are already there:
+The two templates for `Page` link to the current route and preserve the current query parameters.
 
 ```twig
 {# previous/next - counts nothing #}
@@ -472,10 +471,23 @@ Both accept the same options:
 > These require Twig and Symfony's routing (`path()`), and are registered by the
 > [bundle](#symfony-integration).
 
+#### Cursor pager
+
+Pass a `CursorPage` to render Previous and Next links.
+
+```twig
+{{ include('@ZenstruckCollection/Pager/_cursor.html.twig', {page: page}) }}
+```
+
+Links preserve the current route and query parameters, replacing the `cursor` parameter. Pass `route`,
+`params` or `key` to override those defaults. An unavailable direction is disabled. The pager renders
+nothing when neither cursor is available.
+
 #### Styling
 
-The class names are the styling hooks: `pager` on both, plus `pager-simple`/`pager-full`, and `active` and
-`disabled` on the individual items. With Tailwind that's a few `@apply` rules and no template to maintain:
+All templates use the `pager` class. Use `pager-simple`, `pager-full` or `pager-cursor` to style a specific
+template and `active` or `disabled` to style individual items. With Tailwind that's a few `@apply` rules
+and no template to maintain:
 
 ```css
 /* assets/styles/app.css */
@@ -620,6 +632,31 @@ Because it's immutable, deriving is free and the original stays usable:
 ```php
 $recent = $result->filter(Spec::gt('publishedAt', $cutoff)); // $result is unchanged
 ```
+
+##### Cursor Pagination
+
+`Result` extends `CursorPaginatable`. To use `cursorPaginate()` on an `EntityResult`, install Doctrine
+ORM 3.7 or later and select root entities. Sort by their non-null mapped fields in an order that uniquely
+identifies each row. Here, `id` breaks ties when posts share a publication date.
+
+```php
+$posts = $repository->filter(Spec::andX(
+    Spec::sortDesc('publishedAt'),
+    Spec::sortDesc('id'),
+));
+
+$page = $posts->cursorPaginate(cursor: $cursor, limit: 20); // pass null for the first page
+$next = $page->nextCursor();
+$previous = $page->previousCursor();
+```
+
+Iterate the `CursorPage` to read its items. `count($page)` counts those items. Use `hasNext()` and
+`hasPrevious()` to check which cursors are available. An unavailable cursor is `null`. Pass a returned
+cursor string back with the same filters and sort to fetch another page. Use `as()` to transform the
+entities after cursor generation.
+
+In Symfony, read the cursor with `$request->query->get('cursor')` and pass the resulting page to the
+[cursor pager](#cursor-pager).
 
 ##### Hydration
 

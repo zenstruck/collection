@@ -1,0 +1,33 @@
+{## A previous/next pager for a `Zenstruck\Collection\CursorPage`. Renders nothing when neither cursor is available. ##}
+{% types {
+    ## The page to render.
+    page: 'Zenstruck\\Collection\\CursorPage',
+
+    ## The route to link to. Defaults to the current request's route.
+    route?: 'string',
+
+    ## The route/query parameters to keep. Defaults to the current request's.
+    params?: 'array',
+
+    ## The query parameter the cursor is stored in.
+    key?: 'string',
+} %}
+{% if page.hasPrevious or page.hasNext %}
+    {% set key = key|default('cursor') %}
+    {% set route = route|default(app.request.attributes.get('_route')) %}
+    {% set params = params ?? (app.request.query.all|merge(app.request.attributes.get('_route_params')|default({}))) %}
+
+    <ul class="pager pager-cursor">
+        {% if page.hasPrevious %}
+            <li><a href="{{ path(route, params|merge({(key): page.previousCursor})) }}" rel="prev">Previous</a></li>
+        {% else %}
+            <li class="disabled"><span>Previous</span></li>
+        {% endif %}
+
+        {% if page.hasNext %}
+            <li><a href="{{ path(route, params|merge({(key): page.nextCursor})) }}" rel="next">Next</a></li>
+        {% else %}
+            <li class="disabled"><span>Next</span></li>
+        {% endif %}
+    </ul>
+{% endif %}
