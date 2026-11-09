@@ -44,6 +44,33 @@ final class ClosureGeneratorTest extends LazyCollectionTest
     /**
      * @test
      */
+    public function take_opens_the_source_once_per_iteration(): void
+    {
+        $calls = 0;
+        $collection = new LazyCollection(static function() use (&$calls) {
+            ++$calls;
+
+            return (static function() {
+                yield 'skip' => 1;
+                yield 'keep' => 2;
+
+                throw new \LogicException('The generator should not advance past the slice.');
+            })();
+        });
+
+        $slice = $collection->take(1, 1);
+
+        $this->assertTrue($collection->take(0)->isEmpty());
+        $this->assertSame(0, $calls);
+        $this->assertSame(['keep' => 2], \iterator_to_array($slice));
+        $this->assertSame(1, $calls);
+        $this->assertSame(['keep' => 2], \iterator_to_array($slice));
+        $this->assertSame(2, $calls);
+    }
+
+    /**
+     * @test
+     */
     public function is_empty_stops_at_the_first_item(): void
     {
         $collection = new LazyCollection(static function() {

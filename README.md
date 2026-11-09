@@ -1534,7 +1534,7 @@ foreach ($issues as $issue) {
 }
 
 $issues->first();   // one request
-$issues->take(150); // two
+$issues->take(150)->eager(); // two
 
 $issues
     ->filter(fn(array $issue) => \str_contains($issue['title'], 'pagination'))
@@ -1547,7 +1547,7 @@ Two things are expensive, though:
 
 ```php
 \count($issues);          // 22202 - after requesting all 223 pages
-$issues->take(20, 980);   // 11 requests - it skipped 980 items to get there
+$issues->take(20, 980)->eager(); // 11 requests - it skipped 980 items to get there
 ```
 
 `count()` has to walk every page to arrive at a number, and `take()` reaches an offset by skipping items from
@@ -1584,7 +1584,7 @@ $issues->isEmpty(); // ...the same request
 ```
 
 That's the first problem gone. The second one remains: `take()` still skips from the front, so
-`$issues->take(20, 980)` is still eleven requests.
+reading `$issues->take(20, 980)` still takes eleven requests.
 
 ### Wrapping It in Your Own Collection
 
@@ -1676,8 +1676,8 @@ Both of the expensive operations are now a single request, however deep you reac
 $issues = new IssueSearch($client, 'repo:symfony/symfony is:issue');
 
 \count($issues);        // 22202 - one request
-$issues->take(20);      // one request
-$issues->take(20, 980); // still one - it asks for the page the window is in
+$issues->take(20)->eager();      // one request
+$issues->take(20, 980)->eager(); // still one - it asks for the page the window is in
 ```
 
 > [!TIP]

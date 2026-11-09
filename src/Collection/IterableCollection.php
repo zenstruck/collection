@@ -30,10 +30,10 @@ trait IterableCollection
      */
     public function take(int $limit, int $offset = 0): Collection
     {
-        $source = $this->iterableSource();
+        $slice = self::sliceArraySource($this->iterableSource(), $limit, $offset);
 
-        if ($source instanceof \ArrayIterator || $source instanceof \ArrayObject) {
-            return new LazyCollection(\array_slice($source->getArrayCopy(), $offset, $limit, true));
+        if (null !== $slice) {
+            return new LazyCollection($slice);
         }
 
         if ($limit < 0) {
@@ -48,21 +48,7 @@ trait IterableCollection
             return new LazyCollection();
         }
 
-        return new LazyCollection(function() use ($limit, $offset) {
-            $i = 0;
-
-            foreach ($this as $key => $value) {
-                if ($i++ < $offset) {
-                    continue;
-                }
-
-                yield $key => $value;
-
-                if ($i >= $offset + $limit) {
-                    break;
-                }
-            }
-        });
+        return new LazyCollection(fn() => self::iterateSlice($this, $limit, $offset));
     }
 
     /**
@@ -208,6 +194,42 @@ trait IterableCollection
     public function eager(): ArrayCollection
     {
         return new ArrayCollection($this->iterableSource());
+    }
+
+    /**
+     * @param iterable<K,V> $source
+     *
+     * @return \Iterator<K,V>|null
+     */
+    private static function sliceArraySource(iterable $source, int $limit, int $offset): ?\Iterator
+    {
+        if ($source instanceof \ArrayIterator || $source instanceof \ArrayObject) {
+            return new \ArrayIterator(\array_slice($source->getArrayCopy(), $offset, $limit, true));
+        }
+
+        return null;
+    }
+
+    /**
+     * @param iterable<K,V> $source
+     *
+     * @return \Generator<K,V>
+     */
+    private static function iterateSlice(iterable $source, int $limit, int $offset): \Generator
+    {
+        foreach ($source as $key => $value) {
+            if ($offset > 0) {
+                --$offset;
+
+                continue;
+            }
+
+            yield $key => $value;
+
+            if (0 === --$limit) {
+                return;
+            }
+        }
     }
 
     /**
