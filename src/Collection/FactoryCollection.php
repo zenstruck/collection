@@ -34,9 +34,9 @@ final class FactoryCollection implements Collection
     /**
      * @template T
      *
-     * @param Collection<T,K> $collection
+     * @param Collection<T,K>                                          $collection
      * @param ($passKey is true ? (callable(T,K):V) : (callable(T):V)) $factory
-     * @param bool $passKey Whether to pass the item key as the factory's second argument.
+     * @param bool                                                     $passKey    whether to pass the item key as the factory's second argument
      */
     public function __construct(Collection $collection, callable $factory, bool $passKey = false)
     {
