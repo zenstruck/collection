@@ -187,7 +187,8 @@ foreach ($titles as $title) {
 | `paginate()`, `pages()`                   | No - returns a `Page`/`Pages`          | Nothing until the page is used        |
 | `first()`                                 | Yes                                    | Stops at the first item               |
 | `find()`                                  | Yes                                    | Stops at the first match              |
-| `count()`, `isEmpty()`                    | Only if the source isn't `Countable`   | Counts, keeping nothing               |
+| `count()`                                 | Only if the source isn't `Countable`   | Counts, keeping nothing               |
+| `isEmpty()`                               | Only if the source isn't `Countable`   | Stops at the first item, even `null`  |
 | `reduce()`                                | Yes                                    | All of it, keeping nothing            |
 | `eager()`                                 | Yes                                    | All of it, kept in memory             |
 

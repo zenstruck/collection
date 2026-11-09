@@ -41,6 +41,20 @@ final class ClosureGeneratorTest extends LazyCollectionTest
         $this->assertCount(5, $collection);
     }
 
+    /**
+     * @test
+     */
+    public function is_empty_stops_at_the_first_item(): void
+    {
+        $collection = new LazyCollection(static function() {
+            yield null;
+
+            throw new \LogicException('The generator should not advance past the first item.');
+        });
+
+        $this->assertFalse($collection->isEmpty());
+    }
+
     protected function createWithItems(int $count): LazyCollection
     {
         return new LazyCollection(static function() use ($count) {

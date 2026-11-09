@@ -164,7 +164,17 @@ trait IterableCollection
 
     public function isEmpty(): bool
     {
-        return 0 === $this->count();
+        $source = $this->iterableSource();
+
+        if (\is_countable($source)) {
+            return 0 === $this->count();
+        }
+
+        foreach ($source as $value) {
+            return false;
+        }
+
+        return true;
     }
 
     public function count(): int
