@@ -39,6 +39,17 @@ final class FactoryCollectionTest extends TestCase
         $this->assertFalse($collection->isEmpty());
     }
 
+    /**
+     * @test
+     */
+    public function factory_receives_only_the_value_by_default(): void
+    {
+        $source = new LazyCollection(['key' => 'value']);
+        $collection = new FactoryCollection($source, \strlen(...));
+
+        $this->assertSame(['key' => 5], \iterator_to_array($collection));
+    }
+
     protected function createWithItems(int $count): Collection
     {
         return new FactoryCollection(new LazyCollection($count ? \range(1, $count) : []), static fn($position) => "value {$position}");

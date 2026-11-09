@@ -82,6 +82,22 @@ final class ClosureGeneratorTest extends LazyCollectionTest
         $this->assertFalse($collection->isEmpty());
     }
 
+    /**
+     * @test
+     */
+    public function mapped_collection_checks_emptiness_without_mapping_or_counting(): void
+    {
+        $source = new LazyCollection(static function() {
+            yield null;
+
+            throw new \LogicException('The source should not advance past the first item.');
+        });
+
+        $mapped = $source->map(static fn() => throw new \LogicException('The mapper should not be called.'));
+
+        $this->assertFalse($mapped->isEmpty());
+    }
+
     protected function createWithItems(int $count): LazyCollection
     {
         return new LazyCollection(static function() use ($count) {

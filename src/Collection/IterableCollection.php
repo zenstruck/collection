@@ -86,15 +86,11 @@ trait IterableCollection
      *
      * @param callable(V,K):T $function
      *
-     * @return LazyCollection<T,K>
+     * @return Collection<T,K>
      */
     public function map(callable $function): Collection
     {
-        return new LazyCollection(function() use ($function) {
-            foreach ($this as $key => $value) {
-                yield $key => $function($value, $key);
-            }
-        });
+        return new FactoryCollection($this, $function(...), passKey: true);
     }
 
     /**

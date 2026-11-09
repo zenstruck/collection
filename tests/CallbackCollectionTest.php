@@ -33,6 +33,21 @@ final class CallbackCollectionTest extends TestCase
         $this->assertCount(10, $collection);
     }
 
+    /**
+     * @test
+     */
+    public function mapped_collection_uses_the_source_count_callback(): void
+    {
+        $source = new CallbackCollection(
+            static fn() => throw new \LogicException('Counting should not open the iterator.'),
+            static fn() => 10,
+        );
+
+        $mapped = $source->map(static fn(int $value) => $value * 2);
+
+        $this->assertCount(10, $mapped);
+    }
+
     protected function createWithItems(int $count): Collection
     {
         return new CallbackCollection(static fn() => $count ? \range(1, $count) : [], static fn() => $count);

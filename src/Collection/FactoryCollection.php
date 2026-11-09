@@ -33,18 +33,20 @@ final class FactoryCollection implements Collection
      * @template T
      *
      * @param Collection<T,K> $collection
-     * @param callable(T):V   $factory
+     * @param ($passKey is true ? (callable(T,K):V) : (callable(T):V)) $factory
+     * @param bool $passKey Whether to pass the item key as the factory's second argument.
      */
-    public function __construct(Collection $collection, callable $factory)
+    public function __construct(Collection $collection, callable $factory, bool $passKey = false)
     {
         $this->inner = $collection;
-        $this->factory = $factory(...);
+        $factory = $factory(...);
+        $this->factory = $passKey ? $factory : static fn(mixed $value) => $factory($value);
     }
 
     public function getIterator(): \Traversable
     {
         foreach ($this->inner as $key => $value) {
-            yield $key => ($this->factory)($value);
+            yield $key => ($this->factory)($value, $key);
         }
     }
 
