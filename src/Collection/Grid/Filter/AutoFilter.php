@@ -30,6 +30,8 @@ use Zenstruck\Collection\Specification\Logic\Not;
  */
 final class AutoFilter implements Filter
 {
+    private const MAX_NEGATION_DEPTH = 32;
+
     public function __construct(private string $field)
     {
     }
@@ -57,7 +59,7 @@ final class AutoFilter implements Filter
             \str_starts_with($value, '*') && \str_ends_with($value, '*') => new Contains($this->field, \mb_substr($value, 1, -1)),
             \str_starts_with($value, '*') => new StartsWith($this->field, \mb_substr($value, 1)),
             \str_ends_with($value, '*') => new EndsWith($this->field, \mb_substr($value, 0, -1)),
-            \str_starts_with($value, '!') => new Not($this->apply(\mb_substr($value, 1))),
+            \str_starts_with($value, '!') => $this->negate($value),
             \str_starts_with($value, '<=') => new LessThanOrEqualTo($this->field, \mb_substr($value, 2)),
             \str_starts_with($value, '>=') => new GreaterThanOrEqualTo($this->field, \mb_substr($value, 2)),
             \str_starts_with($value, '>') => new GreaterThan($this->field, \mb_substr($value, 1)),
@@ -65,5 +67,14 @@ final class AutoFilter implements Filter
             \count($values = \explode(',', $value)) > 1 => new In($this->field, $values),
             default => new EqualTo($this->field, $value),
         };
+    }
+
+    private function negate(string $value): Not
+    {
+        if (\strspn($value, '!') > self::MAX_NEGATION_DEPTH) {
+            throw new \InvalidArgumentException(\sprintf('Cannot negate a filter more than %d times.', self::MAX_NEGATION_DEPTH));
+        }
+
+        return new Not($this->apply(\mb_substr($value, 1, null, '8bit')));
     }
 }
