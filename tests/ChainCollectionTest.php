@@ -14,6 +14,7 @@ namespace Zenstruck\Collection\Tests;
 use PHPUnit\Framework\TestCase;
 use Zenstruck\Collection\ArrayCollection;
 use Zenstruck\Collection\ChainCollection;
+use Zenstruck\Collection\LazyCollection;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -36,6 +37,20 @@ final class ChainCollectionTest extends TestCase
         );
 
         $this->assertSame(['foo' => 'foo value 2', 'bar' => 'bar value'], \iterator_to_array($collection));
+    }
+
+    /**
+     * @test
+     */
+    public function is_empty_stops_at_the_first_nonempty_collection(): void
+    {
+        $collection = new ChainCollection([
+            new ArrayCollection(),
+            new ArrayCollection([null]),
+            new LazyCollection(static fn() => throw new \LogicException('Later collections should not be opened.')),
+        ]);
+
+        $this->assertFalse($collection->isEmpty());
     }
 
     protected function createWithItems(int $count): ChainCollection

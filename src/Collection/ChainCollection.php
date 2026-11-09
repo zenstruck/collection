@@ -59,4 +59,11 @@ final class ChainCollection implements Collection
     {
         return $this->collections->reduce(static fn(int $r, Collection $c) => $r + $c->count(), 0); // @phpstan-ignore return.type
     }
+
+    public function isEmpty(): bool
+    {
+        $firstNonEmpty = $this->collections->find(static fn(Collection $collection) => !$collection->isEmpty());
+
+        return null === $firstNonEmpty;
+    }
 }

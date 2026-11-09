@@ -23,7 +23,9 @@ use Zenstruck\Collection;
 final class LazyCollection implements Collection
 {
     /** @use IterableCollection<V,K> */
-    use IterableCollection;
+    use IterableCollection {
+        take as private innerTake;
+    }
 
     /** @var \Traversable<K,V>|\Closure():iterable<K,V> */
     private \Closure|\Traversable $source;
@@ -42,6 +44,33 @@ final class LazyCollection implements Collection
         }
 
         $this->source = \is_array($source) ? new \ArrayIterator($source) : $source;
+    }
+
+    /**
+     * @return self<V,K>
+     */
+    public function take(int $limit, int $offset = 0): self
+    {
+        if (!$this->source instanceof \Closure || $limit < 0 || $offset < 0) {
+            return $this->innerTake($limit, $offset);
+        }
+
+        if (0 === $limit) {
+            return new self();
+        }
+
+        return new self(fn() => $this->takeFromCallback($limit, $offset));
+    }
+
+    /**
+     * @return \Traversable<K,V>
+     */
+    private function takeFromCallback(int $limit, int $offset): \Traversable
+    {
+        $source = $this->iterableSource();
+        $slice = self::sliceArraySource($source, $limit, $offset);
+
+        return $slice ?? self::iterateSlice($source, $limit, $offset);
     }
 
     /**
