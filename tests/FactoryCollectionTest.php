@@ -23,6 +23,22 @@ final class FactoryCollectionTest extends TestCase
 {
     use CollectionTests;
 
+    /**
+     * @test
+     */
+    public function is_empty_reads_only_the_first_item_without_calling_the_factory(): void
+    {
+        $source = new LazyCollection(static function() {
+            yield null;
+
+            throw new \LogicException('The source should not advance past the first item.');
+        });
+
+        $collection = new FactoryCollection($source, static fn() => throw new \LogicException('The factory should not be called.'));
+
+        $this->assertFalse($collection->isEmpty());
+    }
+
     protected function createWithItems(int $count): Collection
     {
         return new FactoryCollection(new LazyCollection($count ? \range(1, $count) : []), static fn($position) => "value {$position}");

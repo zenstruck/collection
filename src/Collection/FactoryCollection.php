@@ -52,4 +52,9 @@ final class FactoryCollection implements Collection
     {
         return $this->inner->count();
     }
+
+    public function isEmpty(): bool
+    {
+        return $this->inner->isEmpty();
+    }
 }
