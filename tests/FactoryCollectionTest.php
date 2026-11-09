@@ -50,6 +50,25 @@ final class FactoryCollectionTest extends TestCase
         $this->assertSame(['key' => 5], \iterator_to_array($collection));
     }
 
+    /**
+     * @test
+     */
+    public function take_maps_only_the_slice_with_its_original_keys(): void
+    {
+        $source = new LazyCollection([10 => 'skip', 'keep' => 'a', 20 => 'b', 30 => 'skip']);
+        $mappedKeys = [];
+        $mapped = $source->map(static function(string $value, int|string $key) use (&$mappedKeys): string {
+            $mappedKeys[] = $key;
+
+            return "{$key}:{$value}";
+        });
+        $slice = $mapped->take(2, 1);
+
+        $this->assertSame([], $mappedKeys);
+        $this->assertSame(['keep' => 'keep:a', 20 => '20:b'], \iterator_to_array($slice));
+        $this->assertSame(['keep', 20], $mappedKeys);
+    }
+
     protected function createWithItems(int $count): Collection
     {
         return new FactoryCollection(new LazyCollection($count ? \range(1, $count) : []), static fn($position) => "value {$position}");
